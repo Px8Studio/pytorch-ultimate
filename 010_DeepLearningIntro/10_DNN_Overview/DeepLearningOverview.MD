@@ -29,6 +29,12 @@ The presentation provides an introduction to deep learning fundamentals, coverin
 - **Recurrent Neural Networks (RNNs)**: Handle sequential data with memory
 - **Transformers**: Self-attention based architecture for sequence processing
 
+### Mathematical Foundations
+- **Activation Functions**: ReLU [f(x) = max(0,x)], Sigmoid [σ(x) = 1/(1+e^(-x))], Tanh
+- **Loss Functions**: Mean Squared Error, Cross-Entropy, KL Divergence
+- **Gradient Descent Variants**: SGD, Adam, RMSProp with convergence properties
+- **Matrix Operations**: Essential linear algebra behind neural computations
+
 ### Key Advantages of Deep Learning
 - Automatic feature extraction from raw data
 - Ability to model complex non-linear relationships
