@@ -48,6 +48,13 @@ The presentation provides an introduction to deep learning fundamentals, coverin
 - Recommendation systems
 - Generative AI
 
+### Common Challenges in Deep Learning
+- **Vanishing/Exploding Gradients**: Using gradient clipping, careful initialization
+- **Overfitting**: Implementing dropout, batch normalization, data augmentation
+- **Training Instability**: Learning rate scheduling, warmup strategies
+- **Computational Efficiency**: Model pruning, quantization, distillation
+- **Data Inefficiency**: Few-shot learning, data augmentation, synthetic data
+
 ### Implementation in PyTorch
 - Tensor manipulation as the foundation
 - Building models with `nn.Module`
