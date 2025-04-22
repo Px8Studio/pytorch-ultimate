@@ -88,4 +88,9 @@ print(output.shape)  # Should be [5, 2]
 - Regularization techniques to prevent overfitting
 - Model evaluation strategies and metrics
 
+### Visual Understanding
+- **Neural Network Architecture**: Imagine layers as transformations where each node combines inputs weighted by importance
+- **Gradient Descent**: Picture a ball rolling down a bowl to find the lowest point
+- **Feature Extraction in CNNs**: Early layers detect edges, middle layers detect patterns, later layers detect complex objects
+
 Deep learning continues to evolve rapidly, with new architectures and techniques emerging that push the boundaries of what's possible with artificial intelligence.
