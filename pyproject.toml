@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "pytorch-ultimate"
+version = "0.1.0"
+description = "PyTorch Ultimate 2024 - From Basics to Cutting-Edge"
+authors = ["Px8 Studio <info@px8.studio>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+ipykernel = "^6.29.0"
+seaborn = "^0.13.0"
+requests = "^2.31.0"
+psutil = "^5.9.0"
+kaleido = "0.2.1" # Changed from ^0.2.1 to "0.2.1"
+graphviz = "^0.20.1"
+torchmetrics = "^1.2.0"
+matplotlib = "^3.8.0"
+pandas = "^2.0.0"
+jupyter = "^1.0.0"
+scipy = "^1.11.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.6.0"
+flake8 = "^5.0.4"
+pytest = "^7.1.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
