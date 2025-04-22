@@ -19,12 +19,29 @@ I'll create a new markdown file that summarizes the key information from the "4_
 
 Activation functions are mathematical operations applied to the output of a neuron in neural networks. They introduce non-linearity into the network, allowing it to learn complex patterns and relationships in data. Without activation functions, neural networks would simply be linear regression models regardless of their depth.
 
+A neural network without activation functions would simply compute a linear transformation, regardless of how many layers it has. This is because the composition of linear functions is still a linear function. By introducing non-linearity through activation functions, neural networks gain the ability to approximate complex, non-linear relationships in data.
+
 ## Why Are Activation Functions Necessary?
 
 - **Non-linearity**: They transform the linear input signals into non-linear output signals
 - **Gradient propagation**: Enable backpropagation by providing derivable functions
 - **Output normalization**: Many activation functions bound outputs to specific ranges
 - **Feature representation**: Different activations enable different types of feature learning
+
+### From Biological to Artificial Neurons
+
+Activation functions in artificial neural networks are inspired by the firing patterns of biological neurons. In our brains, a neuron "fires" (sends an electrical signal) only when the total input stimulus exceeds a certain threshold. This binary firing behavior can be approximated with functions like the step function, but most modern networks use smoother activation functions to enable gradient-based learning algorithms.
+
+## Historical Evolution of Activation Functions
+
+The evolution of activation functions reflects the progression of neural network research:
+
+1. **1940s-1950s**: **Step function** was used in early computational models of neurons (perceptrons)
+2. **1980s-1990s**: **Sigmoid** and **Tanh** became popular with the rise of backpropagation
+3. **2010s**: **ReLU** emerged as a breakthrough, enabling the training of much deeper networks
+4. **2015-Present**: Advanced variants like **ELU**, **GELU**, and **Swish** were developed to address limitations of ReLU
+
+This evolution was driven by the need to solve key challenges in neural network training, particularly the vanishing/exploding gradient problems that limited the depth of trainable networks.
 
 ## Common Activation Functions
 
@@ -169,6 +186,10 @@ Softmax(x_i) = e^(x_i) / ∑(e^(x_j)) for all j
 - Multi-class probability distribution
 
 **Use when:** In the output layer for multi-class classification problems
+
+## Visual Comparison of Activation Functions
+
+Below is a conceptual representation of how common activation functions transform inputs:
 
 ## Practical Guidelines for Choosing Activation Functions
 
