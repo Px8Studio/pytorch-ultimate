@@ -16,8 +16,15 @@ Deep neural networks are built using different types of layers, each with specif
 - [Regularization Techniques](#regularization-techniques)
   - [Dropout Layers](#dropout-layers)
 - [Activation Layers](#activation-layers)
+- [Advanced Architecture Components](#advanced-architecture-components)
+  - [Residual Connections](#residual-connections)
+  - [Transformer Layers](#transformer-layers)
 - [Special Purpose Layers](#special-purpose-layers)
+- [Common Layer Sequences and Patterns](#common-layer-sequences-and-patterns)
+- [Choosing Layer Types for Different Problems](#choosing-layer-types-for-different-problems)
 - [PyTorch Implementation](#pytorch-implementation)
+- [Visualizing Layer Operations](#visualizing-layer-operations)
+- [Conclusion](#conclusion)
 
 ## Introduction to Neural Network Layers
 
@@ -188,6 +195,18 @@ Non-linear functions applied after linear transformations to introduce non-linea
 - **Leaky ReLU**: f(x) = max(0.01x, x)
 - **ELU (Exponential Linear Unit)**: f(x) = x if x > 0 else α * (e^x - 1)
 - **SELU (Scaled Exponential Linear Unit)**: Self-normalizing variant of ELU
+- **GELU (Gaussian Error Linear Unit)**: Used in transformers like BERT
+- **Swish**: f(x) = x * sigmoid(x), used in modern networks
+
+**Activation Function Properties:**
+| Function | Range | Differentiable | Advantages | Disadvantages |
+|----------|-------|----------------|------------|---------------|
+| ReLU | [0, ∞) | No (at x=0) | Simple, reduces vanishing gradient | Dead neurons |
+| Sigmoid | (0, 1) | Yes | Good for binary classification | Vanishing gradient |
+| Tanh | (-1, 1) | Yes | Zero-centered | Vanishing gradient |
+| Leaky ReLU | (-∞, ∞) | No (at x=0) | Mitigates dead neurons | - |
+| ELU | (-α, ∞) | Yes | Reduces dead neurons | More computation |
+| GELU | (-∞, ∞) | Yes | Smooth, good performance | Complex calculation |
 
 **PyTorch Example:**
 ```python
@@ -199,6 +218,101 @@ sigmoid = nn.Sigmoid()
 tanh = nn.Tanh()
 leaky_relu = nn.LeakyReLU(negative_slope=0.01)
 elu = nn.ELU(alpha=1.0)
+gelu = nn.GELU()
+```
+
+## Advanced Architecture Components
+
+### Residual Connections
+
+Residual connections (or skip connections) allow the gradient to flow through the network directly, addressing the vanishing gradient problem in deep networks.
+
+**Characteristics:**
+- Add the input of a layer directly to its output: y = F(x) + x
+- Enable training of much deeper networks
+- Core component of ResNet and modern architectures
+
+**PyTorch Example:**
+```python
+class ResidualBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(ResidualBlock, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        
+        # Skip connection (identity mapping or 1x1 conv if dimensions change)
+        self.shortcut = nn.Sequential()
+        if in_channels != out_channels:
+            self.shortcut = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels, kernel_size=1),
+                nn.BatchNorm2d(out_channels)
+            )
+    
+    def forward(self, x):
+        residual = x
+        
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = nn.ReLU()(out)
+        
+        out = self.conv2(out)
+        out = self.bn2(out)
+        
+        out += self.shortcut(residual)  # Add skip connection
+        out = nn.ReLU()(out)
+        
+        return out
+```
+
+### Transformer Layers
+
+Transformer architectures have revolutionized NLP and computer vision with their attention mechanisms and parallelizable structure.
+
+**Key Components:**
+- **Multi-Head Self-Attention**: Allows the model to focus on different parts of the input
+- **Position-wise Feed-Forward Networks**: Apply transformations to each position independently
+- **Layer Normalization**: Applied before each sub-layer
+- **Residual Connections**: Around each sub-layer
+
+**PyTorch Example:**
+```python
+import torch.nn as nn
+
+class TransformerEncoderLayer(nn.Module):
+    def __init__(self, d_model=512, nhead=8, dim_feedforward=2048, dropout=0.1):
+        super().__init__()
+        # Self-attention mechanism
+        self.self_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout)
+        
+        # Feed-forward network
+        self.linear1 = nn.Linear(d_model, dim_feedforward)
+        self.dropout = nn.Dropout(dropout)
+        self.linear2 = nn.Linear(dim_feedforward, d_model)
+        
+        # Normalization layers
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        
+        # Dropout
+        self.dropout1 = nn.Dropout(dropout)
+        self.dropout2 = nn.Dropout(dropout)
+        
+        self.activation = nn.ReLU()
+        
+    def forward(self, src):
+        # Self-attention block with residual connection and layer norm
+        src2 = self.norm1(src)
+        src2, _ = self.self_attn(src2, src2, src2)
+        src = src + self.dropout1(src2)
+        
+        # Feed-forward block with residual connection and layer norm
+        src2 = self.norm2(src)
+        src2 = self.linear2(self.dropout(self.activation(self.linear1(src2))))
+        src = src + self.dropout2(src2)
+        
+        return src
 ```
 
 ## Special Purpose Layers
@@ -234,6 +348,48 @@ import torch.nn as nn
 # Transposed convolution layer
 transpose_conv = nn.ConvTranspose2d(in_channels=16, out_channels=8, kernel_size=3, stride=2, padding=1)
 ```
+
+## Common Layer Sequences and Patterns
+
+Certain combinations of layers appear frequently in successful architectures:
+
+### Convolutional Networks
+- **Basic CNN Block**: Conv → BatchNorm → ReLU → (optional) Pooling
+- **Inception Module**: Parallel paths with different kernel sizes
+- **ResNet Block**: Conv → BatchNorm → ReLU → Conv → BatchNorm + Skip Connection → ReLU
+- **Bottleneck Block**: 1x1 Conv (reduce) → 3x3 Conv → 1x1 Conv (expand) + Skip Connection
+
+### Recurrent Networks
+- **Bidirectional RNN**: Forward and backward RNNs combined
+- **Deep RNN**: Multiple stacked RNN layers with residual connections
+- **Encoder-Decoder**: RNN encoder produces a context vector for an RNN decoder
+
+### Transformer-Based
+- **Encoder Block**: Self-Attention → Add & Norm → Feed Forward → Add & Norm
+- **Decoder Block**: Self-Attention → Add & Norm → Cross-Attention → Add & Norm → Feed Forward → Add & Norm
+
+## Choosing Layer Types for Different Problems
+
+Selecting appropriate layers depends on your data and task:
+
+### Image-Related Tasks
+- **Image Classification**: CNN → Pooling → FC Layers
+- **Object Detection**: CNN backbone → Region Proposal Network or Anchor-based detection heads
+- **Image Segmentation**: Encoder-decoder architecture with skip connections (U-Net)
+
+### Sequence Data
+- **Text Classification**: Embeddings → LSTM/GRU or Transformer → FC Layers
+- **Machine Translation**: Encoder-Decoder with attention (Transformer preferred)
+- **Time Series**: 1D Convolution or RNN/LSTM
+
+### Tabular Data
+- **Structured Data**: FC Layers with BatchNorm and Dropout
+- **Entity Embeddings**: Category embeddings → FC Layers
+
+### Generative Models
+- **GANs**: Transposed convolutions in generator
+- **VAEs**: Encoder with mean/variance outputs, decoder with sampling layer
+- **Diffusion Models**: Time-conditioned U-Net architectures
 
 ## PyTorch Implementation
 
@@ -292,7 +448,18 @@ model = SimpleCNN(num_classes=10)
 print(model)
 ```
 
-This model demonstrates the use of convolutional layers, pooling layers, batch normalization, dropout, fully connected layers, and activation functions.
+## Visualizing Layer Operations
+
+Understanding how different layers transform data is crucial for building effective architectures:
+
+### Convolutional Layer
+Visualize the effect of convolutional filters on input images to understand feature extraction.
+
+### Pooling Layer
+Show how pooling reduces spatial dimensions while retaining important features.
+
+### Activation Functions
+Plot activation functions to understand their behavior and impact on gradients.
 
 ## Conclusion
 
