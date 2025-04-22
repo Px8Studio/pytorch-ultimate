@@ -2,7 +2,7 @@
 name = "pytorch-ultimate"
 version = "0.1.0"
 description = "PyTorch Ultimate 2024 - From Basics to Cutting-Edge"
-authors = ["Px8 Studio info@px8.studio"]
+authors = ["Px8 Studio <info@px8.studio>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
