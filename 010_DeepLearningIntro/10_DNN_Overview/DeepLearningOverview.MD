@@ -55,6 +55,33 @@ The presentation provides an introduction to deep learning fundamentals, coverin
 - Setting up training loops with optimization algorithms
 - Leveraging automatic differentiation
 
+### PyTorch Implementation Examples
+
+```python
+# Simple neural network in PyTorch
+import torch
+import torch.nn as nn
+
+class SimpleNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SimpleNN, self).__init__()
+        self.layer1 = nn.Linear(input_size, hidden_size)
+        self.relu = nn.ReLU()
+        self.layer2 = nn.Linear(hidden_size, output_size)
+    
+    def forward(self, x):
+        x = self.layer1(x)
+        x = self.relu(x)
+        x = self.layer2(x)
+        return x
+        
+# Create and test model
+model = SimpleNN(10, 20, 2)
+dummy_input = torch.randn(5, 10)  # 5 samples, 10 features each
+output = model(dummy_input)
+print(output.shape)  # Should be [5, 2]
+```
+
 ## Best Practices
 - Data preprocessing and normalization
 - Hyperparameter tuning
