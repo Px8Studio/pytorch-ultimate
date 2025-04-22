@@ -93,4 +93,11 @@ print(output.shape)  # Should be [5, 2]
 - **Gradient Descent**: Picture a ball rolling down a bowl to find the lowest point
 - **Feature Extraction in CNNs**: Early layers detect edges, middle layers detect patterns, later layers detect complex objects
 
+### Recent Advances (2022-2025)
+- **Large Language Models**: GPT-4, Claude, Llama 3 architecture and capabilities
+- **Diffusion Models**: DALL-E 3, Midjourney, Stable Diffusion XL for image generation
+- **Multi-modal Learning**: Combining text, image, audio in unified models
+- **Transformer Variants**: Efficient attention mechanisms (Swin, Perceiver IO)
+- **Foundation Models**: Pre-training on broad data then specializing via fine-tuning
+
 Deep learning continues to evolve rapidly, with new architectures and techniques emerging that push the boundaries of what's possible with artificial intelligence.
