@@ -109,39 +109,27 @@ The information flow through an MLP follows a systematic process:
 
 ### Activation Functions and Their Properties
 
+> **Note**: This section provides a brief overview of activation functions. For comprehensive coverage, please refer to [4_DeepLearning_ActivationFunctions.MD]
+
 Activation functions introduce non-linearity, enabling the modeling of complex relationships:
 
 1. **Sigmoid**: σ(z) = 1/(1 + e^(-z))
    - Range: (0,1)
    - Historically popular but suffers from vanishing gradient
    - Useful for binary classification outputs
-   - Computational cost: Relatively expensive (requires exponential)
 
 2. **Hyperbolic Tangent (tanh)**: tanh(z) = (e^z - e^(-z))/(e^z + e^(-z))
    - Range: (-1,1)
    - Zero-centered, aiding in convergence
-   - Still suffers from vanishing gradient at extremes
-   - Computational cost: More expensive than sigmoid
 
 3. **Rectified Linear Unit (ReLU)**: f(z) = max(0,z)
    - Range: [0,∞)
    - Computationally efficient
    - Helps mitigate vanishing gradient problem
-   - Suffers from "dying ReLU" problem (permanent deactivation)
-   - Computational cost: Very efficient
 
-4. **Leaky ReLU**: f(z) = max(αz,z) where α is small (e.g., 0.01)
-   - Range: (-∞,∞)
-   - Prevents dying ReLU problem
-   - More computationally efficient than sigmoid/tanh
-   - Empirically outperforms standard ReLU in some tasks
-
-5. **Softmax**: softmax(z_i) = e^(z_i)/∑_j e^(z_j)
+4. **Softmax**: softmax(z_i) = e^(z_i)/∑_j e^(z_j)
    - Converts vector to probability distribution (sums to 1)
    - Used in output layer for multi-class classification
-   - Computational cost: Moderate (requires exponential)
-
-> **Important Point**: The choice of activation function significantly impacts network performance, training dynamics, and convergence properties.
 
 ## Learning Through Backpropagation
 
@@ -168,6 +156,8 @@ Backpropagation, short for "backward propagation of errors," is the core learnin
 
 ### Loss Functions for Different Tasks
 
+> **Note**: This section provides a brief overview of loss functions. For more details on implementation and usage in PyTorch, refer to our loss functions materials.
+
 Loss functions quantify the network's prediction error:
 
 1. **Regression Loss Functions**:
@@ -186,6 +176,8 @@ Loss functions quantify the network's prediction error:
    - KL Divergence: For variational autoencoders and probability distribution matching
 
 ### Optimization Algorithms
+
+> **Note**: This section provides a brief overview of optimization algorithms. For comprehensive coverage, please refer to [6_DeepLearning_Optimizer.MD]
 
 Optimization algorithms determine how network parameters are updated:
 
