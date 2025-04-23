@@ -291,6 +291,8 @@ Each visual characteristic translates directly to network behavior during traini
 
 ## Activation Functions in Modern Architectures
 
+> **Note**: This section complements the network architecture discussions in [2_PerceptronNeuralNetwork.MD] and the layer types in [3_DeepLearning_LayerTypes.MD]
+
 ### Convolutional Neural Networks (CNNs)
 - **Standard practice**: ReLU dominates due to computational efficiency and good performance
 - **Recent trend**: Swish and Mish showing improved results in very deep CNNs
