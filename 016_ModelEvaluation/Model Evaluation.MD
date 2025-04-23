@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Model evaluation is a critical step in the machine learning workflow that helps us understand how well our models perform and whether they can generalize to unseen data. In this module, we will focus on key concepts and techniques for evaluating machine learning models effectively.
+Model evaluation is a critical step in the machine learning workflow that helps us understand how well our models perform and whether they can generalize to unseen data. In this module, we will focus on evaluating machine learning models. You will learn about underfitting and overfitting, and how to mitigate these issues. The module will also cover the train-test split method and its importance in model evaluation, along with various resampling techniques to manage imbalanced datasets effectively.
 
 ## Learning Objectives
 
@@ -16,27 +16,80 @@ By the end of this module, you will understand:
 
 Understanding the bias-variance tradeoff is fundamental to building effective machine learning models. 
 
-> **Supplementary Reading**: For detailed explanations and visualizations of underfitting and overfitting concepts, refer to [Underfitting and Overfitting Guide](UnderfittingOverfitting.pdf)
-
 ### Key Concepts:
 - **Underfitting**: When a model is too simple to capture the underlying patterns in the data
 - **Overfitting**: When a model learns the training data too well, including its noise and outliers
 - **Balanced fitting**: Finding the optimal complexity that generalizes well to new data
 
+### Visual Understanding of Underfitting and Overfitting
+
+#### Regression Example
+- In **underfitting**, a linear model attempts to fit data with a non-linear (e.g., quadratic) relationship, resulting in high bias and large prediction errors
+- In **overfitting**, an overly complex model captures all noise in the training data, showing nearly perfect fit but poor generalization ability
+
+#### Classification Example
+- In **underfitting**, a simple linear decision boundary fails to separate classes that require a non-linear boundary, resulting in high misclassification rates
+- In **overfitting**, an extremely complex decision boundary perfectly separates all training points but incorporates noise rather than true patterns
+
+### Bias-Variance Tradeoff
+
+Think of this like dart players aiming at a target:
+- **High bias, low variance**: The darts consistently hit the same area, but away from the bullseye
+- **High bias, high variance**: The darts are scattered widely and also miss the target center
+- **Low bias, high variance**: The darts are centered around the bullseye but widely scattered
+- **Low bias, low variance**: The darts consistently hit the bullseye (ideal situation)
+
+In machine learning terms:
+- **Bias** is the difference between predictions and actual values on the training data
+- **Variance** is the difference between performance on training data versus validation data
+
+As model complexity increases:
+- Bias decreases (better fit to training data)
+- Variance increases (more likely to overfit)
+
+### Algorithm Tendencies
+- **Low variance algorithms**: Linear regression, LDA, logistic regression
+- **High variance algorithms**: Decision trees, K-Nearest Neighbors, Support Vector Machines
+
+The goal is to find the optimal model complexity that minimizes the sum of bias error and variance error.
+
+> **Supplementary Reading**: For detailed explanations and visualizations of underfitting and overfitting concepts, refer to [Underfitting and Overfitting Guide](UnderfittingOverfitting.pdf)
+
 ## 2. Data Splitting Strategies
 
 Before training any model, we need to properly split our data to enable robust evaluation.
-
-> **Supplementary Reading**: See [Train-Validation-Test Split Guide](TrainValidationTest_101.pdf) for detailed procedures and best practices.
 
 ### Common Approaches:
 - **Training set**: Used to train the model (typically 60-80% of data)
 - **Validation set**: Used for hyperparameter tuning and model selection
 - **Test set**: Used only once to evaluate the final model
 
+### Purpose of Each Split
+
+- **Training data**: Data used to fit the model parameters
+- **Validation data**: Data used to evaluate and fine-tune the model during development. The model occasionally sees this data but doesn't directly learn from it
+- **Test data**: Provides an unbiased evaluation of the final model. This data should only be used once after the model is completely developed
+
+### Determining Split Proportions
+
+The optimal split depends on:
+1. The total number of samples available
+2. The complexity of the model
+3. Number of hyperparameters to tune
+
+Models with more hyperparameters require more validation data to properly tune. Similarly, more complex models may need larger training sets to learn effectively.
+
+Train-validation-test splitting is considered the gold standard in machine learning evaluation.
+
+> **Supplementary Reading**: See [Train-Validation-Test Split Guide](TrainValidationTest_101.pdf) for detailed procedures and best practices.
+
 ## 3. Cross-Validation Techniques
 
 Cross-validation is a powerful method for assessing a model's performance and stability.
+
+### The Resampling Challenge
+
+Cross-validation addresses a fundamental problem in machine learning: we want to maximize data used for training to build the best model, but we also need sufficient data for validation to ensure reliable performance assessment.
 
 ### K-Fold Cross-Validation
 
@@ -55,6 +108,8 @@ In 5-fold cross-validation, the data is divided into five equal parts. For examp
    - Performance is evaluated on observations 101-200
 
 3. **This process repeats** until we have trained 5 different models and obtained 5 different performance results.
+
+After completing all iterations, the performance metrics from each fold are averaged to produce a final performance estimate. For example, if the R² values for the five folds are 0.25, 0.28, 0.30, 0.27, and 0.25, the average performance would be 0.27.
 
 It's important to note that in practice, data isn't taken in sequence as shown in this example. Instead, observations are typically randomly assigned to folds to ensure that the target variable is properly distributed across all folds.
 
@@ -85,13 +140,25 @@ In LOOCV, we create as many folds as there are data points. Each model is traine
 
 When dealing with imbalanced datasets (where some classes are much more frequent than others), special techniques are needed to ensure models don't simply predict the majority class.
 
-> **Supplementary Reading**: For comprehensive information on handling imbalanced datasets, see [Resampling Techniques Guide](ResamplingTechniques_101.pdf)
+### The Problem of Imbalanced Data
+
+When one class significantly outnumbers others, models tend to favor the majority class, potentially ignoring the minority class entirely. This is problematic when the minority class is often what we're most interested in detecting (e.g., fraud in financial transactions, rare diseases in medical diagnosis).
 
 ### Common Approaches:
 - **Undersampling**: Reducing the number of observations from the majority class
 - **Oversampling**: Increasing the number of observations from the minority class
 - **SMOTE** (Synthetic Minority Over-sampling Technique): Creating synthetic examples of the minority class
 - **Ensemble methods**: Combining multiple models trained on differently resampled datasets
+
+### Implementation Considerations
+
+When applying resampling techniques:
+- Be careful not to introduce bias through the resampling process
+- Apply resampling only to training data, never to validation or test data
+- Consider the domain context when choosing between undersampling and oversampling
+- Evaluate models using metrics appropriate for imbalanced datasets (F1-score, precision-recall AUC, etc.)
+
+> **Supplementary Reading**: For comprehensive information on handling imbalanced datasets, see [Resampling Techniques Guide](ResamplingTechniques_101.pdf)
 
 ## Summary
 
