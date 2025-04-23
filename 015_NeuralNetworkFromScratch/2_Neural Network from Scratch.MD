@@ -1,595 +1,658 @@
-In this module, we will guide you through the process of constructing a neural network from scratch. You will start with data preparation and model initialization and proceed to implement essential functions such as forward and backward propagation. The module also covers training and evaluation techniques to help you build and assess your neural network model effectively.
-Learning Objectives
-Build a neural network from scratch, including data preparation and model initialization.
-Implement forward and backward functions for data propagation and gradient calculation.
-Train and evaluate a custom neural network model.
+# Module 5: Neural Network from Scratch
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Section Overview
+In this module, we will guide you through the process of constructing a neural network entirely from scratch using Python and NumPy. You will start with data preparation and model initialization, proceed to implement essential functions like forward and backward propagation, and cover training and evaluation techniques. This hands-on approach helps solidify understanding of the underlying mechanics before leveraging frameworks like PyTorch.
 
-0:01
-Hello and welcome to this section. In this section we are going to develop our own neural network completely from scratch,
-Play video starting at ::10 and follow transcript0:10
-and we are following the steps as shown here. I will start with theory. So this is our 101 lecture on Neural Network from scratch.
-Play video starting at ::22 and follow transcript0:22
-Then we have a small coding lecture on the dot product. And finally, we have the larger topic, a lot of coding lectures on implementing this directly in Python.
-Play video starting at ::37 and follow transcript0:37
-Actually, I wouldn't say that this section is mandatory, but I really recommend you to follow along because in the end it's much simpler for you to understand how all these things are working if you have at least once implemented all of this on your own. So in the end, this is helping you a lot to understand neural networks in total and it's really good to follow along. So with this, let's just start and take a look at the theory in the next lecture. Thank you very much and see you there.
+**Learning Objectives:**
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch (101)
+*   Build a neural network from scratch, including data preparation and model initialization.
+*   Implement forward and backward functions for data propagation and gradient calculation.
+*   Train and evaluate a custom neural network model.
+*   Understand the role of core components like activation functions, loss functions, gradient descent, and the chain rule.
 
-0:01
-Hello and welcome to this lecture. In this lecture, we are going to implement a neural network completely from scratch. So here there is no PyTorch involved. We are developing every single function on our own. And you learn at first the theory on how to do this.
-Play video starting at ::19 and follow transcript0:19
-So let's start with the forward pass. We've seen this graph before, I've slightly it. So we're starting with our training data X, and then we are passing it to our first layer, then we have some activation which is applied from which we then get our predictions. And then the predictions together with the true values are used to calculate the loss function and we have the loss score. Then the optimizer is taking place in the backward path and updating the weights. So this is the overall picture, but now we make it a bit more precise.
-Play video starting at ::57 and follow transcript0:57
-So we have our first layer, here our weights and biases come into play. So here we take our input data or train data, and multiply them with weights, and we add our biases here.
-Play video starting at :1:14 and follow transcript1:14
-Then we have our activation function and we are going to develop a model for classification. So we are going to use the sigmoid activation function.
-Play video starting at :1:27 and follow transcript1:27
-So then this is the function that is defining the sigmoid function. And then this sigmoid layer is dependent on the output of the first layer. So S is a function of l1. And this is the definition on how to calculate it.
-Play video starting at :1:45 and follow transcript1:45
-Then our predictions, these are again depending on the output of the previous layer.
-Play video starting at :1:53 and follow transcript1:53
-And once we have our predictions, we can calculate our losses.
-Play video starting at :1:59 and follow transcript1:59
-And for the losses, we are just using the squared error. So we are taking the difference of our predictions and true values, and square them. And we will see why this is beneficial to do.
-Play video starting at :2:12 and follow transcript2:12
-And that's our forward pass. So the question that now arises is, how do we actually update our weights?
-Play video starting at :2:20 and follow transcript2:20
-So how does the backward path work
-Play video starting at :2:23 and follow transcript2:23
-for this? We have a short x course. Let's maybe take a look here at what we got from our forward path. We've spoken about the error. And here you can see we have our
-Play video starting at :2:37 and follow transcript2:37
-difference of the predictions and the outputs, this is shown horizontally. And the vertical axis is corresponding to our loss that is depending on it. And since we are squaring it, you can see that then this curve is rising, and we want to minimize our loss. So basically, we want to end up here in this point at the center where we have 0. But actually, we won't have 0. We will have any value, like this point L1 or L2. And of course, then the measures are different. So if we have a point of L1,
-Play video starting at :3:13 and follow transcript3:13
-so where the predictions are smaller than the true values, we're ending up in the lefthand side of this, then we would have to increase our predictions.
-Play video starting at :3:24 and follow transcript3:24
-On the other hand, if we would have a point of L2, then we would have to decrease the difference that we can see here to also get to this point. So he wants to get to larger values, he wants to get to lower values. So how do we do that?
-Play video starting at :3:40 and follow transcript3:40
-Well, this is going back to math. So you know that you can put a tangent on a curve. So then we would have these tangents, the red lines which are basically in math called the gradient; and the gradient that is the derivative of a function.
-Play video starting at :3:58 and follow transcript3:58
-And here we are using the loss function. So this is called our derivative or the gradient, which is also the reason why it is called gradient descent. And we can use this gradient to update the weights. So then we can have different measures whether we are on L1 or L2. The gradient is pointing then into the right direction,
-Play video starting at :4:21 and follow transcript4:21
-and one positive property of our loss function is actually that if we have larger errors, these are also resulting in larger absolute gradients. So if you're further away from the perfect minimum, then the way you're going to get closer to the minimum is also larger, so larger errors also result in larger absolute gradients. So now we want to speak about a specific aspect which is implemented in all neural networks, which is the learning rate.
-Play video starting at :4:53 and follow transcript4:53
-Because if we have our, if we have our error L1, and we are adapting our weights, it could be that if we don't have a learning rate that we are jumping to the other side. So we are directly ending up in L2, and then we are adapting again, and we are going directly to the other side. So it's fluctuating or just going in very small steps to the minimum. So for this, we're not adapting the weights totally
-Play video starting at :5:20 and follow transcript5:20
-with the gradient, but we add a small margin of it. So this is called the learning rate. You can see the formula down here. So here when we are updating our weights, the new weights are calculated based on the old weights and we are subtracting our gradient. But yeah, if we take the total gradient, then we could end up with this problem. So we just take a smaller value. So we adapt this second term
-Play video starting at :5:49 and follow transcript5:49
-and we do this by multiplying it with a learning rate. So this is just a static number
-Play video starting at :5:56 and follow transcript5:56
-and the number is below one and above zero, of course. And then if we do so, and we are starting in this point L1, then we are ideally just moving along the curve and getting closer and closer to our minimum. And as I told you, it's between zero and one, but the typical values are 0.01 or 0.001. So something like that we can play with,
-Play video starting at :6:24 and follow transcript6:24
-but you can also visualize the development of the losses over the time. And then you can see if the learning rate is too large or too small. Okay. The next thing that we're going to need is the Chain Rule. We're still on our way to understand the backward path. So stay with me, we will get there. So the next thing is the chain rule.
-Play video starting at :6:50 and follow transcript6:50
-Let's take some example. Here we have our input vector X, and then this is passed to a function Y which is actually a function of X, and then we have the next path. Then the next function is called Z. This is a function of the previous one of X. So this is actually very much similar to what we have seen before in our neural network. And how do we get the derivative of Z to X?
-Play video starting at :7:22 and follow transcript7:22
-Well, we have to take the partial derivatives, and apply the chain rule. So at each step, we can calculate the derivative. So here at the first one Y is a function of X, then we can calculate the derivative Y to the X.
-Play video starting at :7:41 and follow transcript7:41
-At the next point
-Play video starting at :7:43 and follow transcript7:43
-here we have Z which is a function of Y. So we are calculating the derivative of this, of the Z to the Y
-Play video starting at :7:51 and follow transcript7:51
-and
-Play video starting at :7:52 and follow transcript7:52
-we just have to multiply them, and we have our dz to dx, and thats our chain rule. And this is exactly what we are going to apply in the backward path.
-Play video starting at :8:5 and follow transcript8:05
-Now, going back to our neural network, here we have our forward path again. And now we want to see how the backward path is working. So we're starting with our losses, we calculate the derivative dL to Dy pred. So then this is just two times y pred minus y true. The next point is to calculate, dy pred to dl 1. So this is the derivative of the sigmoid function. And at the end, we can calculate the derivative of our first layer, dlayer1 to dw, and this is just X.
-Play video starting at :8:44 and follow transcript8:44
-So our final derivative dL to dw is just the product of all these individual derivatives. So just keep this in mind, this is exactly what we are going to implement in our network. Good. The next point is simple, we just have to do the same for the biases. So the data steps are the same. It's just the first derivative which is adapted, if we calculate the derivative dlayer1 to db , this is then just 1. So this is the only difference here.
-Play video starting at :9:22 and follow transcript9:22
-And actually that's it. There's just one more technical aspect which I want to tell you about, which is the dot product. So we are using the dot product because finally our weights shall be adapted to create a mapping between our input data and the outputs.
-Play video starting at :9:41 and follow transcript9:41
-And we have some sample input data or some sample input vector X. And we have two different weight vectors. And the question is, which one is more similar to X. So for this, we can apply the dot product, and you can see the mathematical representation of this, how you can calculate it. So we take the magnitude of the first vector times the magnitude of the second vector times the angle between both vectors.
-Play video starting at :10:14 and follow transcript10:14
-And the weight is more similar to our input vector if the magnitudes are similar; and if the angles are similar
-Play video starting at :10:25 and follow transcript10:25
-and the dot product is making our life a bit easier because otherwise we would have to calculate everything quite time intensive. So, so we will see in a second how we can calculate this with the help of numpy. So again, here is just the, the magnitude which is corresponding to the length of the vector and we have our vector in between.
-Play video starting at :10:48 and follow transcript10:48
-So how do we calculate that? So actually, we don't have to calculate any angles in between. There is a simpler way because the dot product is making it easier. Here we can see our input vector X and our weight one, and some specific values. And the dot product is working the following way. We are just taking our first observations of this vector X and the vector w1, and we multiply them. So this is then the first product, and we do the same for the second index. So this is then ending here, and then we just have to calculate the sum of all of them. And this is the dot product. So this is actually not too complicated. And we will see in the next video how we can calculate this with Python. Thank you very much, and see you there.
+---
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Calculating the dot-product (Coding)
+## Section Overview
 
-0:01
-Hello and welcome to this lecture. In this lecture we are going to talk about the dot product. So you can find this in the subfolder 015_NeuralNetworkFromScratch. We can just hide this to have more space. And all we need here is to import numpy as np.
-Play video starting at ::20 and follow transcript0:20
-And then we have here our input vector X and our weight vector w1 and w2.
-Play video starting at ::28 and follow transcript0:28
-So this is our start. And now at first we calculate this from scratch. So if we want to calculate our dot product of X_w1, then this would be
-Play video starting at ::43 and follow transcript0:43
-something like this. We have to take the first element of our input vector X, multiply it with the first element of our input vector w1.
-Play video starting at ::56 and follow transcript0:56
-And then we are taking our next element of the input vector and multiplying it with the second one of our weight vector.
-Play video starting at :1:13 and follow transcript1:13
-And this is quite annoying. So actually the developers of numpy have developed something better as we will see.
-Play video starting at :1:22 and follow transcript1:22
-So let's just take a look at the results. We have 3 for this, and now we can just
-Play video starting at :1:29 and follow transcript1:29
-do the same and adapt it slightly for our second
-Play video starting at :1:35 and follow transcript1:35
-weight vector.
-Play video starting at :1:43 and follow transcript1:43
-All right. So we have two different values 3 and 1.8. So which one is more similar to our input vector? Well, it's the other one, it's the weight vector w1,
-Play video starting at :1:58 and follow transcript1:58
-because larger values correspond here to more similarity, good. But I told you that there is a more simple way to do that. And it's actually really simple because the developers of numpy have implemented this dot functionality where we just have to put in X and w1.
-Play video starting at :2:17 and follow transcript2:17
-And then we get the same value. And similarly for X and w2.
-Play video starting at :2:24 and follow transcript2:24
-Perfect. So this was the last piece that we need to understand to be able to develop a complete network from scratch. So this is what we're going to do and start right now in the next lecture. Thank you and see you there.
+[Timestamp 0:01]
+Hello and welcome to this section. Here, we'll develop our own neural network completely from scratch.
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch (Data Prep)
+[Timestamp 0:10]
+The process involves these steps:
+1.  **Theory:** A foundational lecture on Neural Networks from scratch. [Timestamp 0:10]
+2.  **Dot Product (Coding):** A small coding lecture focused on the dot product calculation. [Timestamp 0:22]
+3.  **Implementation (Coding):** Several coding lectures implementing the neural network in Python. [Timestamp 0:22]
 
-0:01
-Hello and welcome to this lecture. In this lecture we are going to develop our neural network completely from scratch, and I've developed here our datascript so that we don't have to import the packages together. I've already prepared that. So we're going to use numpy and Pandas, Seaborn, and then for the data processing, and then for the preprocessing of our training data, we are going to scale it with StandardScalar, and we're also going to use our train_test_split, and at the end we are checking our results with the confusion_matrix.
-Play video starting at ::41 and follow transcript0:41
-So let's load all of these packages, and let's take a look at the data that we're going to use.
-Play video starting at ::49 and follow transcript0:49
-So the data is focusing on heart attacks, and we can check that on the Kaggle page and you can see it, it's a classification problem for detecting heart attacks. And we have here
-Play video starting at :1:4 and follow transcript1:04
-different features like the age, the sex,
-Play video starting at :1:8 and follow transcript1:08
-and some other health related independent features. And at the end, we have a target which is already binary, it's mapped as 0 or 1, in which 0 is mapped to, there is less chance of a heart attack, and 1 means there is a higher chance of a heart attack.
-Play video starting at :1:30 and follow transcript1:30
-So this is the data that we're going to work with.
-Play video starting at :1:33 and follow transcript1:33
-I've already downloaded it and placed it in the working folder so we can import it with pandas and check out the first observations. Here we can see the data that we have. And finally, there is the output
-Play video starting at :1:48 and follow transcript1:48
-Okay. The first part is that we need to separate our independent from the dependent features. So all the independent features are ending up in X; and our target, our dependent feature is Y, and everything is converted to a numpy array. So here we take all the different columns except for our output column. And the opposite holds for our target value. Here, we only take our output column.
-Play video starting at :2:17 and follow transcript2:17
-Let's check that.
-Play video starting at :2:19 and follow transcript2:19
-So now we have here our shapes, we have in total 303 observations, and 13 independent features, and then one target feature. Good. Now we can apply our train_test_split so that we have our training data reserved, which are used in the training phase. And then we have our test data.
-Play video starting at :2:43 and follow transcript2:43
-So we take as usual the function train_test_split, we put in our independent and dependent feature and we have to specify the test size. I just say I keep 20% for the testing. And
-Play video starting at :2:58 and follow transcript2:58
-I want to control the randomness and specify here a specific random state.
-Play video starting at :3:6 and follow transcript3:06
-Okay.
-Play video starting at :3:8 and follow transcript3:08
-And the last thing that we need to do before we can actually start with our neural network modeling is that we have to scale our data. So if you take a look at the range or the pure numbers inside the columns, you can see here that they're really varying a lot. So we want to scale them and apply some normal distribution based scaling. So we apply the StandardScalar. And for this, we calculate here our X_train_scale object which is the scaled version of our training data. And similarly, then we apply the scaling factors derived from the first step and apply it to our test data. So here we then apply the transform function in contrast to the fit_transform as we have used before. So we directly use just the scaling factors from X_train and apply them to X_test.
-Play video starting at :4:10 and follow transcript4:10
-Good. So this is let's say classical machine learning. And now we are going to develop our model.
+[Timestamp 0:37]
+While not strictly mandatory, following this section is highly recommended. Implementing a neural network yourself significantly deepens your understanding of how they work internally. This knowledge will be invaluable later on. Let's begin with the theory in the next lecture.
 
+---
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch Modeling __init__ Function
+## Neural Network from Scratch (101 - Theory)
 
-0:00
-So the first thing is that we are going to create a class.
-Play video starting at ::11 and follow transcript0:11
-You wouldn't have to structure it in a class. Actually, I like it much more. And it's also similar to how we are going to use it later with PyTorch where we're also creating network classes. Okay? And if we have our class name defined, the first thing is that we need to define some __init__ function.
-Play video starting at ::34 and follow transcript0:34
-And what we're going to pass during the instantiation of the class is a learning rate;
-Play video starting at ::41 and follow transcript0:41
-then our train data, X_train, Y_train; and our test data X_test, Y_test.
-Play video starting at ::51 and follow transcript0:51
-Good.
-Play video starting at ::53 and follow transcript0:53
-And then we at first start with our weights, they have to be initialized, and we're just going to randomly initialize them. So we can use here
-Play video starting at :1:6 and follow transcript1:06
-the function randn,
-Play video starting at :1:8 and follow transcript1:08
-and,
-Play video starting at :1:10 and follow transcript1:10
-and we'll have here as many weights as we have input columns. So we are using the shape at position one for this, and this is our baseline weights for the start, and we're going to do something very similar with our biases. Here we have,
-Play video starting at :1:40 and follow transcript1:40
-so here we have just one bias. Okay. Good. Now, we have to create our
-Play video starting at :1:49 and follow transcript1:49
-internal properties, and assign this with the values that were passed during the instantiation.
-Play video starting at :1:56 and follow transcript1:56
-So now we have our learning rate created,
-Play video starting at :2: and follow transcript2:00
-and we do the same for X_train.
-Play video starting at :2:27 and follow transcript2:27
-So now we have it for the train and the test data. And I'm also going to initialize some other objects,
-Play video starting at :2:37 and follow transcript2:37
-one for the training losses which I call L_train.
-Play video starting at :2:41 and follow transcript2:41
-And another one called L_test.
-Play video starting at :2:45 and follow transcript2:45
-That was the first part.
+[Timestamp 0:01]
+Hello and welcome. In this lecture, we'll cover the theory behind implementing a neural network from scratch, without using PyTorch. We'll develop every function ourselves.
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch Modeling Helper Functions
+### Forward Pass Explained
 
-0:00
-And now we can create a few more functions. So the first one is our activation function.
-Play video starting at ::9 and follow transcript0:09
-So the activation function is, as we have said before this is our Sigmoid function.
-Play video starting at ::20 and follow transcript0:20
-And then we can directly return the function that is defining Sigmoid.
-Play video starting at ::33 and follow transcript0:33
-You can always check that with the previous video
-Play video starting at ::37 and follow transcript0:37
-in which I have shown this in the slides. So this is the function for the Sigmoid activation.
-Play video starting at ::43 and follow transcript0:43
-And then we need our derivative of the activation function, so the derivative of the Sigmoid function,
-Play video starting at ::52 and follow transcript0:52
-I did not show you the mathematical calculation of this. You can just look it up
-Play video starting at ::59 and follow transcript0:59
-and it's defined in the following way.
-Play video starting at :1:15 and follow transcript1:15
-So it's the sigmoid
-Play video starting at :1:18 and follow transcript1:18
-times
-Play video starting at :1:20 and follow transcript1:20
-1 - the Sigmoid.
-Play video starting at :1:30 and follow transcript1:30
-Okay. If you want to check that, you can just go to the internet, look for it. And then you can find here the definition, the derivative of Sigmoid is the Sigmoid function multiplied by 1 -, the Sigmoid function. Good.
-Play video starting at :1:44 and follow transcript1:44
-That's the next part. And that was what we needed to prepare before we can actually do our forward pass.
+[Timestamp 0:19]
+Let's revisit the forward pass structure:
+1.  **Input Data (`X`):** Starts with our training data.
+2.  **Layer 1 (`l1`):** Processes the input using weights (`w`) and biases (`b`).
+    *   [Timestamp 0:57] Calculation: `l1 = X * w + b` (simplified representation).
+3.  **Activation Function:** Applies a non-linearity. We'll use the Sigmoid function for classification.
+    *   [Timestamp 1:14] Sigmoid Function: `S(x) = 1 / (1 + exp(-x))`.
+    *   [Timestamp 1:27] The output `S` depends on the output of layer 1: `S = sigmoid(l1)`.
+4.  **Predictions (`y_pred`):** The output of the activation function serves as our predictions.
+    *   [Timestamp 1:45] `y_pred = S`.
+5.  **Loss Calculation:** Compares predictions (`y_pred`) with true values (`y_true`) using a loss function.
+    *   [Timestamp 1:53] We'll use Mean Squared Error (MSE): `Loss = (y_pred - y_true)^2`. [Timestamp 1:59]
+    *   The result is a single loss score.
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch Modeling Forward Function
+[Timestamp 2:12]
+That completes the forward pass. The next question is: how do we update the weights and biases?
 
-0:00
-So we are defining a function called forward.
-Play video starting at ::5 and follow transcript0:05
-And this one is taking in all the internal parameter states and some
-Play video starting at ::13 and follow transcript0:13
-variable X.
-Play video starting at ::15 and follow transcript0:15
-So here we are calculating now layer by layer the results. In the first hidden we calculate our dot product.
-Play video starting at ::25 and follow transcript0:25
-So the dot product of our input object X
-Play video starting at ::31 and follow transcript0:31
-with the weights.
-Play video starting at ::33 and follow transcript0:33
-And then we are
-Play video starting at ::36 and follow transcript0:36
-also adding here the biases.
-Play video starting at ::39 and follow transcript0:39
-So this is our first hidden state.
-Play video starting at ::43 and follow transcript0:43
-And then we have our activate layer,
-Play video starting at ::47 and follow transcript0:47
-and here we just have to call our activation function and pass in the result from the previous step.
-Play video starting at ::55 and follow transcript0:55
-So this is just the mathematical representation of the slides we've seen before.
-Play video starting at :1:1 and follow transcript1:01
-And here we have a super simple network, we can directly then return the result of this layer. And this is our complete forward pass.
+### Backward Pass Explained (Weight Updates)
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch Modeling Backward Function
+[Timestamp 2:20]
+The backward pass adjusts weights to minimize the loss.
 
-0:00
-Now we need to setup our backward pass.
-Play video starting at ::4 and follow transcript0:04
-So here we put in some input vector of the independent features X and also some true values, because we need to calculate some losses in here.
-Play video starting at ::16 and follow transcript0:16
-So here we're going to calculate our gradients.
-Play video starting at ::21 and follow transcript0:21
-So we need at first again our hidden layer,
-Play video starting at ::28 and follow transcript0:28
-I can just copy paste this,
-Play video starting at ::33 and follow transcript0:33
-then we can calculate our predictions.
-Play video starting at ::39 and follow transcript0:39
-We can tell you to do this with the forward pass.
-Play video starting at ::44 and follow transcript0:44
-We're just stacking up all the different pieces that we are going to use in the end to calculate the derivative of the loss function with respect to the weight vector and with respect to the bias vector.
-Play video starting at ::59 and follow transcript0:59
-OK. So this is the second ingredient we need. Then we need our derivative of the losses to the predictions.
-Play video starting at :1:9 and follow transcript1:09
-And that as we've seen is two times
-Play video starting at :1:14 and follow transcript1:14
-y_pred
-Play video starting at :1:16 and follow transcript1:16
-minus y_true.
-Play video starting at :1:20 and follow transcript1:20
-Good. That's the next piece.
-Play video starting at :1:23 and follow transcript1:23
-And then we have our
-Play video starting at :1:26 and follow transcript1:26
-derivative of their predictions to the hidden layer,
-Play video starting at :1:31 and follow transcript1:31
-dpred_ dhidden1.
-Play video starting at :1:38 and follow transcript1:38
-So here we can use our derivative of the activation function.
-Play video starting at :1:43 and follow transcript1:43
-So for this purpose, we have created this additional function,
-Play video starting at :1:48 and follow transcript1:48
-and here we put in our hidden layer.
-Play video starting at :1:55 and follow transcript1:55
-Good. And then finally we have our derivative of the hidden layer 1
-Play video starting at :2:1 and follow transcript2:01
-and our biases, we have seen that as 1, and dhidden1
-Play video starting at :2:9 and follow transcript2:09
-to dw, that is just X.
-Play video starting at :2:14 and follow transcript2:14
-So we're just taking all the pieces from the slide and putting it into code. And now we can calculate our derivatives dL_db,
-Play video starting at :2:26 and follow transcript2:26
-that is dL
-Play video starting at :2:28 and follow transcript2:28
-_dpred. So the product is here calculated of the different pieces. Now we have the,
-Play video starting at :2:36 and follow transcript2:36
-dhidden1,
-Play video starting at :2:40 and follow transcript2:40
-and we have dhidden1_db
-Play video starting at :2:44 and follow transcript2:44
-good. That's our first. And then we want to calculate the derivative of the layer to dw,
-Play video starting at :2:54 and follow transcript2:54
-that is very similar to the dL_
-Play video starting at :2:57 and follow transcript2:57
-d pred times
-Play video starting at :3:1 and follow transcript3:01
-d pred_ dhidden1 times
-Play video starting at :3:6 and follow transcript3:06
-d hidden1_ dw
-Play video starting at :3:11 and follow transcript3:11
-good. And once we've done that, we can return everything.
-Play video starting at :3:16 and follow transcript3:16
-So we can return the derivative of the loss to the bias, and the loss to the weights,
-Play video starting at :3:26 and follow transcript3:26
-good. That is our backward path. So this was the most complicated part in here because here we have all these different derivatives and yeah, this is already done now. And the next parts are simpler.
+**Understanding the Loss Landscape:**
+[Timestamp 2:23]
+Imagine plotting the loss based on the difference between predictions and true values (`y_pred - y_true`). Since we square the difference (MSE), this forms a parabola.
+[Timestamp 2:37] Our goal is to reach the minimum point (loss = 0).
+*   If our current loss is at point `L1` (predictions too low), we need to *increase* predictions. [Timestamp 3:13]
+*   If at point `L2` (predictions too high), we need to *decrease* predictions. [Timestamp 3:24]
 
+**Gradient Descent:**
+[Timestamp 3:40] How do we know which way to adjust? We use the *gradient* (the slope or derivative) of the loss function at our current point.
+*   The gradient tells us the direction of the steepest ascent. To minimize loss, we move in the *opposite* direction of the gradient. [Timestamp 3:58]
+*   This process is called **Gradient Descent**.
+*   A key property of MSE: larger errors result in larger gradients, leading to bigger initial adjustments. [Timestamp 4:21]
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch Modeling Optimizer Function
+**The Learning Rate (`alpha`):**
+[Timestamp 4:53] Simply subtracting the full gradient might cause us to overshoot the minimum, potentially oscillating back and forth (`L1` to `L2` to `L1`...).
+[Timestamp 5:20] To control the step size, we introduce a **learning rate** (`alpha`), a small positive number (e.g., 0.01, 0.001).
+*   **Weight Update Rule:** `new_weights = old_weights - alpha * gradient` [Timestamp 5:20]
+*   [Timestamp 5:49] By multiplying the gradient by `alpha`, we take smaller, more controlled steps towards the minimum. [Timestamp 5:56]
 
-0:00
-So the optimizer,
-Play video starting at ::2 and follow transcript0:02
-this is just consuming some values like their derivatives are passed in here.
-Play video starting at ::9 and follow transcript0:09
-And then based on this, we can update the weights.
-Play video starting at ::18 and follow transcript0:18
-So the bias is just calculated as the bias minus
-Play video starting at ::25 and follow transcript0:25
-the derivative, dL_db
-Play video starting at ::30 and follow transcript0:30
-times, and now the important part is that we multiply this with the learning rate,
-Play video starting at ::37 and follow transcript0:37
-good. And the same we're doing for the weights. So this is just our weight. And here again, we are subtracting the derivative of the losses to the weights, and multiply it with the learning rate,
-Play video starting at ::56 and follow transcript0:56
-good. So now we have updated our weights.
+**The Chain Rule:**
+[Timestamp 6:24] Our network has multiple steps (Layer 1 -> Activation -> Loss). How do we calculate the gradient of the *loss* with respect to the *weights* (`dL/dw`), which are used much earlier?
+[Timestamp 6:50] We use the **Chain Rule** from calculus.
+*   Example: Input `X` -> Function `Y(X)` -> Function `Z(Y)`.
+*   To find `dZ/dX`, we multiply the derivatives of each step: `dZ/dX = dZ/dY * dY/dX`. [Timestamp 7:22, 7:52]
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch Modeling Train Function
+**Applying the Chain Rule to Our Network:**
+[Timestamp 8:05]
+To find `dL/dw` (the gradient needed to update weights):
+1.  Calculate `dL/dy_pred`: Derivative of the Loss function w.r.t. predictions.
+    *   For MSE: `dL/dy_pred = 2 * (y_pred - y_true)`.
+2.  Calculate `dy_pred/dl1`: Derivative of the Activation function (Sigmoid) w.r.t. the output of layer 1.
+3.  Calculate `dl1/dw`: Derivative of Layer 1's output w.r.t. the weights.
+    *   This is simply the input `X`. [Timestamp 8:30]
 
-0:00
-And now we need to specify how the training is done. So during the training, we are iterating over all the observations in the dataset. And we need to set up this train loop. We're going to do this in a function called train.
-Play video starting at ::18 and follow transcript0:18
-And here just pass in value ITERATIONS.
-Play video starting at ::23 and follow transcript0:23
-And here we can now iterate over the range of the ITERATIONS.
-Play video starting at ::32 and follow transcript0:32
-So at first
-Play video starting at ::35 and follow transcript0:35
-we get some random position,
-Play video starting at ::41 and follow transcript0:41
-so it's often a good idea to just pick the values randomly out of the train data. So for this, we set up a variable called random_pos.
-Play video starting at ::54 and follow transcript0:54
-And here we can get a random integer value with randint.
-Play video starting at :1:2 and follow transcript1:02
-We just have to make sure that it's in a certain range. So we want to get only values from zero to the length of the train data.
-Play video starting at :1:19 and follow transcript1:19
-So here we are just defining the indices for picking the right element,
-Play video starting at :1:27 and follow transcript1:27
-good. Now we can implement the forward pass.
-Play video starting at :1:31 and follow transcript1:31
-So here, first for a comparison, later on we're
-Play video starting at :1:35 and follow transcript1:35
-picking our true train value, and this is stored in self.X_train at the position random_pos which we have just defined.
-Play video starting at :1:48 and follow transcript1:48
-And now we need to get our prediction y_train_pred.
-Play video starting at :1:54 and follow transcript1:54
-And for this, we are using our forward pass, and in here we pass our train data
-Play video starting at :2:2 and follow transcript2:02
-at the same position.
-Play video starting at :2:6 and follow transcript2:06
-So by now we have a prediction value and a true value. This is all that we need to calculate the losses,
-Play video starting at :2:16 and follow transcript2:16
-the training losses.
-Play video starting at :2:20 and follow transcript2:20
-So this loss is calculated by summing up
-Play video starting at :2:26 and follow transcript2:26
-all the different squared differences.
-Play video starting at :2:30 and follow transcript2:30
-So we have the np.square function, and in here we have our y_train pred,
-Play video starting at :2:37 and follow transcript2:37
-and
-Play video starting at :2:39 and follow transcript2:39
-we subtract y_ train_ true
-Play video starting at :2:51 and follow transcript2:51
-good. And finally, we want to check that in a graph. So we will just append our training losses with the current loss that we have just calculated. So this is just for checking out the result afterward.
-Play video starting at :3:8 and follow transcript3:08
-And now we can calculate the gradients
-Play video starting at :3:13 and follow transcript3:13
-dL_db, and DL_ dw.
-Play video starting at :3:19 and follow transcript3:19
-And for this, we can call our backward function.
-Play video starting at :3:24 and follow transcript3:24
-In here, this is just consuming some data like the train data,
-Play video starting at :3:30 and follow transcript3:30
-X_train at the position that we have defined, and Y_train
-Play video starting at :3:39 and follow transcript3:39
-at the random position,
-Play video starting at :3:41 and follow transcript3:41
-good. Now we have our derivatives, and now we can update the weights.
-Play video starting at :3:47 and follow transcript3:47
-So for this, we can call self dot optimizer,
-Play video starting at :3:52 and follow transcript3:52
-and just pass in our derivatives that we have just defined dL_db and dL_dw,
-Play video starting at :4:7 and follow transcript4:07
-good.
-Play video starting at :4:8 and follow transcript4:08
-Actually, that's it. I just want to check how this is performing also on the test data. So at every end of one iteration, we are going to calculate the error for the testing.
-Play video starting at :4:27 and follow transcript4:27
-Here again I set up some variable the loss sum is zero at the beginning. And now we're iterating over very similarly to before
-Play video starting at :4:40 and follow transcript4:40
-the length of our test data.
-Play video starting at :4:45 and follow transcript4:45
-So we pick again our true value y_true. This is just picked from our
-Play video starting at :4:54 and follow transcript4:54
-y_test at the position j,
-Play video starting at :4:59 and follow transcript4:59
-and the predictions
-Play video starting at :5:2 and follow transcript5:02
-are calculated by calling our forward function,
-Play video starting at :5:11 and follow transcript5:11
-here we put in our index j.
-Play video starting at :5:15 and follow transcript5:15
-So now we have our predictions, now we can update our sum.
-Play video starting at :5:22 and follow transcript5:22
-So just do it in one step. I use this plus equal sign because now we can calculate our sum for this specific loss and directly add it to our object L_sum.
-Play video starting at :5:36 and follow transcript5:36
-So here we are using our square function, and we can calculate the difference of y_pred, and y_true,
-Play video starting at :5:48 and follow transcript5:48
-good. And once we have that, once the loop is done, we can add it to the final loss list and append here our L_sum,
-Play video starting at :6:4 and follow transcript6:04
-good.
-Play video starting at :6:7 and follow transcript6:07
-Alright. And then we are at the end of our train function, we can just say something like, training successful.
+[Timestamp 8:44]
+**Final Gradient for Weights:** `dL/dw = (dL/dy_pred) * (dy_pred/dl1) * (dl1/dw)`
 
+**Gradient for Biases (`dL/db`):**
+[Timestamp 9:00] The process is similar, but the last derivative changes:
+*   `dl1/db`: Derivative of Layer 1's output w.r.t. the bias.
+    *   This is simply `1`. [Timestamp 9:10]
+**Final Gradient for Biases:** `dL/db = (dL/dy_pred) * (dy_pred/dl1) * (dl1/db)`
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch Model Training
+[Timestamp 9:22] That covers the core mechanics of the backward pass.
 
-0:01
-Good. Let's just see if this all works good. The class can be created. Now, we can set up some hyperparameters. So the first one is the learning rate.
-Play video starting at ::13 and follow transcript0:13
-Let's say we start with a value of 0.1. And the iterations,
-Play video starting at ::20 and follow transcript0:20
-here we're using 1000 iterations.
-Play video starting at ::26 and follow transcript0:26
-Now we're going to create an instance of our model and I just call it nn,
-Play video starting at ::33 and follow transcript0:33
-for saving some typing. So here we have our model class NeuralNetworkFromScratch, so the learning rate, this is LR, we just pass all the different parameters that we have defined here. X_train is X_
-Play video starting at ::51 and follow transcript0:51
-train_scale. Just make sure that you use the right one, Y_train
-Play video starting at ::58 and follow transcript0:58
-is passed as y_train
-Play video starting at :1:1 and follow transcript1:01
-and then X_test
-Play video starting at :1:4 and follow transcript1:04
-is passed as X_test_scale; and y_test,
-Play video starting at :1:9 and follow transcript1:09
-here we also pass the y_test;
-Play video starting at :1:15 and follow transcript1:15
-good. And now we can check if everything is working. We can call our train function,
-Play video starting at :1:21 and follow transcript1:21
-and pass in the ITERATIONS,
-Play video starting at :1:27 and follow transcript1:27
-and then the training should run.
-Play video starting at :1:33 and follow transcript1:33
-Okay. There is a small error. Let's see here. This, of course, I forgot to call the property shape. Okay? Lets just run it again
-Play video starting at :1:45 and follow transcript1:45
-and see if it's now working. training successful, that's good.
+### The Dot Product
 
-Foundations and Core Concepts of PyTorch
-Module 5
-Neural Network from Scratch Model Evaluation
+[Timestamp 9:22] One more technical aspect: the **dot product**.
+Why use it? It efficiently calculates the weighted sum in our layers (`X * w`) and helps measure similarity between vectors (like input `X` and weight vector `w`).
 
-0:00
-And now we can check
-Play video starting at ::3 and follow transcript0:03
-actually how good this was performing. So we can create with Seaborn lineplot
-Play video starting at ::11 and follow transcript0:11
-of the test losses. So here for X, we just need to add still some
-Play video starting at ::19 and follow transcript0:19
-numbers. So I'm just using a list
-Play video starting at ::23 and follow transcript0:23
-which is based on a range of the length of nn. L_test. So we'll just use the length of our losses test list. And then for the vertical axis, I can just use our test classes
-Play video starting at ::45 and follow transcript0:45
-and that looks quite decent. So this is exactly the behavior that we want to see. We want to see that the losses are over time reducing more and more and then stabilizing at some point. So this is some expected behavior. So this is good. Now we can iterate over our test data to just check how the results are. So we are at first extracting the total number of observations. So this is
-Play video starting at :1:15 and follow transcript1:15
-our X_test_scale,
-Play video starting at :1:19 and follow transcript1:19
-and then we take the rows,
-Play video starting at :1:24 and follow transcript1:24
-and I'm also extracting how many correct
-Play video starting at :1:27 and follow transcript1:27
-predictions there were, and we're starting with 0, and we will land the line, then iterate it if there was the right prediction
-Play video starting at :1:36 and follow transcript1:36
-and then we are going to save our predictions in this object, y_preds,
-Play video starting at :1:42 and follow transcript1:42
-good. Now we can iterate
-Play video starting at :1:45 and follow transcript1:45
-over all the different rows, so we can iterate over this total number of rows.
-Play video starting at :1:54 and follow transcript1:54
-And here we are extracting our true values. These are coming from y_test at the position i,
-Play video starting at :2:4 and follow transcript2:04
-and the predictions of course,
-Play video starting at :2:7 and follow transcript2:07
-that
-Play video starting at :2:8 and follow transcript2:08
-needs to be coming from
-Play video starting at :2:11 and follow transcript2:11
-our forward function.
-Play video starting at :2:14 and follow transcript2:14
-And here I pass in our test data, X_ test_scale
-Play video starting at :2:20 and follow transcript2:20
-at position i, but then if I want to compare that, I need to round it. So I just call np.round, and put it round.
-Play video starting at :2:30 and follow transcript2:30
-And now we have here a number 0 1 and here a number 0 1. And
-Play video starting at :2:38 and follow transcript2:38
-before we can check their correctness, I'm just going to append this to the y_preds list,
-Play video starting at :2:46 and follow transcript2:46
-so
-Play video starting at :2:48 and follow transcript2:48
-good.
-Play video starting at :2:50 and follow transcript2:50
-And now every time some correct prediction was found, I'm adding a one to it.
-Play video starting at :2:57 and follow transcript2:57
-And when do I do that? If y_true is equal to y_pred.
-Play video starting at :3:5 and follow transcript3:05
-Otherwise I don't add anything,
-Play video starting at :3:8 and follow transcript3:08
-good.
-Play video starting at :3:11 and follow transcript3:11
-Let's run this.
-Play video starting at :3:13 and follow transcript3:13
-And now we can calculate the accuracy. So the accuracy is just the ratio of the correct predictions with respect to the total number of observations.
-Play video starting at :3:24 and follow transcript3:24
-And we have an accuracy of, let's say 82%. This is quite, quite good I would say, but we only can really be sure if we check the baseline. So it could be that the majority class has 82% of all data, and then the algorithm wouldn't be worth anything So for this always check the baseline classifier. I did this before. So I know that this is good. But I will also show you we can use from collections import Counter,
-Play video starting at :4:1 and follow transcript4:01
-and then we can apply our test data to the Counter class.
-Play video starting at :4:8 and follow transcript4:08
-And here we can see it's pretty much balanced. So we have 61 observations in the testing and the majority class is 31. So our baseline classifier has an accuracy of 52%. So our algorithm has an accuracy of 82%. So it's really valuable and it has learned something. So it's definitely much better than just pure guessing.
-Play video starting at :4:36 and follow transcript4:36
-And we can also check that in more detail with the confusion_matrix.
-Play video starting at :4:42 and follow transcript4:42
-Here we just have to put in our true values.
-Play video starting at :4:47 and follow transcript4:47
-These are coming from the y_test;
-Play video starting at :4:50 and follow transcript4:50
-and we have our predictions, these are stored in the list y_preds;
-Play video starting at :4:59 and follow transcript4:59
-good. So we have 50 correct predictions. So 25 and 25, and then the off diagonal values, these are the ones which are incorrectly predicted. So this is in total quite good. Now, you could go deeper and check out the wrong predictions and try to find out what was going wrong with them. But for now, this is fine, you could also just check different parameters. So for example, you could just play here with the learning rate and see what the impact on the development of the losses is. So you can see if you have a smaller learning rate, then it's taking much longer and it's not reaching a stable result yet. You can even go to, to larger values,
-Play video starting at :5:50 and follow transcript5:50
-at some point it's getting unstable, I would expect.
-Play video starting at :5:55 and follow transcript5:55
-0.3 is still good. So you can just play with the different values in here.
-Play video starting at :6:1 and follow transcript6:01
-Okay. This was really a lot that we have done here and I think it's super important and really helpful to have done this at least once in your life so that you really have seen how this is all stacked together. And this is what we have done here. We have imported our data and then we followed the classical machine learning steps. We have separated the independent and dependent features,
-Play video starting at :6:26 and follow transcript6:26
-then we have split the data in training and testing and we have scaled them. And then in our NeuralNetworkFromScratch class, we have worked on all the different aspects that we needed to develop our network from scratch. So we have passed some parameters at first, then we have setup our activation function,
-Play video starting at :6:50 and follow transcript6:50
-and then also some helper function for the derivative of the activation function. And then in the forward function, we are performing the forward pass through the network to get some predictions.
-Play video starting at :7:3 and follow transcript7:03
-In the backward pass we are calculating the derivatives which are needed then in the optimizer to update the weights and the bias,
-Play video starting at :7:14 and follow transcript7:14
-and then we put everything together in the training function. And in here, we are performing on the train and the test data to create predictions, calculating the losses, and subsequently updating the weights and improving the results.
-Play video starting at :7:31 and follow transcript7:31
-And finally, we have tested it on our data, and we have trained the network, we have checked the losses, and finally also checked the confusion_matrix to see how good the predictions are.
-Play video starting at :7:46 and follow transcript7:46
-So I hope you find this lecturer valuable and you have learned something and you will see it's getting simpler actually because we have PyTorch at our hand which is taking a lot of these steps. So a lot of the more complicated parts are actually taken directly under the hood by PyTorch, and we don't even have to take care of it. So when you see how the first neural network with PyTorch is looking, like you will be very grateful for all the small things that PyTorch is doing for us.
-Play video starting at :8:17 and follow transcript8:17
-So by now, we have reached the end of this lecture. Thank you very much, and see you in the next one.
+[Timestamp 9:41]
+Consider an input vector `X` and two weight vectors `w1` and `w2`. Which weight vector is more "aligned" or similar to the input?
+*   [Timestamp 10:14] Similarity depends on both the *magnitude* (length) of the vectors and the *angle* between them.
+*   [Timestamp 10:25] The dot product captures this relationship efficiently.
+
+**Calculating the Dot Product:**
+[Timestamp 10:48] Given `X = [x1, x2, ...]` and `w1 = [w1_1, w1_2, ...]`:
+*   Dot Product (`X . w1`) = `(x1 * w1_1) + (x2 * w1_2) + ...`
+*   It's the sum of the element-wise products. [Timestamp 11:00]
+*   Larger dot product values generally indicate greater similarity/alignment between the vectors.
+
+We'll see how to compute this easily with NumPy in the next video. Thank you.
+
+---
+
+## Calculating the Dot Product (Coding)
+
+[Timestamp 0:01]
+Hello and welcome. Let's implement the dot product calculation using Python and NumPy. You can find the code in the `015_NeuralNetworkFromScratch` subfolder.
+
+[Timestamp 0:01] We only need NumPy:
+```python
+import numpy as np
+```
+
+[Timestamp 0:20] Let's define sample input and weight vectors:
+```python
+X = np.array([1, 2, 3])
+w1 = np.array([0.2, 0.8, -0.5])
+w2 = np.array([-0.5, 0.1, 0.9])
+```
+
+**Manual Calculation:**
+[Timestamp 0:28] Calculating the dot product manually for `X` and `w1`:
+```python
+dot_X_w1_manual = (X[0] * w1[0]) + (X[1] * w1[1]) + (X[2] * w1[2])
+# [Timestamp 0:43] -> (1 * 0.2) + (2 * 0.8) + (3 * -0.5)
+# [Timestamp 0:56] -> 0.2 + 1.6 - 1.5 = 0.3
+print(dot_X_w1_manual) # Output: 0.3 (Note: Video calculation seems slightly off, result should be 0.3)
+```
+[Timestamp 1:13] This is tedious for larger vectors.
+
+[Timestamp 1:29] Similarly for `X` and `w2`:
+```python
+dot_X_w2_manual = (X[0] * w2[0]) + (X[1] * w2[1]) + (X[2] * w2[2])
+# -> (1 * -0.5) + (2 * 0.1) + (3 * 0.9)
+# -> -0.5 + 0.2 + 2.7 = 2.4
+print(dot_X_w2_manual) # Output: 2.4 (Note: Video calculation seems slightly off, result should be 2.4)
+```
+[Timestamp 1:43] Comparing the results (0.3 vs 2.4), `w2` has a larger dot product with `X`, suggesting more similarity in this case (assuming the corrected calculations). [Timestamp 1:58]
+
+**NumPy's `dot` Function:**
+[Timestamp 1:58] NumPy provides a much simpler way: `np.dot()`.
+```python
+dot_X_w1_numpy = np.dot(X, w1)
+print(dot_X_w1_numpy) # Output: 0.3 [Timestamp 2:17]
+
+dot_X_w2_numpy = np.dot(X, w2)
+print(dot_X_w2_numpy) # Output: 2.4 [Timestamp 2:24]
+```
+Perfect! This matches our manual (corrected) calculation and is much more concise.
+
+[Timestamp 2:24] This `np.dot` function is the final piece we need before building the full network from scratch, which we'll start in the next lecture.
+
+---
+
+## Neural Network from Scratch (Data Prep)
+
+[Timestamp 0:01]
+Hello and welcome. Now we begin developing our neural network from scratch. We'll start with data preparation. I've prepared a script (`datascript`) for imports.
+
+**Imports:**
+[Timestamp 0:01]
+```python
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+# (Assuming matplotlib is also potentially used with seaborn)
+import matplotlib.pyplot as plt
+```
+
+**Dataset:**
+[Timestamp 0:41] We'll use a heart attack prediction dataset (available on Kaggle).
+*   [Timestamp 0:49] It's a classification problem.
+*   [Timestamp 1:04] Features include age, sex, and other health metrics.
+*   [Timestamp 1:08] The target variable (`output`) is binary (0: less chance, 1: higher chance of heart attack).
+
+**Loading Data:**
+[Timestamp 1:33] Assuming the data (`heart.csv`) is in the working directory:
+```python
+df = pd.read_csv('heart.csv')
+print(df.head())
+```
+[Timestamp 1:48] We can see the features and the `output` column.
+
+**Separating Features and Target:**
+[Timestamp 1:48] We need to separate independent features (`X`) from the dependent target variable (`Y`).
+```python
+X = df.drop('output', axis=1).values # Convert to NumPy array
+Y = df['output'].values           # Convert to NumPy array
+```
+[Timestamp 2:17] Check shapes:
+```python
+print("X shape:", X.shape) # E.g., (303, 13) -> 303 observations, 13 features
+print("Y shape:", Y.shape) # E.g., (303,) -> 303 target values
+```
+
+**Train/Test Split:**
+[Timestamp 2:19] We split the data to train the model and evaluate it on unseen data.
+```python
+X_train, X_test, y_train, y_test = train_test_split(
+    X, Y,
+    test_size=0.2,    # 20% for testing [Timestamp 2:43]
+    random_state=42   # For reproducibility [Timestamp 2:58]
+)
+```
+
+**Feature Scaling:**
+[Timestamp 3:08] Neural networks often perform better when input features are scaled. Different features have varying ranges (e.g., age vs. cholesterol).
+[Timestamp 3:08] We'll use `StandardScaler` (transforms data to have mean=0, stddev=1).
+```python
+scaler = StandardScaler()
+
+# Fit on training data ONLY and transform it
+X_train_scale = scaler.fit_transform(X_train) [Timestamp 3:40]
+
+# Use the SAME scaler (fitted on train data) to transform test data
+X_test_scale = scaler.transform(X_test) [Timestamp 3:40]
+```
+**Important:** Fit the scaler *only* on the training data to avoid data leakage from the test set.
+
+[Timestamp 4:10] With data prepared and scaled, we can now start building the neural network model itself.
+
+---
+
+## Neural Network from Scratch Modeling: `__init__` Function
+
+[Timestamp 0:00]
+We'll structure our network within a Python class for better organization, similar to how PyTorch models are often defined. [Timestamp 0:11]
+
+```python
+import numpy as np
+
+class NeuralNetworkFromScratch:
+    # [Timestamp 0:11]
+    def __init__(self, learning_rate, X_train, y_train, X_test, y_test):
+        """
+        Initializes the Neural Network.
+        Args:
+            learning_rate (float): The step size for gradient descent.
+            X_train, y_train (np.array): Scaled training data and labels.
+            X_test, y_test (np.array): Scaled test data and labels.
+        """
+        # [Timestamp 0:34] Parameters passed during instantiation
+
+        # --- Initialize Weights and Biases ---
+        # [Timestamp 0:53] Randomly initialize weights. One weight per input feature.
+        num_features = X_train.shape[1]
+        self.weights = np.random.randn(num_features) # [Timestamp 1:06]
+        # [Timestamp 1:10] Initialize bias (single value for this simple network)
+        self.bias = np.random.randn(1) # [Timestamp 1:40]
+
+        # --- Store Data and Parameters ---
+        # [Timestamp 1:49] Assign passed parameters to internal attributes
+        self.learning_rate = learning_rate # [Timestamp 1:56]
+        self.X_train = X_train # [Timestamp 2:00]
+        self.y_train = y_train
+        self.X_test = X_test
+        self.y_test = y_test # [Timestamp 2:27]
+
+        # --- Initialize Loss Tracking ---
+        # [Timestamp 2:37] Lists to store loss values during training
+        self.L_train = [] # Training losses [Timestamp 2:41]
+        self.L_test = []  # Test losses [Timestamp 2:45]
+
+    # ... other methods (activation, forward, backward, etc.) will go here ...
+
+```
+This `__init__` method sets up the essential components: weights, bias, learning rate, data storage, and lists for tracking performance.
+
+---
+
+## Neural Network from Scratch Modeling: Helper Functions (Activation)
+
+[Timestamp 0:00]
+Now, let's add the helper functions needed within our class, starting with the activation function and its derivative.
+
+```python
+# (Inside the NeuralNetworkFromScratch class)
+
+    # [Timestamp 0:09] --- Activation Function (Sigmoid) ---
+    def _sigmoid(self, x):
+        """ Applies the Sigmoid activation function element-wise. """
+        # [Timestamp 0:20] Formula: 1 / (1 + exp(-x))
+        return 1 / (1 + np.exp(-x)) # [Timestamp 0:37]
+
+    # [Timestamp 0:43] --- Derivative of Sigmoid ---
+    def _sigmoid_derivative(self, x):
+        """ Computes the derivative of the Sigmoid function. """
+        # [Timestamp 0:52] Formula: sigmoid(x) * (1 - sigmoid(x))
+        sig_x = self._sigmoid(x) # [Timestamp 1:15]
+        return sig_x * (1 - sig_x) # [Timestamp 1:20, 1:30]
+        # [Timestamp 1:30] You can verify this formula online.
+```
+[Timestamp 1:44] These functions encapsulate the Sigmoid calculation and its derivative, which we'll need for the forward and backward passes, respectively. We use a leading underscore (`_`) by convention to indicate these are intended primarily for internal use within the class.
+
+---
+
+## Neural Network from Scratch Modeling: Forward Function
+
+[Timestamp 0:00]
+Next, we define the `forward` pass function within our class. This function takes an input `X` and propagates it through the network to produce a prediction.
+
+```python
+# (Inside the NeuralNetworkFromScratch class)
+
+    # [Timestamp 0:05] --- Forward Pass ---
+    def forward(self, X):
+        """
+        Performs the forward pass of the network.
+        Args:
+            X (np.array): Input data (a single sample or batch).
+        Returns:
+            np.array: Network's prediction(s).
+        """
+        # [Timestamp 0:15] Step 1: Calculate weighted sum + bias (Linear Layer)
+        # [Timestamp 0:15] Using dot product for weighted sum
+        hidden1 = np.dot(X, self.weights) + self.bias # [Timestamp 0:25, 0:36]
+
+        # [Timestamp 0:43] Step 2: Apply activation function
+        activated_output = self._sigmoid(hidden1) # [Timestamp 0:47, 0:55]
+
+        # [Timestamp 1:01] Step 3: Return the final prediction
+        # (In this simple network, the activated output is the final prediction)
+        return activated_output
+```
+[Timestamp 0:55] This function implements the steps we discussed in the theory lecture: linear combination followed by the Sigmoid activation. It returns the network's output (prediction) for the given input `X`.
+
+---
+
+## Neural Network from Scratch Modeling: Backward Function
+
+[Timestamp 0:00]
+Now, we implement the `backward` pass, which calculates the gradients of the loss with respect to the weights and bias. These gradients tell us how to adjust the parameters to reduce the loss.
+
+```python
+# (Inside the NeuralNetworkFromScratch class)
+
+    # [Timestamp 0:04] --- Backward Pass (Gradient Calculation) ---
+    def backward(self, X_sample, y_true_sample):
+        """
+        Performs the backward pass to calculate gradients for a single sample.
+        Args:
+            X_sample (np.array): A single input data sample.
+            y_true_sample (float): The corresponding true label.
+        Returns:
+            tuple: Gradients (dL_db, dL_dw).
+        """
+        # [Timestamp 0:16] --- Recompute steps from Forward Pass (needed for derivatives) ---
+        # 1. Linear layer output
+        hidden1 = np.dot(X_sample, self.weights) + self.bias # [Timestamp 0:21, 0:28]
+        # 2. Prediction (output after activation)
+        y_pred = self._sigmoid(hidden1) # [Timestamp 0:33, 0:39] (Can also call self.forward(X_sample))
+
+        # [Timestamp 0:44] --- Calculate Gradients using Chain Rule ---
+        # Derivative of Loss w.r.t. Prediction (dL/d_pred)
+        # Assuming Mean Squared Error Loss: Loss = (y_pred - y_true)^2
+        # Derivative = 2 * (y_pred - y_true)
+        dL_dpred = 2 * (y_pred - y_true_sample) # [Timestamp 1:09, 1:16]
+
+        # Derivative of Prediction w.r.t. Hidden Layer Output (d_pred/d_hidden1)
+        # This is the derivative of the sigmoid function
+        dpred_dhidden1 = self._sigmoid_derivative(hidden1) # [Timestamp 1:26, 1:38, 1:48]
+
+        # Derivative of Hidden Layer Output w.r.t Bias (d_hidden1/db)
+        # d(X*w + b)/db = 1
+        dhidden1_db = 1 # [Timestamp 2:01]
+
+        # Derivative of Hidden Layer Output w.r.t Weights (d_hidden1/dw)
+        # d(X*w + b)/dw = X
+        dhidden1_dw = X_sample # [Timestamp 2:09, 2:14]
+
+        # --- Combine derivatives using Chain Rule ---
+        # Gradient for Bias (dL/db = dL/d_pred * d_pred/d_hidden1 * d_hidden1/db)
+        dL_db = dL_dpred * dpred_dhidden1 * dhidden1_db # [Timestamp 2:26, 2:40]
+        # Need to ensure dimensions match for multiplication if X_sample is multi-feature
+        # Often requires summing or averaging gradients across batch/features depending on implementation
+        # For simplicity here, assuming element-wise multiplication works or needs adjustment (e.g., sum dL_db)
+
+        # Gradient for Weights (dL/dw = dL/d_pred * d_pred/d_hidden1 * d_hidden1/dw)
+        # We need element-wise multiplication of dL_dpred * dpred_dhidden1 with each element of dhidden1_dw (X_sample)
+        # Reshape might be needed depending on exact NumPy broadcasting rules
+        # A common way: dL_dw = X_sample.T @ (dL_dpred * dpred_dhidden1) - check dimensions
+        # Let's refine dL_dw calculation assuming X_sample is (features,) and intermediate grads are scalars/broadcastable
+        dL_dw_intermediate = dL_dpred * dpred_dhidden1
+        dL_dw = dhidden1_dw * dL_dw_intermediate # Element-wise multiplication
+
+        # Sum gradients if needed (especially dL_db if it resulted from broadcasting)
+        dL_db = np.sum(dL_db) # Summing over the potential broadcasted dimension
+
+        # [Timestamp 3:11] --- Return calculated gradients ---
+        return dL_db, dL_dw # [Timestamp 3:16, 3:26]
+
+```
+[Timestamp 3:26] This function calculates the necessary gradients (`dL_db`, `dL_dw`) for a single data sample using the chain rule, breaking down the derivatives step-by-step. These gradients will then be used by the optimizer to update the network's parameters. *Note: The exact NumPy operations for combining derivatives (`dL_db`, `dL_dw`) might need careful handling of shapes and broadcasting, especially `dL_dw`.*
+
+---
+
+## Neural Network from Scratch Modeling: Optimizer Function
+
+[Timestamp 0:00]
+The `optimizer` function takes the calculated gradients and updates the network's weights and bias according to the gradient descent rule.
+
+```python
+# (Inside the NeuralNetworkFromScratch class)
+
+    # [Timestamp 0:02] --- Optimizer (Parameter Update) ---
+    def optimizer(self, dL_db, dL_dw):
+        """
+        Updates the weights and bias using the calculated gradients.
+        Args:
+            dL_db (float): Gradient of the loss w.r.t. the bias.
+            dL_dw (np.array): Gradient of the loss w.r.t. the weights.
+        """
+        # [Timestamp 0:09] Update bias using gradient descent rule
+        # new_bias = old_bias - learning_rate * gradient_bias
+        self.bias = self.bias - self.learning_rate * dL_db # [Timestamp 0:18, 0:25, 0:30]
+
+        # [Timestamp 0:37] Update weights using gradient descent rule
+        # new_weights = old_weights - learning_rate * gradient_weights
+        self.weights = self.weights - self.learning_rate * dL_dw # [Timestamp 0:37, 0:56]
+
+```
+[Timestamp 0:56] This simple function implements the core update step of gradient descent. It subtracts a fraction (controlled by `self.learning_rate`) of the gradient from the current parameters (`self.bias`, `self.weights`), moving them in the direction that should decrease the loss.
+
+---
+
+## Neural Network from Scratch Modeling: Train Function
+
+[Timestamp 0:00]
+The `train` function orchestrates the learning process. It iterates multiple times (epochs or iterations), processing data samples, calculating losses, computing gradients, and updating parameters.
+
+```python
+# (Inside the NeuralNetworkFromScratch class)
+
+    # [Timestamp 0:00] --- Training Loop ---
+    def train(self, iterations):
+        """
+        Trains the neural network for a specified number of iterations.
+        Args:
+            iterations (int): The number of training iterations.
+        """
+        # [Timestamp 0:18, 0:23] Iterate for the specified number of times
+        for i in range(iterations):
+            # --- Training Step on a Random Sample ---
+            # [Timestamp 0:32] Select a random data point from the training set
+            random_pos = np.random.randint(0, len(self.X_train)) # [Timestamp 0:41, 0:54, 1:02]
+            X_sample = self.X_train[random_pos] # [Timestamp 1:19]
+            y_true_sample = self.y_train[random_pos] # [Timestamp 1:35]
+
+            # [Timestamp 1:27] 1. Forward Pass (get prediction for the sample)
+            y_train_pred = self.forward(X_sample) # [Timestamp 1:48, 1:54, 2:02]
+
+            # [Timestamp 2:06] 2. Calculate Training Loss (for this sample)
+            # Using Mean Squared Error for this example
+            train_loss = np.sum(np.square(y_train_pred - y_true_sample)) # [Timestamp 2:20, 2:30]
+            self.L_train.append(train_loss) # Store loss for plotting [Timestamp 2:51]
+
+            # [Timestamp 3:08] 3. Backward Pass (calculate gradients for the sample)
+            dL_db, dL_dw = self.backward(X_sample, y_true_sample) # [Timestamp 3:13, 3:19, 3:24]
+
+            # [Timestamp 3:41] 4. Optimize (update weights and bias)
+            self.optimizer(dL_db, dL_dw) # [Timestamp 3:47, 3:52, 4:07]
+
+            # --- Evaluation Step on Test Set (Optional, per iteration) ---
+            # [Timestamp 4:08] Calculate loss on the *entire* test set periodically
+            # This is computationally more expensive but gives insight into generalization
+            if i % 50 == 0: # Example: Evaluate every 50 iterations
+                test_loss_sum = 0
+                # [Timestamp 4:27] Iterate through all test samples
+                for j in range(len(self.X_test)): # [Timestamp 4:40]
+                    y_test_true = self.y_test[j] # [Timestamp 4:45, 4:54]
+                    y_test_pred = self.forward(self.X_test[j]) # [Timestamp 4:59, 5:02, 5:11]
+                    # [Timestamp 5:15] Calculate squared error for this test sample
+                    test_loss_sum += np.sum(np.square(y_test_pred - y_test_true)) # [Timestamp 5:22, 5:36]
+                # [Timestamp 5:48] Average loss over the test set (optional, could just store sum)
+                avg_test_loss = test_loss_sum / len(self.X_test)
+                self.L_test.append(avg_test_loss) # Append average test loss [Timestamp 6:04]
+
+        # [Timestamp 6:07] Indicate training completion
+        print("Training successful.")
+
+```
+This `train` function implements stochastic gradient descent (SGD) by processing one random sample at a time. It performs the forward pass, calculates loss, performs the backward pass to get gradients, and then updates the parameters using the optimizer. It also includes optional evaluation on the test set within the loop to monitor generalization performance, storing both training and test losses.
+
+---
+
+## Neural Network from Scratch: Model Training
+
+[Timestamp 0:01]
+Now that our `NeuralNetworkFromScratch` class is defined, let's instantiate it and run the training process.
+
+**Hyperparameters:**
+[Timestamp 0:01] Set the learning rate and number of iterations.
+```python
+LEARNING_RATE = 0.01 # [Timestamp 0:13] Example value (adjust as needed)
+ITERATIONS = 1000   # [Timestamp 0:20] Number of training steps
+```
+
+**Instantiate the Model:**
+[Timestamp 0:26] Create an instance of our class, passing the hyperparameters and the prepared data.
+```python
+nn = NeuralNetworkFromScratch(
+    learning_rate=LEARNING_RATE, # [Timestamp 0:33]
+    X_train=X_train_scale,       # Use scaled data [Timestamp 0:51]
+    y_train=y_train,             # [Timestamp 0:58]
+    X_test=X_test_scale,         # Use scaled data [Timestamp 1:04]
+    y_test=y_test                # [Timestamp 1:09]
+)
+# [Timestamp 1:15]
+```
+
+**Run Training:**
+[Timestamp 1:15] Call the `train` method on the instance.
+```python
+nn.train(ITERATIONS) # [Timestamp 1:21, 1:27]
+```
+[Timestamp 1:33] *Self-correction during execution:* The original code had a `shape` attribute missing when initializing weights/bias. Assuming that's fixed in the class definition as shown previously.
+```python
+# Potential fix inside __init__ if error occurs:
+# num_features = X_train.shape[1] # Get number of features
+# self.weights = np.random.randn(num_features)
+# self.bias = np.random.randn(1) # Or np.random.randn() if scalar bias preferred
+```
+[Timestamp 1:45] After fixing potential initialization errors, running `nn.train(ITERATIONS)` should execute the training loop. "Training successful" indicates completion.
+
+---
+
+## Neural Network from Scratch: Model Evaluation
+
+[Timestamp 0:00]
+After training, we need to evaluate how well our network performs, especially on the unseen test data.
+
+**1. Plotting Losses:**
+[Timestamp 0:03] Visualize the test loss over iterations to see if the model learned effectively.
+```python
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# [Timestamp 0:11] Create x-axis values (iterations where test loss was recorded)
+# Assuming test loss was recorded every 50 iterations in train()
+iterations_recorded = range(0, ITERATIONS, 50) # Adjust step if different in train()
+# [Timestamp 0:19] (Or use range(len(nn.L_test)) if recorded every iteration)
+x_axis = range(len(nn.L_test)) # Simpler if recorded every iteration or use the list directly
+
+plt.figure(figsize=(10, 6))
+sns.lineplot(x=x_axis, y=nn.L_test) # [Timestamp 0:23, 0:45]
+plt.title("Test Loss During Training")
+plt.xlabel("Training Iteration (or Recording Step)")
+plt.ylabel("Average Test Loss")
+plt.show()
+```
+[Timestamp 0:45] A decreasing loss curve that stabilizes indicates successful learning. [Timestamp 0:45]
+
+**2. Calculating Accuracy on Test Set:**
+[Timestamp 1:00] Iterate through the test set, get predictions, compare to true labels, and calculate accuracy.
+```python
+num_test_samples = X_test_scale.shape[0] # [Timestamp 1:15, 1:19]
+correct_predictions = 0 # [Timestamp 1:24, 1:27]
+y_preds_list = [] # Store predictions for confusion matrix [Timestamp 1:36]
+
+# [Timestamp 1:42] Iterate through each test sample
+for i in range(num_test_samples): # [Timestamp 1:45]
+    X_sample = X_test_scale[i]
+    y_true = y_test[i] # [Timestamp 1:54]
+
+    # Get prediction
+    y_pred_proba = nn.forward(X_sample) # [Timestamp 2:11, 2:14]
+    # Convert probability to binary prediction (0 or 1)
+    y_pred_binary = np.round(y_pred_proba).astype(int) # [Timestamp 2:20, 2:30]
+
+    y_preds_list.append(y_pred_binary.item()) # Store prediction [Timestamp 2:38, 2:48]
+
+    # Check if prediction is correct
+    if y_pred_binary == y_true: # [Timestamp 2:57]
+        correct_predictions += 1 # [Timestamp 2:50, 3:05]
+
+# [Timestamp 3:11] Calculate overall accuracy
+accuracy = correct_predictions / num_test_samples # [Timestamp 3:13]
+print(f"Test Accuracy: {accuracy:.2%}") # [Timestamp 3:24] -> e.g., 82%
+```
+
+**3. Checking Baseline Accuracy:**
+[Timestamp 3:24] Compare the model's accuracy to a naive baseline (e.g., always predicting the majority class).
+```python
+from collections import Counter
+
+# [Timestamp 4:01] Count occurrences of each class in the test set
+y_test_counts = Counter(y_test)
+# [Timestamp 4:08] Find the count of the majority class
+majority_class_count = max(y_test_counts.values())
+# Calculate baseline accuracy
+baseline_accuracy = majority_class_count / num_test_samples
+print(f"Baseline (Majority Class) Accuracy: {baseline_accuracy:.2%}") # [Timestamp 4:08] -> e.g., 52%
+```
+[Timestamp 4:08] If our model's accuracy (e.g., 82%) is significantly higher than the baseline (e.g., 52%), it indicates the model has learned meaningful patterns.
+
+**4. Confusion Matrix:**
+[Timestamp 4:36] Provides a more detailed breakdown of correct and incorrect predictions for each class.
+```python
+from sklearn.metrics import confusion_matrix
+
+# [Timestamp 4:42] Ensure y_preds_list is a NumPy array if needed by confusion_matrix
+y_preds_array = np.array(y_preds_list)
+
+cm = confusion_matrix(y_test, y_preds_array) # [Timestamp 4:47, 4:50]
+print("\nConfusion Matrix:")
+print(cm)
+
+# Optional: Visualize confusion matrix
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix')
+plt.show()
+```
+[Timestamp 4:59] The matrix shows True Positives, True Negatives, False Positives, and False Negatives, giving insight into the types of errors the model makes.
+
+**Experimenting with Hyperparameters:**
+[Timestamp 5:00] You can now experiment by changing `LEARNING_RATE` or `ITERATIONS` and retraining to see the impact on the loss curve and final accuracy. [Timestamp 5:50, 5:55, 6:01]
+
+**Summary & Next Steps:**
+[Timestamp 6:01] We have successfully:
+*   Imported and preprocessed data (scaling, splitting). [Timestamp 6:10]
+*   Built a `NeuralNetworkFromScratch` class containing: [Timestamp 6:26]
+    *   `__init__`: Initialization.
+    *   `_sigmoid`, `_sigmoid_derivative`: Activation functions. [Timestamp 6:50]
+    *   `forward`: Prediction generation. [Timestamp 6:50]
+    *   `backward`: Gradient calculation. [Timestamp 7:03]
+    *   `optimizer`: Parameter updates. [Timestamp 7:03]
+    *   `train`: Training loop orchestration. [Timestamp 7:14]
+*   Trained the network. [Timestamp 7:31]
+*   Evaluated performance using loss plots, accuracy, and a confusion matrix. [Timestamp 7:31, 7:46]
+
+[Timestamp 7:46] This exercise demonstrates the fundamental components of a neural network. While building from scratch is insightful, frameworks like PyTorch automate many of these steps (especially gradient calculation and optimization), making development much faster and less error-prone, as we'll see soon. [Timestamp 8:17] Thank you.
 
