@@ -186,6 +186,8 @@ dropout = nn.Dropout(p=0.5)
 
 ## Activation Layers
 
+> **Note**: This section provides a brief overview of activation layers. For comprehensive coverage of activation functions, please refer to [4_DeepLearning_ActivationFunctions.MD]
+
 Non-linear functions applied after linear transformations to introduce non-linearity into the network.
 
 **Common Activation Functions:**
