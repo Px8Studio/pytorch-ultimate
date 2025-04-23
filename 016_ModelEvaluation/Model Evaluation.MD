@@ -75,6 +75,9 @@ These high variance algorithms train many more parameters, and you need to ensur
 - **Pruning**: Removing unnecessary complexity from models (especially decision trees)
 - **Dropout**: Randomly deactivating neurons during training (for neural networks)
 - **Data augmentation**: Artificially increasing the training dataset size with modified examples
+- **Batch Normalization**: Normalizing layer inputs to stabilize and accelerate training in neural networks
+- **Weight Decay**: A form of L2 regularization specific to deep learning optimization
+- **Mixup/CutMix**: Advanced data augmentation techniques that create new training samples by combining existing ones
 
 > **Supplementary Reading**: For detailed explanations and visualizations of underfitting and overfitting concepts, refer to [Underfitting and Overfitting Guide](UnderfittingOverfitting.pdf)
 
@@ -116,6 +119,29 @@ For time series data, random splits can lead to data leakage. Instead:
 - Most recent data for testing
 
 This approach respects the temporal nature of the data and better simulates real-world forecasting scenarios.
+
+### Preventing Data Leakage
+
+Data leakage occurs when information from outside the training dataset is used to create the model. Best practices include:
+
+- Perform feature scaling/normalization **after** splitting the data
+- Apply feature selection only on training data
+- Keep validation and test sets completely isolated until final evaluation
+- Be cautious with time-dependent features that may contain future information
+- When using grouped data (like multiple measurements from the same patient), ensure that groups remain intact within each split
+
+### Domain Adaptation and Dataset Shift
+
+Modern ML systems often face challenges when deployed in environments different from their training data:
+
+- **Covariate shift**: When the distribution of inputs changes between training and deployment
+- **Concept drift**: When the relationship between inputs and outputs changes over time
+- **Domain adaptation**: Techniques to adapt models to new domains with limited or no labels
+
+To make models more robust to these shifts:
+- Test on multiple datasets from different distributions
+- Use domain-adaptive training techniques
+- Implement monitoring systems to detect performance degradation over time
 
 > **Supplementary Reading**: See [Train-Validation-Test Split Guide](TrainValidationTest_101.pdf) for detailed procedures and best practices.
 
@@ -171,16 +197,35 @@ In LOOCV, we create as many folds as there are data points. Each model is traine
 
 As the instructor noted, "The best and most stable results are achieved if you create as many folds as there are data points. You always hold one observation back for validation and create the model based on all data except for this one observation."
 
-### Time Series Cross-Validation
+### Advanced Cross-Validation Variants
+
+#### Group K-Fold
+For data with inherent grouping (e.g., multiple samples from the same patient), Group K-Fold ensures all samples from the same group stay together in the same fold, preventing data leakage.
+
+#### Repeated K-Fold
+Runs K-fold cross-validation multiple times with different random splits, further reducing the variance of the performance estimate.
+
+#### Time Series Cross-Validation
 
 For time series data, specialized cross-validation techniques preserve the temporal order:
 
 - **Forward chaining**: Train on a fixed window, predict the next time period, then expand the window
 - **Rolling-origin cross-validation**: Use a fixed-size window that moves forward through time
+- **Purged cross-validation**: Removes overlapping time periods between training and validation to prevent leakage
 
 ### Nested Cross-Validation
 
 When tuning hyperparameters and evaluating model performance, nested CV uses an inner loop for hyperparameter tuning and an outer loop for model evaluation.
+
+This approach provides an unbiased estimate of true model performance, accounting for the hyperparameter optimization process. It's particularly important when comparing different modeling approaches.
+
+### Modern Hyperparameter Optimization
+
+Within cross-validation, several advanced techniques can efficiently search the hyperparameter space:
+
+- **Bayesian optimization**: Uses probabilistic models to efficiently explore the hyperparameter space
+- **Hyperband**: Allocates resources to promising configurations early in training
+- **Population-based training**: Evolves model configurations during training
 
 ### Advantages of Cross-Validation
 
@@ -194,6 +239,7 @@ When tuning hyperparameters and evaluating model performance, nested CV uses an 
 1. Computationally very expensive because many different models are created
 2. May still not fully represent real-world performance if the data distribution shifts
 3. Can be challenging to implement correctly for time series or hierarchical data
+4. Resource-intensive for large datasets or complex models
 
 ## 4. Resampling Techniques for Imbalanced Data
 
@@ -215,6 +261,7 @@ When one class significantly outnumbers others, models tend to favor the majorit
 2. **Tomek Links**: Remove majority samples that form Tomek links with minority samples (pairs from different classes that are each other's nearest neighbor)
 3. **Edited Nearest Neighbors (ENN)**: Remove samples whose class differs from the majority of their k nearest neighbors
 4. **Neighborhood Cleaning Rule (NCR)**: Combines ENN with selective undersampling
+5. **Near Miss**: Selects majority class samples based on their distance to minority class examples
 
 ### Oversampling Techniques
 
@@ -222,6 +269,8 @@ When one class significantly outnumbers others, models tend to favor the majorit
 2. **SMOTE (Synthetic Minority Oversampling Technique)**: Create synthetic samples along the line segments connecting minority class neighbors
 3. **ADASYN (Adaptive Synthetic Sampling)**: Similar to SMOTE but focuses on harder-to-learn examples
 4. **Borderline-SMOTE**: Creates synthetic samples near the decision boundary rather than throughout the feature space
+5. **SMOTE-NC and SMOTENC**: Variants of SMOTE designed for datasets with categorical features
+6. **SMOTE-TomekLinks**: Combines SMOTE with Tomek links removal for cleaner decision boundaries
 
 ### Hybrid Methods
 
@@ -233,6 +282,14 @@ When one class significantly outnumbers others, models tend to favor the majorit
 1. **Cost-sensitive learning**: Assign higher misclassification costs to the minority class
 2. **Class weights**: Adjust the weight of classes in the learning algorithm's objective function
 3. **Specialized algorithms**: Some algorithms like XGBoost have built-in mechanisms to handle imbalanced data
+4. **Focal Loss**: Down-weights well-classified examples to focus on hard, misclassified ones
+5. **Label distribution smoothing**: Smoothing the hard class labels to reduce model confidence
+
+### Deep Learning Approaches for Imbalanced Data
+
+1. **Two-phase training**: First train on balanced data, then fine-tune on the original distribution
+2. **Class-balanced loss**: Reweights losses based on effective number of samples
+3. **Generative models**: Use GANs or VAEs to generate minority class samples
 
 ### Evaluation Metrics for Imbalanced Data
 
@@ -242,6 +299,7 @@ Standard accuracy is misleading for imbalanced datasets. Instead, use:
 - **ROC AUC**: Area under the receiver operating characteristic curve
 - **Precision-Recall AUC**: Better for highly imbalanced datasets
 - **Balanced Accuracy**: The average of recall obtained on each class
+- **Matthews Correlation Coefficient**: A correlation coefficient between predicted and observed classifications
 
 ### Implementation Considerations
 
@@ -251,6 +309,7 @@ When applying resampling techniques:
 - Consider the domain context when choosing between undersampling and oversampling
 - Evaluate models using metrics appropriate for imbalanced datasets (F1-score, precision-recall AUC, etc.)
 - Monitor for potential overfitting, especially with oversampling techniques
+- Use cross-validation to assess the stability of results with different resampling approaches
 
 > **Supplementary Reading**: For comprehensive information on handling imbalanced datasets, see [Resampling Techniques Guide](ResamplingTechniques_101.pdf)
 
@@ -393,12 +452,96 @@ balanced_loader = DataLoader(
 )
 ```
 
+### Implementing Focal Loss for Imbalanced Classification
+
+```python
+import torch
+import torch.nn.functional as F
+
+class FocalLoss(torch.nn.Module):
+    """Focal Loss implementation for imbalanced classification.
+    
+    Paper: https://arxiv.org/abs/1708.02002
+    """
+    def __init__(self, alpha=0.25, gamma=2.0, reduction='mean'):
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.reduction = reduction
+        
+    def forward(self, inputs, targets):
+        BCE_loss = F.binary_cross_entropy_with_logits(inputs, targets, reduction='none')
+        pt = torch.exp(-BCE_loss)  # probability of the correct class
+        focal_loss = self.alpha * (1-pt)**self.gamma * BCE_loss
+        
+        if self.reduction == 'mean':
+            return focal_loss.mean()
+        elif self.reduction == 'sum':
+            return focal_loss.sum()
+        else:
+            return focal_loss
+```
+
+### Learning Rate Scheduling for Better Training
+
+```python
+def train_with_lr_scheduling(model, train_loader, val_loader, epochs=30):
+    """Train with learning rate scheduling for better convergence."""
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    
+    # Learning rate scheduler - reduces LR when validation loss plateaus
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='min', factor=0.1, patience=3, verbose=True
+    )
+    
+    train_losses = []
+    val_losses = []
+    
+    for epoch in range(epochs):
+        # Training phase
+        model.train()
+        train_loss = 0.0
+        for inputs, targets in train_loader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            loss.backward()
+            optimizer.step()
+            train_loss += loss.item()
+        
+        avg_train_loss = train_loss / len(train_loader)
+        train_losses.append(avg_train_loss)
+        
+        # Validation phase
+        model.eval()
+        val_loss = 0.0
+        with torch.no_grad():
+            for inputs, targets in val_loader:
+                outputs = model(inputs)
+                loss = criterion(outputs, targets)
+                val_loss += loss.item()
+                
+        avg_val_loss = val_loss / len(val_loader)
+        val_losses.append(avg_val_loss)
+        
+        print(f"Epoch {epoch+1}: Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}")
+        
+        # Update learning rate based on validation loss
+        scheduler.step(avg_val_loss)
+    
+    return train_losses, val_losses
+```
+
 ## Summary
 
 Proper model evaluation is essential for developing reliable and robust machine learning systems. By understanding concepts like overfitting, using appropriate data splitting techniques, implementing cross-validation, and handling data imbalances, you can build models that perform well not just on training data but in real-world applications as well.
+
+In today's rapidly evolving machine learning landscape, it's crucial to stay updated with the latest techniques for model evaluation. Modern approaches focus not just on static evaluation metrics but on building resilient models that can adapt to changing data distributions and deliver consistent performance in production environments.
 
 ## Additional Resources
 
 - The PDF guides provided with this module offer more detailed explanations and visual examples
 - Practice implementing these techniques with the code examples in the accompanying notebooks
 - Consider how these evaluation methods might be applied to your specific machine learning projects
+- For the latest developments in model evaluation, follow research publications from conferences like NeurIPS, ICML, and ICLR
