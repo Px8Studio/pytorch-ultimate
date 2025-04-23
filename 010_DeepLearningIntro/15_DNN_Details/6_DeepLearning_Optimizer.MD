@@ -31,6 +31,8 @@ Deep neural networks present unique optimization challenges:
 
 ## Types of Optimizers in PyTorch
 
+> **Note**: This section expands on the gradient descent variants introduced in [0_DeepLearningOverview.MD] and complements the training process discussion in [8_DeepLearning_EpochBatchsize.md]
+
 ### 1. Stochastic Gradient Descent (SGD)
 
 **Principle**: Updates parameters in the opposite direction of the gradient of the objective function. It's like rolling a ball down a hill and letting gravity guide it to the bottom.
@@ -380,7 +382,7 @@ Similar to Step Decay but allows specifying multiple milestones for learning rat
 ```
 lr
 ^
-|‾‾‾‾‾‾‾‾‾‾‾‾‾
+|‾‾‾‾‾‾‾‾‾‾‾
 |             ‾‾‾‾‾‾‾‾‾
 |                      ‾‾‾‾‾‾
 |                            ‾‾‾
