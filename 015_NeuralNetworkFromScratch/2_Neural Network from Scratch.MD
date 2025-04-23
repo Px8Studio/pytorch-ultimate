@@ -492,3 +492,104 @@ Okay. There is a small error. Let's see here. This, of course, I forgot to call 
 Play video starting at :1:45 and follow transcript1:45
 and see if it's now working. training successful, that's good.
 
+Foundations and Core Concepts of PyTorch
+Module 5
+Neural Network from Scratch Model Evaluation
+
+0:00
+And now we can check
+Play video starting at ::3 and follow transcript0:03
+actually how good this was performing. So we can create with Seaborn lineplot
+Play video starting at ::11 and follow transcript0:11
+of the test losses. So here for X, we just need to add still some
+Play video starting at ::19 and follow transcript0:19
+numbers. So I'm just using a list
+Play video starting at ::23 and follow transcript0:23
+which is based on a range of the length of nn. L_test. So we'll just use the length of our losses test list. And then for the vertical axis, I can just use our test classes
+Play video starting at ::45 and follow transcript0:45
+and that looks quite decent. So this is exactly the behavior that we want to see. We want to see that the losses are over time reducing more and more and then stabilizing at some point. So this is some expected behavior. So this is good. Now we can iterate over our test data to just check how the results are. So we are at first extracting the total number of observations. So this is
+Play video starting at :1:15 and follow transcript1:15
+our X_test_scale,
+Play video starting at :1:19 and follow transcript1:19
+and then we take the rows,
+Play video starting at :1:24 and follow transcript1:24
+and I'm also extracting how many correct
+Play video starting at :1:27 and follow transcript1:27
+predictions there were, and we're starting with 0, and we will land the line, then iterate it if there was the right prediction
+Play video starting at :1:36 and follow transcript1:36
+and then we are going to save our predictions in this object, y_preds,
+Play video starting at :1:42 and follow transcript1:42
+good. Now we can iterate
+Play video starting at :1:45 and follow transcript1:45
+over all the different rows, so we can iterate over this total number of rows.
+Play video starting at :1:54 and follow transcript1:54
+And here we are extracting our true values. These are coming from y_test at the position i,
+Play video starting at :2:4 and follow transcript2:04
+and the predictions of course,
+Play video starting at :2:7 and follow transcript2:07
+that
+Play video starting at :2:8 and follow transcript2:08
+needs to be coming from
+Play video starting at :2:11 and follow transcript2:11
+our forward function.
+Play video starting at :2:14 and follow transcript2:14
+And here I pass in our test data, X_ test_scale
+Play video starting at :2:20 and follow transcript2:20
+at position i, but then if I want to compare that, I need to round it. So I just call np.round, and put it round.
+Play video starting at :2:30 and follow transcript2:30
+And now we have here a number 0 1 and here a number 0 1. And
+Play video starting at :2:38 and follow transcript2:38
+before we can check their correctness, I'm just going to append this to the y_preds list,
+Play video starting at :2:46 and follow transcript2:46
+so
+Play video starting at :2:48 and follow transcript2:48
+good.
+Play video starting at :2:50 and follow transcript2:50
+And now every time some correct prediction was found, I'm adding a one to it.
+Play video starting at :2:57 and follow transcript2:57
+And when do I do that? If y_true is equal to y_pred.
+Play video starting at :3:5 and follow transcript3:05
+Otherwise I don't add anything,
+Play video starting at :3:8 and follow transcript3:08
+good.
+Play video starting at :3:11 and follow transcript3:11
+Let's run this.
+Play video starting at :3:13 and follow transcript3:13
+And now we can calculate the accuracy. So the accuracy is just the ratio of the correct predictions with respect to the total number of observations.
+Play video starting at :3:24 and follow transcript3:24
+And we have an accuracy of, let's say 82%. This is quite, quite good I would say, but we only can really be sure if we check the baseline. So it could be that the majority class has 82% of all data, and then the algorithm wouldn't be worth anything So for this always check the baseline classifier. I did this before. So I know that this is good. But I will also show you we can use from collections import Counter,
+Play video starting at :4:1 and follow transcript4:01
+and then we can apply our test data to the Counter class.
+Play video starting at :4:8 and follow transcript4:08
+And here we can see it's pretty much balanced. So we have 61 observations in the testing and the majority class is 31. So our baseline classifier has an accuracy of 52%. So our algorithm has an accuracy of 82%. So it's really valuable and it has learned something. So it's definitely much better than just pure guessing.
+Play video starting at :4:36 and follow transcript4:36
+And we can also check that in more detail with the confusion_matrix.
+Play video starting at :4:42 and follow transcript4:42
+Here we just have to put in our true values.
+Play video starting at :4:47 and follow transcript4:47
+These are coming from the y_test;
+Play video starting at :4:50 and follow transcript4:50
+and we have our predictions, these are stored in the list y_preds;
+Play video starting at :4:59 and follow transcript4:59
+good. So we have 50 correct predictions. So 25 and 25, and then the off diagonal values, these are the ones which are incorrectly predicted. So this is in total quite good. Now, you could go deeper and check out the wrong predictions and try to find out what was going wrong with them. But for now, this is fine, you could also just check different parameters. So for example, you could just play here with the learning rate and see what the impact on the development of the losses is. So you can see if you have a smaller learning rate, then it's taking much longer and it's not reaching a stable result yet. You can even go to, to larger values,
+Play video starting at :5:50 and follow transcript5:50
+at some point it's getting unstable, I would expect.
+Play video starting at :5:55 and follow transcript5:55
+0.3 is still good. So you can just play with the different values in here.
+Play video starting at :6:1 and follow transcript6:01
+Okay. This was really a lot that we have done here and I think it's super important and really helpful to have done this at least once in your life so that you really have seen how this is all stacked together. And this is what we have done here. We have imported our data and then we followed the classical machine learning steps. We have separated the independent and dependent features,
+Play video starting at :6:26 and follow transcript6:26
+then we have split the data in training and testing and we have scaled them. And then in our NeuralNetworkFromScratch class, we have worked on all the different aspects that we needed to develop our network from scratch. So we have passed some parameters at first, then we have setup our activation function,
+Play video starting at :6:50 and follow transcript6:50
+and then also some helper function for the derivative of the activation function. And then in the forward function, we are performing the forward pass through the network to get some predictions.
+Play video starting at :7:3 and follow transcript7:03
+In the backward pass we are calculating the derivatives which are needed then in the optimizer to update the weights and the bias,
+Play video starting at :7:14 and follow transcript7:14
+and then we put everything together in the training function. And in here, we are performing on the train and the test data to create predictions, calculating the losses, and subsequently updating the weights and improving the results.
+Play video starting at :7:31 and follow transcript7:31
+And finally, we have tested it on our data, and we have trained the network, we have checked the losses, and finally also checked the confusion_matrix to see how good the predictions are.
+Play video starting at :7:46 and follow transcript7:46
+So I hope you find this lecturer valuable and you have learned something and you will see it's getting simpler actually because we have PyTorch at our hand which is taking a lot of these steps. So a lot of the more complicated parts are actually taken directly under the hood by PyTorch, and we don't even have to take care of it. So when you see how the first neural network with PyTorch is looking, like you will be very grateful for all the small things that PyTorch is doing for us.
+Play video starting at :8:17 and follow transcript8:17
+So by now, we have reached the end of this lecture. Thank you very much, and see you in the next one.
+
