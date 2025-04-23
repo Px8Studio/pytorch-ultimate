@@ -81,10 +81,14 @@ The field has evolved dramatically since the 2010s, catalyzed by three key facto
     - Converts vectors to probability distributions
     - Used in multi-class classification output layers
 
+  > **Note**: For a more detailed explanation of activation functions, see the dedicated section in [4_DeepLearning_ActivationFunctions.MD]
+
 - **Loss Functions**: 
   - **Mean Squared Error**: For regression problems
   - **Cross-Entropy**: Standard for classification tasks
   - **KL Divergence**: Measures difference between probability distributions
+
+  > **Note**: For a comprehensive coverage of loss functions, refer to the loss functions section in our materials
 
 - **Gradient Descent Variants**: 
   - **Batch Gradient Descent**: Updates using the entire dataset
@@ -92,6 +96,8 @@ The field has evolved dramatically since the 2010s, catalyzed by three key facto
   - **Mini-batch SGD**: Updates using a subset of data
   - **Adam**: Adaptive learning rates with momentum
   - **RMSProp**: Adapts learning rate based on recent gradient magnitudes
+
+  > **Note**: For detailed explanations of optimizers, see [6_DeepLearning_Optimizer.MD]
 
 ## Training Process in Detail
 
@@ -112,6 +118,8 @@ The field has evolved dramatically since the 2010s, catalyzed by three key facto
 - Use gradients and learning rate to update weights and biases
 - Goal: Minimize the loss function over many iterations
 - Formula: w_new = w_old - η(∂L/∂w)
+
+> **Note**: For a deeper understanding of epochs and batch sizes in training, refer to [8_DeepLearning_EpochBatchsize.md]
 
 ## Key Advantages of Deep Learning
 - Automatic feature extraction from raw data
