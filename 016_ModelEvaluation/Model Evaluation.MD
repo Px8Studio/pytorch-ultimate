@@ -6,11 +6,12 @@ Model evaluation is a critical step in the machine learning workflow that helps 
 
 ## Learning Objectives
 
-By the end of this module, you will understand:
-- The concepts of underfitting and overfitting and how to identify them
-- How to properly split data into training, validation, and test sets
-- Cross-validation techniques and their implementation
-- Resampling methods for handling imbalanced datasets
+By the end of this module, you will:
+- Identify and address issues related to underfitting and overfitting
+- Implement the train-test split method for model evaluation
+- Utilize resampling techniques to handle imbalanced datasets
+- Understand cross-validation techniques and their implementation
+- Learn how to properly split data into training, validation, and test sets
 
 ## 1. Underfitting and Overfitting
 
@@ -24,32 +25,42 @@ Understanding the bias-variance tradeoff is fundamental to building effective ma
 ### Visual Understanding of Underfitting and Overfitting
 
 #### Regression Example
-- In **underfitting**, a linear model attempts to fit data with a non-linear (e.g., quadratic) relationship, resulting in high bias and large prediction errors
-- In **overfitting**, an overly complex model captures all noise in the training data, showing nearly perfect fit but poor generalization ability
+In regression problems, underfitting and overfitting are visually apparent:
+
+- In **underfitting**, the model is too simple for the given complexity. For example, when the relationship between x and y follows a quadratic shape, but we try to fit a linear model, the vertical differences between actual data (green points) and predicted values (blue line) are very high. This indicates high bias in the model.
+
+- In **overfitting**, the model has learned the training data too well. Nearly all points of the data are perfectly covered by the model, including all noise related to the measurement points. Such models generalize poorly to new data and won't work well in real-life situations.
 
 #### Classification Example
-- In **underfitting**, a simple linear decision boundary fails to separate classes that require a non-linear boundary, resulting in high misclassification rates
-- In **overfitting**, an extremely complex decision boundary perfectly separates all training points but incorporates noise rather than true patterns
+For classification problems with two independent variables X1 and X2:
+
+- In **underfitting**, a linear decision boundary (blue line) attempts to separate classes that require a non-linear boundary. This results in significant misclassification rates, with points predicted as one class when they actually belong to another.
+
+- In **overfitting**, an extremely complex decision boundary perfectly separates all training points, even accounting for points that are likely measurement errors rather than actual properties of the data. The model tries to predict noise, which by definition cannot be modeled.
 
 ### Bias-Variance Tradeoff
 
 Think of this like dart players aiming at a target:
 - **High bias, low variance**: The darts consistently hit the same area, but away from the bullseye
-- **High bias, high variance**: The darts are scattered widely and also miss the target center
 - **Low bias, high variance**: The darts are centered around the bullseye but widely scattered
+- **High bias, high variance**: The darts are scattered widely and also miss the target center
 - **Low bias, low variance**: The darts consistently hit the bullseye (ideal situation)
 
 In machine learning terms:
-- **Bias** is the difference between predictions and actual values on the training data
-- **Variance** is the difference between performance on training data versus validation data
+- **Bias** is the difference between predictions and actual values on the training data. High bias means the model is not well-fitted to the training data.
+- **Variance** is the difference between performance on training data versus validation data. High variance means large differences between training and validation performance.
 
 As model complexity increases:
 - Bias decreases (better fit to training data)
 - Variance increases (more likely to overfit)
 
+The goal is to find the optimal model complexity that minimizes the sum of bias error and variance error. This is known as the bias-variance tradeoff.
+
 ### Algorithm Tendencies
-- **Low variance algorithms**: Linear regression, LDA, logistic regression
+- **Low variance algorithms**: Linear regression, Linear Discriminant Analysis (LDA), logistic regression
 - **High variance algorithms**: Decision trees, K-Nearest Neighbors, Support Vector Machines
+
+These high variance algorithms train many more parameters, and you need to ensure they don't overfit by providing good training performance but poor validation performance.
 
 ### Detecting and Mitigating Overfitting
 
@@ -64,8 +75,6 @@ As model complexity increases:
 - **Pruning**: Removing unnecessary complexity from models (especially decision trees)
 - **Dropout**: Randomly deactivating neurons during training (for neural networks)
 - **Data augmentation**: Artificially increasing the training dataset size with modified examples
-
-The goal is to find the optimal model complexity that minimizes the sum of bias error and variance error.
 
 > **Supplementary Reading**: For detailed explanations and visualizations of underfitting and overfitting concepts, refer to [Underfitting and Overfitting Guide](UnderfittingOverfitting.pdf)
 
@@ -84,6 +93,17 @@ Before training any model, we need to properly split our data to enable robust e
 - **Validation data**: Data used to evaluate and fine-tune the model during development. The model occasionally sees this data but doesn't directly learn from it
 - **Test data**: Provides an unbiased evaluation of the final model. This data should only be used once after the model is completely developed
 
+The train-validation-test splitting of data is considered the gold standard in machine learning evaluation. The final model is checked with test data only once, and it should have the same distribution as the validation data.
+
+### Determining Split Proportions
+
+The optimal split depends on:
+1. The total number of samples available
+2. The complexity of the model
+3. Number of hyperparameters to tune
+
+Some models require more training data than others. The validation data needs to be large enough to detect differences between models. Models with few hyperparameters are easier to validate and require less validation data, while models with many hyperparameters need more validation data for proper tuning.
+
 ### Stratified Splitting
 
 When working with classification problems, especially imbalanced datasets, it's important to maintain the class distribution across all splits. This is achieved through stratified sampling, where the proportion of each class is preserved in training, validation, and test sets.
@@ -97,17 +117,6 @@ For time series data, random splits can lead to data leakage. Instead:
 
 This approach respects the temporal nature of the data and better simulates real-world forecasting scenarios.
 
-### Determining Split Proportions
-
-The optimal split depends on:
-1. The total number of samples available
-2. The complexity of the model
-3. Number of hyperparameters to tune
-
-Models with more hyperparameters require more validation data to properly tune. Similarly, more complex models may need larger training sets to learn effectively.
-
-Train-validation-test splitting is considered the gold standard in machine learning evaluation.
-
 > **Supplementary Reading**: See [Train-Validation-Test Split Guide](TrainValidationTest_101.pdf) for detailed procedures and best practices.
 
 ## 3. Cross-Validation Techniques
@@ -117,6 +126,11 @@ Cross-validation is a powerful method for assessing a model's performance and st
 ### The Resampling Challenge
 
 Cross-validation addresses a fundamental problem in machine learning: we want to maximize data used for training to build the best model, but we also need sufficient data for validation to ensure reliable performance assessment.
+
+This presents a dilemma:
+- The best training performance is reached if as much data as possible is used for fitting the model
+- Stable validation results require as much data as possible for validation
+- Maximizing both simultaneously is not possible
 
 ### K-Fold Cross-Validation
 
@@ -155,6 +169,8 @@ In LOOCV, we create as many folds as there are data points. Each model is traine
 **Pros**: Provides the most stable and reliable results  
 **Cons**: Computationally very expensive, especially with large datasets
 
+As the instructor noted, "The best and most stable results are achieved if you create as many folds as there are data points. You always hold one observation back for validation and create the model based on all data except for this one observation."
+
 ### Time Series Cross-Validation
 
 For time series data, specialized cross-validation techniques preserve the temporal order:
@@ -168,14 +184,14 @@ When tuning hyperparameters and evaluating model performance, nested CV uses an 
 
 ### Advantages of Cross-Validation
 
-1. Provides more stable and reliable performance estimates
+1. Provides better and more stable results than simple train-validation splits
 2. Helps compare different machine learning algorithms effectively
 3. Useful for assessing the impact of hyperparameter tuning
 4. Utilizes data more efficiently than a simple train-test split
 
 ### Disadvantages of Cross-Validation
 
-1. Computationally expensive, especially with large datasets or complex models
+1. Computationally very expensive because many different models are created
 2. May still not fully represent real-world performance if the data distribution shifts
 3. Can be challenging to implement correctly for time series or hierarchical data
 
