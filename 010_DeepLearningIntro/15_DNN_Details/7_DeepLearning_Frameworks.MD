@@ -13,6 +13,8 @@ Most deep learning frameworks share the following key components:
 5. **Pre-trained Models**: Libraries of ready-to-use architectures and weights
 6. **Deployment Tools**: Methods to move models from training to production
 
+> **Note**: The performance aspects of these components are covered in detail in [1_DeepLearningPerformance.MD]
+
 ## Major Deep Learning Frameworks
 
 ### PyTorch
