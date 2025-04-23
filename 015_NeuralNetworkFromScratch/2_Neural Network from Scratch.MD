@@ -9,6 +9,24 @@ In this module, we will guide you through the process of constructing a neural n
 *   Train and evaluate a custom neural network model.
 *   Understand the role of core components like activation functions, loss functions, gradient descent, and the chain rule.
 
+## Table of Contents
+- [Section Overview](#section-overview)
+- [Neural Network from Scratch (101 - Theory)](#neural-network-from-scratch-101---theory)
+  - [Forward Pass Explained](#forward-pass-explained)
+  - [Backward Pass Explained (Weight Updates)](#backward-pass-explained-weight-updates)
+  - [The Dot Product](#the-dot-product)
+- [Calculating the Dot Product (Coding)](#calculating-the-dot-product-coding)
+- [Neural Network from Scratch (Data Prep)](#neural-network-from-scratch-data-prep)
+- [Neural Network from Scratch Modeling](#neural-network-from-scratch-modeling)
+  - [`__init__` Function](#neural-network-from-scratch-modeling-__init__-function)
+  - [Helper Functions (Activation)](#neural-network-from-scratch-modeling-helper-functions-activation)
+  - [Forward Function](#neural-network-from-scratch-modeling-forward-function)
+  - [Backward Function](#neural-network-from-scratch-modeling-backward-function)
+  - [Optimizer Function](#neural-network-from-scratch-modeling-optimizer-function)
+  - [Train Function](#neural-network-from-scratch-modeling-train-function)
+- [Neural Network from Scratch: Model Training](#neural-network-from-scratch-model-training)
+- [Neural Network from Scratch: Model Evaluation](#neural-network-from-scratch-model-evaluation)
+
 ---
 
 ## Section Overview
@@ -48,6 +66,9 @@ Let's revisit the forward pass structure:
     *   [Timestamp 1:53] We'll use Mean Squared Error (MSE): `Loss = (y_pred - y_true)^2`. [Timestamp 1:59]
     *   The result is a single loss score.
 
+![Neural Network Forward Pass](https://raw.githubusercontent.com/yourusername/pytorch-ultimate/main/015_NeuralNetworkFromScratch/images/forward_pass_diagram.png)
+*Figure 1: Diagram showing the forward pass through our simple neural network, from input X through weights, bias, activation to final prediction.*
+
 [Timestamp 2:12]
 That completes the forward pass. The next question is: how do we update the weights and biases?
 
@@ -68,6 +89,9 @@ Imagine plotting the loss based on the difference between predictions and true v
 *   The gradient tells us the direction of the steepest ascent. To minimize loss, we move in the *opposite* direction of the gradient. [Timestamp 3:58]
 *   This process is called **Gradient Descent**.
 *   A key property of MSE: larger errors result in larger gradients, leading to bigger initial adjustments. [Timestamp 4:21]
+
+![Gradient Descent Visualization](https://raw.githubusercontent.com/yourusername/pytorch-ultimate/main/015_NeuralNetworkFromScratch/images/gradient_descent.png)
+*Figure 2: Visualization of gradient descent optimization on a loss landscape, showing how parameters are updated to minimize loss.*
 
 **The Learning Rate (`alpha`):**
 [Timestamp 4:53] Simply subtracting the full gradient might cause us to overshoot the minimum, potentially oscillating back and forth (`L1` to `L2` to `L1`...).
@@ -119,6 +143,14 @@ Consider an input vector `X` and two weight vectors `w1` and `w2`. Which weight 
 
 We'll see how to compute this easily with NumPy in the next video. Thank you.
 
+**Section Summary:**
+> **Key Takeaways from Theory:**
+> - The forward pass consists of: input → weighted sum → activation function → predictions → loss calculation
+> - The backward pass uses gradient descent to update weights by minimizing loss
+> - The chain rule allows us to calculate gradients through multiple layers
+> - Learning rate controls step size during optimization
+> - Dot products efficiently calculate weighted sums and measure vector similarity
+
 ---
 
 ## Calculating the Dot Product (Coding)
@@ -169,6 +201,13 @@ print(dot_X_w2_numpy) # Output: 2.4 [Timestamp 2:24]
 Perfect! This matches our manual (corrected) calculation and is much more concise.
 
 [Timestamp 2:24] This `np.dot` function is the final piece we need before building the full network from scratch, which we'll start in the next lecture.
+
+**Section Summary:**
+> **Key Takeaways from Dot Product:**
+> - Dot products calculate the sum of element-wise multiplication between vectors
+> - NumPy's `np.dot()` provides an efficient implementation for vectors and matrices
+> - This operation is fundamental to neural network calculations
+> - Larger dot product values often indicate greater similarity between vectors
 
 ---
 
@@ -241,6 +280,14 @@ X_test_scale = scaler.transform(X_test) [Timestamp 3:40]
 **Important:** Fit the scaler *only* on the training data to avoid data leakage from the test set.
 
 [Timestamp 4:10] With data prepared and scaled, we can now start building the neural network model itself.
+
+**Section Summary:**
+> **Key Takeaways from Data Preparation:**
+> - Split data into features (X) and target (Y) variables
+> - Further divide into training and testing sets using `train_test_split`
+> - Scale features using `StandardScaler` to normalize different feature ranges
+> - Apply the scaler only to training data first, then use the same scaler for test data
+> - Properly preprocessed data is crucial for neural network performance
 
 ---
 
@@ -504,6 +551,14 @@ The `train` function orchestrates the learning process. It iterates multiple tim
 ```
 This `train` function implements stochastic gradient descent (SGD) by processing one random sample at a time. It performs the forward pass, calculates loss, performs the backward pass to get gradients, and then updates the parameters using the optimizer. It also includes optional evaluation on the test set within the loop to monitor generalization performance, storing both training and test losses.
 
+**Section Summary:**
+> **Key Takeaways from Neural Network Implementation:**
+> - A neural network can be represented as a class with attributes for weights, biases, and data
+> - Key components include activation functions (sigmoid), forward propagation, backward propagation, and optimization
+> - The backward function implements the chain rule for calculating gradients
+> - The training process involves iteratively selecting samples, making predictions, calculating loss, and updating parameters
+> - Periodically evaluating on test data helps track generalization performance
+
 ---
 
 ## Neural Network from Scratch: Model Training
@@ -654,5 +709,6 @@ plt.show()
 *   Trained the network. [Timestamp 7:31]
 *   Evaluated performance using loss plots, accuracy, and a confusion matrix. [Timestamp 7:31, 7:46]
 
-[Timestamp 7:46] This exercise demonstrates the fundamental components of a neural network. While building from scratch is insightful, frameworks like PyTorch automate many of these steps (especially gradient calculation and optimization), making development much faster and less error-prone, as we'll see soon. [Timestamp 8:17] Thank you.
+![Neural Network Complete Architecture](https://raw.githubusercontent.com/yourusername/pytorch-ultimate/main/015_NeuralNetworkFromScratch/images/complete_nn_architecture.png)
+*Figure 3: Complete architecture of our neural network showing data flow, training process, and evaluation metrics.*
 
