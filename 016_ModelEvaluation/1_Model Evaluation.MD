@@ -32,26 +32,36 @@ Understanding the bias-variance tradeoff is fundamental to building effective ma
 - **Too complex (overfitting)**: The model learns noise rather than signal
 - **Just right (balanced fitting)**: The model captures true patterns that generalize well
 
+> 📌 **Note:** For visual representations of these concepts, refer to the `UnderfittingOverfitting.pdf` document in this folder.
+
 ### 1.1 Key Concepts Visualized
 
 #### Underfitting
 When a model is **too simple** to capture the underlying patterns in the data.
 
 > 🔍 **Analogy**: Imagine trying to draw the coastline of a country using only straight lines. No matter how hard you try, you'll miss the intricate bays, peninsulas, and curves. Your map is "underfit" because your tool (straight lines only) is too simple for the complex reality.
+>
+> For detailed examples of underfitting in different models, see the examples in `UnderfittingOverfitting.pdf`.
 
 #### Overfitting
 When a model learns the training data **too well**, including its noise and outliers.
 
 > 🔍 **Analogy**: Picture a student who memorizes an entire textbook word-for-word, including typos and printing errors. When tested on the material, they can recite it perfectly but struggle to apply the concepts to slightly different problems. They've "overfit" to the textbook rather than learning the underlying principles.
+>
+> For visual demonstrations of how overfitting affects model performance, refer to `UnderfittingOverfitting.pdf`.
 
 #### Balanced Fitting
 Finding the optimal complexity that generalizes well to new data.
 
 > 🔍 **Analogy**: A good summary of a book captures its main themes and important details without including every minor plot point. It's complex enough to be useful but simple enough to apply broadly.
+>
+> To understand how to achieve balance using validation techniques, see `TrainValidationTest_101.pdf` for a comprehensive guide.
 
 ### 1.2 The Bias-Variance Tradeoff: A Deeper Dive
 
 The bias-variance tradeoff is often explained mathematically, but let's make it intuitive:
+
+> ℹ️ For mathematical formulations and statistical explanations of the bias-variance decomposition, see the technical appendix in `ResamplingTechniques_101.pdf`.
 
 #### The Archery Analogy
 
