@@ -36,7 +36,7 @@ Understanding the bias-variance tradeoff is fundamental to building effective ma
 
 > 📌 **Note:** For visual representations of these concepts, refer to the `UnderfittingOverfitting.pdf` document in this folder.
 
-> 🌍 **Real-World Failure**: In 2008, Google launched "Google Flu Trends" to predict flu outbreaks based on search trends. Initially praised for its accuracy, by 2013 it was consistently overestimating flu prevalence by nearly double—a classic case of overfitting to early data patterns that didn't hold over time. Google eventually discontinued the service. This $200+ million project failed because the model mistook temporary correlations for lasting patterns.
+> 🌍 **Real-World Failure**: In 2008, Google launched "Google Flu Trends" to predict flu outbreaks based on search trends. Initially praised for its accuracy, by 2013 it was consistently overestimating flu prevalence by nearly double—a classic case of overfitting to early data patterns that didn't hold over time. Google eventually discontinued the service. This high-profile project failed partly because the model mistook temporary correlations for lasting patterns.
 
 > 🎮 **Microsoft Kinect's Body Tracking Breakthrough**: When developing the Kinect motion sensor, Microsoft faced a classic bias-variance dilemma. Early prototypes used simple skeletal models (high bias) that worked consistently but missed subtle movements. Later versions used complex 3D modeling (high variance) that captured intricate movements but became erratic in unusual poses or lighting conditions. The final breakthrough came when they balanced complexity: using a "forest" of decision trees to recognize body parts from depth images. This middle-ground approach reduced error rates from 26% to 4% across diverse users while maintaining real-time performance. Microsoft's engineers explicitly framed this as finding the sweet spot in the bias-variance tradeoff, creating technology that ultimately sold over 35 million units.
 
@@ -75,10 +75,10 @@ The bias-variance tradeoff is often explained mathematically, but let's make it 
 >
 > - **High Bias (Underfitting)**: The archer consistently misses the target in the same direction. Their aim is systematically off.
 >   - *In ML terms*: The model makes consistent, systematic errors because it's too simple to capture the true pattern.
-> 
+>
 > - **High Variance (Overfitting)**: The archer's arrows are scattered widely across the target with no consistent pattern.
 >   - *In ML terms*: The model is highly sensitive to small fluctuations in the training data, performing differently each time.
-> 
+>
 > - **Low Bias, Low Variance (Ideal)**: The archer consistently hits near the bullseye with tight grouping.
 >   - *In ML terms*: The model accurately captures the underlying pattern without being thrown off by noise.
 
@@ -334,7 +334,7 @@ Data leakage has caused notable failures in production systems:
 - Financial models that appeared to "predict" market crashes but actually used post-crash data
 - Recommendation systems that worked in testing but failed to influence customer behavior
 
-> 🏦 **The FICO Competition Cautionary Tale**: In 2019, a major credit scoring competition on Kaggle had to be restarted after participants discovered target leakage in the dataset. The data contained variables that were unintentionally created after loan defaults had already occurred. Several teams achieved "magical" 100% accuracy by identifying and exploiting these leak variables. This incident highlighted how even financial experts with decades of experience can accidentally introduce leakage, reinforcing why rigorous leakage detection must be part of every data scientist's toolkit.
+> 🏦 **The FICO Competition Cautionary Tale**: In 2018, the FICO x Kaggle Explainable Machine Learning Challenge had to be carefully managed after participants discovered potential target leakage in the dataset. The data contained variables that could have been unintentionally influenced by loan outcomes. Several teams achieved very high accuracy by identifying and potentially exploiting these leak variables. This incident highlighted how even carefully prepared datasets can contain subtle leakage, reinforcing why rigorous leakage detection must be part of every data scientist's toolkit.
 
 > 💸 **Netflix's $1 Million Algorithm That Was Never Used**: After Netflix awarded a $1 million prize for an algorithm that could improve movie recommendations by 10%, they never implemented the winning solution. Why? The competition data didn't account for how Netflix's business had evolved—they had shifted from DVD rentals to streaming. The carefully optimized algorithm solved yesterday's problem, not tomorrow's. This famous case demonstrates how evaluation must consider not just statistical performance but business evolution as well.
 
@@ -402,7 +402,7 @@ In LOOCV, we create as many folds as there are data points. Each model is traine
 
 > 🔍 **Analogy**: Imagine you're preparing for a major cooking competition but can only afford a very limited amount of expensive ingredients. Instead of dividing your ingredients into training and testing portions, you cook repeatedly using almost all ingredients, leaving out just one piece each time to taste and evaluate. This maximizes your practice while still getting feedback on each component. LOOCV similarly maximizes training data while still validating on each individual sample.
 
-**Pros**: Provides the most stable and reliable results  
+**Pros**: Provides the most stable and reliable results
 **Cons**: Computationally very expensive, especially with large datasets
 
 > 🏛️ **How Cross-Validation Saved Taxpayers $3 Million**: A government agency was evaluating machine learning systems to detect fraudulent transactions. Initial evaluations based on a single train-test split suggested Algorithm A was superior. However, before committing to a $3 million implementation, they ran 10-fold cross-validation, revealing that Algorithm B was actually more consistent and performed better on average. This extra evaluation step, which took just three days to complete, prevented the selection of a less reliable system—a remarkable return on investment for such a simple technique.
@@ -529,7 +529,7 @@ Standard accuracy is misleading for imbalanced datasets. Instead, use:
 - **Balanced Accuracy**: The average of recall obtained on each class
 - **Matthews Correlation Coefficient**: A correlation coefficient between predicted and observed classifications
 
-> 📊 **PayPal's Fraud Detection Revolution**: PayPal processes over $700 billion in payments annually, with fraud representing less than 0.3% of transactions—a classic imbalanced dataset problem. Their early models had high accuracy but missed many fraudulent transactions. After implementing SMOTE combined with cost-sensitive learning, they reduced fraud by an additional 10% while decreasing false positives by 8%. This improvement saved over $2 billion in fraudulent transactions annually while improving customer experience by reducing false flags on legitimate purchases.
+> 📊 **PayPal's Fraud Detection Revolution**: PayPal processes over $700 billion in payments annually, with fraud representing less than 0.3% of transactions—a classic imbalanced dataset problem. Their early models had high accuracy but missed many fraudulent transactions. After implementing advanced techniques like SMOTE combined with cost-sensitive learning within their broader fraud detection systems, they significantly reduced fraud losses while decreasing false positives. These improvements contribute to saving substantial amounts annually while improving customer experience by reducing false flags on legitimate purchases.
 
 > 🩺 **The Rarity Challenge in Medical Imaging**: When researchers at MIT were developing systems to detect a rare form of brain cancer (occurring in <0.01% of scans), traditional approaches achieved 99.9% accuracy by simply classifying everything as negative. Using a combination of generative adversarial networks to generate synthetic examples and focal loss to emphasize the minority class, they created a system that achieved 97% sensitivity (true positive rate) while maintaining 99.5% specificity. The system is now helping radiologists identify cases they might otherwise miss during initial screening.
 
@@ -570,15 +570,26 @@ def plot_learning_curves(train_losses, val_losses):
     if not val_losses: # Handle empty validation losses
         print("Validation losses are empty, cannot detect overfitting.")
         return
+    # Ensure val_losses is a numpy array for argmin
+    val_losses = np.array(val_losses)
+    if len(val_losses) < 2: # Need at least two points to detect a trend
+        print("Not enough epochs to determine overfitting trend based on validation loss.")
+        return
+
     divergence_point = np.argmin(val_losses)
-    if divergence_point < len(val_losses) - 1 and val_losses[-1] > val_losses[divergence_point]:
-        print(f"Potential overfitting detected after epoch {divergence_point + 1}")
-        print(f"Minimum validation loss was {val_losses[divergence_point]:.4f} at epoch {divergence_point + 1}.")
-        print(f"Consider early stopping around epoch {divergence_point + 1}")
-    elif len(val_losses) > 1:
-         print(f"No clear overfitting detected based on validation loss trend. Minimum validation loss: {np.min(val_losses):.4f}")
+    min_val_loss = val_losses[divergence_point]
+
+    # Check if loss increased significantly after the minimum
+    # A simple check: did the loss at the end increase compared to the minimum?
+    if divergence_point < len(val_losses) - 1 and val_losses[-1] > min_val_loss:
+        # More robust check: did the loss consistently increase after the minimum?
+        # Or simply note the point of minimum validation loss as potential early stopping point.
+        print(f"Potential overfitting detected. Minimum validation loss was {min_val_loss:.4f} at epoch {divergence_point + 1}.")
+        print(f"Validation loss at final epoch ({len(val_losses)}): {val_losses[-1]:.4f}")
+        print(f"Consider early stopping around epoch {divergence_point + 1} or using the model from that epoch.")
     else:
-        print("Not enough epochs to determine overfitting trend.")
+         print(f"No clear overfitting detected based on validation loss trend. Minimum validation loss: {min_val_loss:.4f} at epoch {divergence_point + 1}.")
+
 
 ```
 
@@ -587,8 +598,8 @@ def plot_learning_curves(train_losses, val_losses):
 ```python
 # filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\data_split.py
 from sklearn.model_selection import train_test_split
-from torch.utils.data import SubsetRandomSampler, DataLoader, Subset
-import torch
+# ...existing code...
+import numpy as np # Ensure numpy is imported
 
 def create_data_loaders(dataset, batch_size=32, train_size=0.7, val_size=0.15, test_size=0.15, random_state=42, stratify=None):
     """Create train, validation and test data loaders from a single dataset, with optional stratification."""
@@ -600,65 +611,102 @@ def create_data_loaders(dataset, batch_size=32, train_size=0.7, val_size=0.15, t
         raise ValueError("train_size, val_size, and test_size must sum to 1.0")
 
     # Determine target labels for stratification if needed
-    stratify_labels = None
+    stratify_labels_array = None # Use a different name to avoid confusion
     if stratify:
         # Attempt to get labels; adapt based on dataset type (e.g., TensorDataset, torchvision Dataset)
+        targets_for_stratify = None
         if hasattr(dataset, 'targets'):
-            stratify_labels = dataset.targets
+            targets_for_stratify = dataset.targets
         elif isinstance(dataset, torch.utils.data.TensorDataset):
              # Assuming the last tensor in the tuple is the target
-            stratify_labels = dataset.tensors[-1]
+            targets_for_stratify = dataset.tensors[-1]
         elif isinstance(dataset, torch.utils.data.Subset):
              # Handle Subset objects if stratification is needed
-             if hasattr(dataset.dataset, 'targets'):
-                 stratify_labels = [dataset.dataset.targets[i] for i in dataset.indices]
-             elif isinstance(dataset.dataset, torch.utils.data.TensorDataset):
-                 stratify_labels = dataset.dataset.tensors[-1][dataset.indices]
+             original_dataset = dataset.dataset
+             original_indices = dataset.indices
+             if hasattr(original_dataset, 'targets'):
+                 targets_for_stratify = [original_dataset.targets[i] for i in original_indices]
+             elif isinstance(original_dataset, torch.utils.data.TensorDataset):
+                 targets_for_stratify = original_dataset.tensors[-1][original_indices]
              else:
                  print("Warning: Stratification requested but cannot determine labels for Subset. Proceeding without stratification.")
         else:
-            print("Warning: Stratification requested but cannot determine labels. Proceeding without stratification.")
-        
+            # Try getting targets via __getitem__ if possible, assuming targets are the second element
+            try:
+                targets_for_stratify = [dataset[i][1] for i in range(num_samples)] # Less reliable, might be slow
+                print("Attempting to extract targets via __getitem__ for stratification.")
+            except Exception as e:
+                print(f"Warning: Stratification requested but cannot determine labels automatically ({e}). Proceeding without stratification.")
+
+
         # Ensure stratify_labels is a list or numpy array for sklearn
-        if torch.is_tensor(stratify_labels):
-            stratify_labels = stratify_labels.cpu().numpy()
-        elif isinstance(stratify_labels, list):
-             stratify_labels = np.array(stratify_labels) # Ensure numpy array for sklearn compatibility
+        if targets_for_stratify is not None:
+            if torch.is_tensor(targets_for_stratify):
+                stratify_labels_array = targets_for_stratify.cpu().numpy()
+            elif isinstance(targets_for_stratify, list):
+                 stratify_labels_array = np.array(targets_for_stratify) # Ensure numpy array for sklearn compatibility
+            elif isinstance(targets_for_stratify, np.ndarray):
+                 stratify_labels_array = targets_for_stratify
+            else:
+                 print(f"Warning: Determined targets are of unexpected type {type(targets_for_stratify)}. Proceeding without stratification.")
+
 
         # Check if stratification is possible
-        if stratify_labels is None or len(np.unique(stratify_labels)) < 2:
-             print("Warning: Not enough classes for stratification or labels unavailable. Proceeding without stratification.")
-             stratify_labels = None # Disable stratification
+        if stratify_labels_array is None or len(np.unique(stratify_labels_array)) < 2:
+             print("Warning: Not enough classes for stratification or labels unavailable/unsuitable. Proceeding without stratification.")
+             stratify_labels_array = None # Disable stratification
 
 
     # First split: temporary train and test
+    # Use stratify_labels_array directly if available
+    stratify_param_1 = stratify_labels_array if stratify_labels_array is not None else None
     temp_train_idx, test_idx = train_test_split(
         indices,
         test_size=test_size,
         random_state=random_state,
-        stratify=stratify_labels[indices] if stratify_labels is not None else None # Stratify the split
+        stratify=stratify_param_1
     )
 
     # Adjust validation size relative to the remaining data
-    relative_val_size = val_size / (train_size + val_size)
+    # Avoid division by zero if train_size + val_size is close to zero
+    if np.isclose(train_size + val_size, 0.0):
+         relative_val_size = 0 # Or handle as an error case
+         if val_size > 0:
+              print("Warning: train_size + val_size is zero, cannot calculate relative_val_size.")
+    else:
+        relative_val_size = val_size / (train_size + val_size)
+
 
     # Prepare labels for the second split if stratifying
-    stratify_labels_temp_train = None
-    if stratify_labels is not None:
-        stratify_labels_temp_train = stratify_labels[temp_train_idx]
+    stratify_param_2 = None
+    if stratify_labels_array is not None:
+        stratify_labels_temp_train = stratify_labels_array[temp_train_idx]
          # Check if stratification is possible for the second split
         if len(np.unique(stratify_labels_temp_train)) < 2:
              print("Warning: Not enough classes for stratification in the second split. Proceeding without stratification for train/val split.")
-             stratify_labels_temp_train = None
+        else:
+             stratify_param_2 = stratify_labels_temp_train
 
 
     # Second split: train and validation from the temporary train
-    train_idx, val_idx = train_test_split(
-        temp_train_idx,
-        test_size=relative_val_size,
-        random_state=random_state,
-        stratify=stratify_labels_temp_train # Stratify the second split
-    )
+    # Handle case where temp_train_idx might be empty or too small for split
+    if len(temp_train_idx) == 0:
+         train_idx, val_idx = [], []
+         print("Warning: No samples left for training/validation split.")
+    elif relative_val_size == 0: # Only training data left
+         train_idx = temp_train_idx
+         val_idx = []
+    elif relative_val_size == 1: # Only validation data left (unusual case)
+         train_idx = []
+         val_idx = temp_train_idx
+    else:
+        train_idx, val_idx = train_test_split(
+            temp_train_idx,
+            test_size=relative_val_size,
+            random_state=random_state,
+            stratify=stratify_param_2 # Stratify the second split if possible
+        )
+
 
     # Create data samplers (using Subset instead of SubsetRandomSampler for clarity and potential shuffling in DataLoader)
     train_dataset = Subset(dataset, train_idx)
@@ -667,11 +715,18 @@ def create_data_loaders(dataset, batch_size=32, train_size=0.7, val_size=0.15, t
 
     # Create the data loaders
     # Shuffle training data, but not validation or test data
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    # Handle empty datasets in loaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True) if train_dataset else None
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False) if val_dataset else None
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False) if test_dataset else None
+
 
     print(f"Data split: Train={len(train_idx)}, Validation={len(val_idx)}, Test={len(test_idx)}")
+    # Provide warnings if any set is empty
+    if not train_idx: print("Warning: Training set is empty.")
+    if not val_idx: print("Warning: Validation set is empty.")
+    if not test_idx: print("Warning: Test set is empty.")
+
     return train_loader, val_loader, test_loader
 
 ```
@@ -681,11 +736,7 @@ def create_data_loaders(dataset, batch_size=32, train_size=0.7, val_size=0.15, t
 ```python
 # filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\cv.py
 from sklearn.model_selection import KFold, StratifiedKFold
-import numpy as np
-import torch
-from torch.utils.data import Subset, DataLoader
-# Assume evaluate_model function exists and returns a performance metric (e.g., accuracy, loss)
-# from evaluation import evaluate_model # Placeholder for your evaluation function
+# ...existing code...
 
 # Placeholder for evaluate_model - replace with your actual evaluation logic
 def evaluate_model(model, data_loader, criterion):
@@ -694,6 +745,10 @@ def evaluate_model(model, data_loader, criterion):
     correct_predictions = 0
     total_samples = 0
     device = next(model.parameters()).device # Get model device
+
+    if not data_loader or len(data_loader.dataset) == 0:
+         print("Warning: Validation data loader is empty or has no samples.")
+         return 0.0 # Return a default value, e.g., 0 accuracy or infinite loss
 
     with torch.no_grad():
         for inputs, targets in data_loader:
@@ -706,6 +761,10 @@ def evaluate_model(model, data_loader, criterion):
             total_samples += targets.size(0)
             correct_predictions += (predicted == targets).sum().item()
 
+    if total_samples == 0:
+        print("Warning: No samples found during evaluation.")
+        return 0.0 # Avoid division by zero
+
     avg_loss = total_loss / total_samples
     accuracy = correct_predictions / total_samples
     print(f"Validation - Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}")
@@ -715,29 +774,80 @@ def evaluate_model(model, data_loader, criterion):
 
 def k_fold_cross_validation(dataset, model_class, k=5, batch_size=32, epochs=10, lr=0.001, random_state=42, stratify=False, **model_args):
     """Perform k-fold cross-validation with PyTorch models, with optional stratification."""
-    
+
     # Determine target labels for stratification if needed
     targets = None
     if stratify:
+        # Enhanced target extraction logic
         if hasattr(dataset, 'targets'):
-            targets = np.array(dataset.targets)
+            targets = dataset.targets
         elif isinstance(dataset, torch.utils.data.TensorDataset):
-            targets = dataset.tensors[-1].cpu().numpy()
+            targets = dataset.tensors[-1]
+        elif hasattr(dataset, 'dataset') and hasattr(dataset.dataset, 'targets') and hasattr(dataset, 'indices'):
+             # Handle Subset objects
+             targets = [dataset.dataset.targets[i] for i in dataset.indices]
         else:
-            print("Warning: Stratification requested but cannot determine labels. Using standard KFold.")
-            stratify = False # Disable stratification if labels aren't easily accessible
+            try:
+                # Attempt extraction via __getitem__ as a fallback
+                print("Attempting target extraction via __getitem__ for stratification...")
+                targets = [dataset[i][1] for i in range(len(dataset))]
+                print("Target extraction via __getitem__ successful.")
+            except Exception as e:
+                print(f"Warning: Stratification requested but cannot determine labels automatically ({e}). Using standard KFold.")
+                stratify = False # Disable stratification if labels aren't easily accessible
+
+        # Convert targets to numpy array if successfully extracted
+        if targets is not None:
+             if torch.is_tensor(targets):
+                 targets = targets.cpu().numpy()
+             elif isinstance(targets, list):
+                 targets = np.array(targets)
+             elif not isinstance(targets, np.ndarray):
+                 print(f"Warning: Targets are of unexpected type {type(targets)}. Disabling stratification.")
+                 targets = None
+                 stratify = False
+
 
         # Check if stratification is possible
-        if targets is not None and len(np.unique(targets)) < k:
-             print(f"Warning: Number of unique classes ({len(np.unique(targets))}) is less than k={k}. Stratification might behave unexpectedly or fail. Consider reducing k or disabling stratification.")
-             # You might still proceed, but be aware of potential issues with very small classes.
-        elif targets is None:
-             stratify = False # Ensure stratification is disabled if targets are None
+        if targets is not None:
+            unique_classes, counts = np.unique(targets, return_counts=True)
+            if len(unique_classes) < 2:
+                 print("Warning: Only one class found. Stratification is not applicable. Using standard KFold.")
+                 stratify = False
+            elif len(unique_classes) < k:
+                 print(f"Warning: Number of unique classes ({len(unique_classes)}) is less than k={k}. Stratification might behave unexpectedly or fail, especially if classes have fewer samples than k.")
+                 # Check if any class has fewer samples than k, which guarantees failure for StratifiedKFold
+                 if any(count < k for count in counts):
+                      print(f"Error: At least one class has fewer samples ({min(counts)}) than k={k}. Cannot perform StratifiedKFold. Use standard KFold or reduce k.")
+                      # Optionally: Force standard KFold or raise an error
+                      # stratify = False
+                      raise ValueError(f"Cannot perform StratifiedKFold with k={k} as minimum class count is {min(counts)}")
+            elif any(count < k for count in counts):
+                 # This condition is problematic for StratifiedKFold
+                 print(f"Warning: At least one class has fewer samples ({min(counts)}) than k={k}. StratifiedKFold requires at least k samples per class. This will likely cause an error.")
+                 # Consider raising an error or switching to standard KFold
+                 raise ValueError(f"Cannot perform StratifiedKFold with k={k} as minimum class count is {min(counts)}")
+
+        elif stratify: # If stratify was true but targets are None
+             print("Warning: Stratification requested but targets could not be determined. Using standard KFold.")
+             stratify = False
 
 
-    if stratify:
+    if stratify and targets is not None:
+        # Ensure targets is 1D array for StratifiedKFold
+        if len(targets.shape) > 1:
+             print(f"Warning: Targets array has shape {targets.shape}. Attempting to use the first dimension for stratification.")
+             # This might need adjustment based on target format (e.g., argmax for one-hot)
+             if targets.shape[1] > 1: # Likely one-hot encoded
+                  targets_for_split = np.argmax(targets, axis=1)
+             else:
+                  targets_for_split = targets.flatten() # Assume single column
+        else:
+             targets_for_split = targets
+
         kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=random_state)
-        split_generator = kf.split(np.arange(len(dataset)), targets) # Need targets for StratifiedKFold
+        # Use np.arange(len(dataset)) as the first argument for split
+        split_generator = kf.split(np.arange(len(dataset)), targets_for_split)
         print(f"Using Stratified {k}-Fold Cross-Validation.")
     else:
         kf = KFold(n_splits=k, shuffle=True, random_state=random_state)
@@ -750,6 +860,12 @@ def k_fold_cross_validation(dataset, model_class, k=5, batch_size=32, epochs=10,
 
     for fold, (train_idx, val_idx) in enumerate(split_generator):
         print(f"\n--- Training fold {fold+1}/{k} ---")
+        print(f"Train indices: {len(train_idx)}, Validation indices: {len(val_idx)}")
+        if len(train_idx) == 0 or len(val_idx) == 0:
+             print(f"Warning: Fold {fold+1} has empty train or validation set. Skipping fold.")
+             fold_performances.append(np.nan) # Record as NaN or skip
+             continue
+
 
         # Create subsets for this fold
         train_subset = Subset(dataset, train_idx)
@@ -769,18 +885,31 @@ def k_fold_cross_validation(dataset, model_class, k=5, batch_size=32, epochs=10,
         for epoch in range(epochs):
             model.train()
             epoch_loss = 0.0
-            for batch_idx, (inputs, targets) in enumerate(train_loader):
-                inputs, targets = inputs.to(device), targets.to(device)
+            samples_processed = 0
+            for batch_idx, batch_data in enumerate(train_loader):
+                # Handle different dataset structures (e.g., tuple vs single tensor)
+                if isinstance(batch_data, (list, tuple)):
+                    inputs, targets = batch_data[0].to(device), batch_data[1].to(device)
+                else:
+                    # Assume input is data, need separate targets (might not work for all cases)
+                    inputs = batch_data.to(device)
+                    # This case needs clarification on how targets are obtained
+                    raise ValueError("Dataset structure not recognized (expected tuple/list of inputs, targets)")
+
 
                 optimizer.zero_grad()
                 outputs = model(inputs)
                 loss = criterion(outputs, targets)
                 loss.backward()
                 optimizer.step()
-                epoch_loss += loss.item()
-            
-            avg_epoch_loss = epoch_loss / len(train_loader)
-            print(f"Fold {fold+1}, Epoch {epoch+1}/{epochs}, Train Loss: {avg_epoch_loss:.4f}")
+                epoch_loss += loss.item() * inputs.size(0) # Weighted by batch size
+                samples_processed += inputs.size(0)
+
+            if samples_processed > 0:
+                avg_epoch_loss = epoch_loss / samples_processed
+                print(f"Fold {fold+1}, Epoch {epoch+1}/{epochs}, Train Loss: {avg_epoch_loss:.4f}")
+            else:
+                print(f"Fold {fold+1}, Epoch {epoch+1}/{epochs}, No training samples processed.")
             # Optional: Evaluate on validation set each epoch if needed
             # evaluate_model(model, val_loader, criterion)
 
@@ -792,13 +921,20 @@ def k_fold_cross_validation(dataset, model_class, k=5, batch_size=32, epochs=10,
         print(f"Fold {fold+1} Performance: {val_performance:.4f}")
 
 
-    # Calculate average performance across folds
-    avg_performance = np.mean(fold_performances)
-    std_performance = np.std(fold_performances)
+    # Calculate average performance across folds, ignoring NaNs if any folds were skipped
+    valid_performances = [p for p in fold_performances if not np.isnan(p)]
+    if not valid_performances:
+         print("\n--- Cross-Validation Summary ---")
+         print("No valid fold performances recorded.")
+         return [], np.nan, np.nan
+
+    avg_performance = np.mean(valid_performances)
+    std_performance = np.std(valid_performances)
+
 
     print("\n--- Cross-Validation Summary ---")
-    print(f"Fold Performances: {[f'{p:.4f}' for p in fold_performances]}")
-    print(f"Average Performance: {avg_performance:.4f} ± {std_performance:.4f}")
+    print(f"Fold Performances: {[f'{p:.4f}' if not np.isnan(p) else 'NaN' for p in fold_performances]}")
+    print(f"Average Performance (over {len(valid_performances)} valid folds): {avg_performance:.4f} ± {std_performance:.4f}")
     return fold_performances, avg_performance, std_performance
 
 ```
@@ -808,23 +944,62 @@ def k_fold_cross_validation(dataset, model_class, k=5, batch_size=32, epochs=10,
 ```python
 # filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\resampling.py
 import torch
-from torch.utils.data import WeightedRandomSampler, DataLoader
-import numpy as np
+# ...existing code...
 
 def create_balanced_sampler(dataset):
     """Create a weighted sampler to handle imbalanced datasets based on dataset targets."""
     # Attempt to get targets from the dataset
     targets = None
+    dataset_len = len(dataset) # Get length once
+
     if hasattr(dataset, 'targets'):
         targets = dataset.targets
-    elif isinstance(dataset, torch.utils.data.TensorDataset):
+        # Ensure targets length matches dataset length
+        if len(targets) != dataset_len:
+             print(f"Warning: Length of dataset.targets ({len(targets)}) does not match dataset length ({dataset_len}). Attempting fallback.")
+             targets = None # Reset targets if length mismatch
+
+    if targets is None and isinstance(dataset, torch.utils.data.TensorDataset):
         # Assuming the last tensor is the target
         targets = dataset.tensors[-1]
-    elif hasattr(dataset, 'dataset') and hasattr(dataset.dataset, 'targets') and hasattr(dataset, 'indices'):
-         # Handle Subset objects
-         targets = [dataset.dataset.targets[i] for i in dataset.indices]
-    else:
-        raise ValueError("Could not automatically determine targets for balancing. Ensure dataset has 'targets' attribute or is a TensorDataset.")
+        if len(targets) != dataset_len:
+             print(f"Warning: Length of TensorDataset targets ({len(targets)}) does not match dataset length ({dataset_len}). Attempting fallback.")
+             targets = None
+
+    if targets is None and isinstance(dataset, torch.utils.data.Subset):
+         # Handle Subset objects more robustly
+         original_dataset = dataset.dataset
+         original_indices = dataset.indices
+         if hasattr(original_dataset, 'targets'):
+             # Ensure original_dataset.targets is indexable and has correct length
+             try:
+                 original_targets = original_dataset.targets
+                 if len(original_targets) == len(original_dataset):
+                      targets = [original_targets[i] for i in original_indices]
+                 else:
+                      print(f"Warning: Length mismatch in original dataset targets for Subset. Fallback.")
+             except Exception as e:
+                 print(f"Warning: Error accessing original targets for Subset ({e}). Fallback.")
+         elif isinstance(original_dataset, torch.utils.data.TensorDataset):
+             try:
+                 original_targets = original_dataset.tensors[-1]
+                 if len(original_targets) == len(original_dataset):
+                      targets = original_targets[original_indices]
+                 else:
+                      print(f"Warning: Length mismatch in original TensorDataset targets for Subset. Fallback.")
+             except Exception as e:
+                 print(f"Warning: Error accessing original TensorDataset targets for Subset ({e}). Fallback.")
+
+
+    if targets is None:
+        # Fallback: try iterating with __getitem__
+        print("Attempting target extraction via __getitem__ for balancing...")
+        try:
+            targets = [dataset[i][1] for i in range(dataset_len)] # Assumes target is the second element
+            print("Target extraction via __getitem__ successful.")
+        except Exception as e:
+            raise ValueError(f"Could not automatically determine targets for balancing. Ensure dataset has 'targets' attribute, is a TensorDataset, or supports target access via __getitem__[1]. Error: {e}")
+
 
     if not isinstance(targets, torch.Tensor):
         targets = torch.tensor(targets) # Convert to tensor if necessary
@@ -832,29 +1007,51 @@ def create_balanced_sampler(dataset):
     # Ensure targets are integer type for bincount
     if not targets.dtype in [torch.int, torch.long]:
          print(f"Warning: Targets dtype is {targets.dtype}. Casting to long for bincount.")
-         targets = targets.long()
+         # Check for non-integer values before casting
+         if torch.is_floating_point(targets):
+              # Check if float values are effectively integers
+              if not torch.all(targets == targets.long()):
+                   raise ValueError("Targets contain non-integer values and cannot be cast to long for bincount.")
+         try:
+             targets = targets.long()
+         except RuntimeError as e:
+             raise ValueError(f"Failed to cast targets to long for bincount. Check target values. Error: {e}")
 
 
     # Calculate class counts and weights
+    if len(targets) == 0:
+         print("Warning: Dataset is empty. Cannot create sampler.")
+         # Return None or handle appropriately
+         return None
+
     class_counts = torch.bincount(targets)
     # Ensure class_counts covers all potential classes if targets are 0-indexed
     num_classes = class_counts.size(0)
     # Handle potential missing classes in the current subset/dataset
+    # Use max target value + 1 as the number of classes, only if targets exist
     total_classes = int(targets.max().item() + 1) if len(targets) > 0 else 0
     if total_classes > num_classes:
         # Pad class_counts with zeros for missing classes
-        padded_counts = torch.zeros(total_classes, dtype=class_counts.dtype)
+        padded_counts = torch.zeros(total_classes, dtype=class_counts.dtype, device=class_counts.device)
         padded_counts[:num_classes] = class_counts
         class_counts = padded_counts
+    elif total_classes < num_classes and total_classes > 0:
+         # This case might happen if max label is less than expected number of classes
+         # Ensure class_weights has the right size based on bincount result
+         total_classes = num_classes
 
 
     # Avoid division by zero for classes not present in the dataset/subset
-    class_weights = torch.zeros_like(class_counts, dtype=torch.float)
+    # Initialize weights for potentially all classes up to max index + 1
+    class_weights = torch.zeros(total_classes, dtype=torch.float, device=targets.device)
     present_classes_mask = class_counts > 0
-    class_weights[present_classes_mask] = 1. / class_counts[present_classes_mask].float()
+    # Only calculate weights for classes actually present (indices < num_classes)
+    indices_present = torch.where(present_classes_mask)[0]
+    if len(indices_present) > 0:
+         class_weights[indices_present] = 1. / class_counts[indices_present].float()
 
 
-    # Assign weights to each sample
+    # Assign weights to each sample using the original targets tensor
     sample_weights = class_weights[targets]
 
     # Create a weighted sampler
@@ -863,19 +1060,10 @@ def create_balanced_sampler(dataset):
         num_samples=len(sample_weights), # Draw samples equal to the original dataset size
         replacement=True # Oversampling requires replacement
     )
-    print(f"Created WeightedRandomSampler. Class counts: {class_counts.tolist()}. Class weights: {class_weights.tolist()[:10]}...") # Print first 10 weights
+    print(f"Created WeightedRandomSampler. Class counts: {class_counts.tolist()}. Class weights (first 10): {class_weights.tolist()[:10]}...")
     return sampler
 
-# Example Usage (within your training script)
-# train_dataset = ... # Your training dataset (e.g., after splitting)
-# balanced_sampler = create_balanced_sampler(train_dataset)
-# balanced_train_loader = DataLoader(
-#     train_dataset,
-#     batch_size=32,
-#     sampler=balanced_sampler # Use the sampler instead of shuffle=True
-# )
-# # Use balanced_train_loader in your training loop
-
+# ...existing code...
 ```
 
 ### Implementing Focal Loss for Imbalanced Classification
@@ -883,29 +1071,11 @@ def create_balanced_sampler(dataset):
 ```python
 # filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\losses.py
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+# ...existing code...
 
 class FocalLoss(nn.Module):
     """Focal Loss implementation for imbalanced classification.
-    Reduces the loss contribution from easy examples and focuses on hard negatives.
-    Useful for dense object detection or highly imbalanced classification.
-
-    Paper: https://arxiv.org/abs/1708.02002
-
-    Args:
-        alpha (float, optional): Weighting factor for balancing positive/negative examples.
-                                 Typically alpha for foreground class, 1-alpha for background.
-                                 Defaults to 0.25. Set to -1 to disable alpha weighting.
-        gamma (float, optional): Focusing parameter. Higher values give more focus to hard examples.
-                                 Defaults to 2.0.
-        reduction (str, optional): Specifies the reduction to apply to the output:
-                                   'none' | 'mean' | 'sum'. 'none': no reduction will be applied,
-                                   'mean': the sum of the output will be divided by the number of
-                                           elements in the output, 'sum': the output will be summed.
-                                   Defaults to 'mean'.
-        logits (bool, optional): If True, inputs are assumed to be logits (before sigmoid/softmax).
-                                 If False, inputs are probabilities. Defaults to True.
+    # ... (rest of docstring) ...
     """
     def __init__(self, alpha=0.25, gamma=2.0, reduction='mean', logits=True):
         super(FocalLoss, self).__init__()
@@ -918,6 +1088,12 @@ class FocalLoss(nn.Module):
         self.gamma = gamma
         self.reduction = reduction
         self.logits = logits
+        # Store alpha as a buffer if it's a tensor, for device handling
+        if isinstance(alpha, torch.Tensor):
+             self.register_buffer('alpha_tensor', alpha)
+        else:
+             self.alpha_tensor = None # Indicate alpha is scalar or disabled
+
 
     def forward(self, inputs, targets):
         """
@@ -930,86 +1106,133 @@ class FocalLoss(nn.Module):
         Returns:
             Tensor: The calculated focal loss.
         """
-        num_classes = inputs.shape[1] if len(inputs.shape) > 1 else 1
+        # Determine number of classes C
+        if len(inputs.shape) > 1 and inputs.shape[1] > 1: # Multi-class (N, C)
+             num_classes = inputs.shape[1]
+             input_type = 'multiclass'
+        else: # Binary or single-output regression-like (N,) or (N, 1)
+             # Treat as binary classification for loss calculation
+             num_classes = 1
+             input_type = 'binary'
+             # Ensure inputs has shape (N, 1) for consistency if originally (N,)
+             if len(inputs.shape) == 1:
+                  inputs = inputs.unsqueeze(1)
 
-        # Ensure targets are long type and have correct shape
-        if targets.dtype != torch.long:
+
+        # --- Target Preparation ---
+        # Ensure targets are long type for class indices
+        if targets.dtype != torch.long and not torch.is_floating_point(targets): # Allow float targets if already one-hot
             targets = targets.long()
-        if len(targets.shape) == 1:
-             if num_classes > 1: # Multi-class
-                 targets = F.one_hot(targets, num_classes=num_classes)
-             elif num_classes == 1: # Binary case, ensure shape (N, 1)
-                 targets = targets.unsqueeze(1)
-        
-        # Ensure targets are float for calculations
-        targets = targets.float()
+
+        # Convert targets to one-hot format if needed (for multi-class)
+        if input_type == 'multiclass':
+            if len(targets.shape) == 1: # Class indices (N,)
+                targets_one_hot = F.one_hot(targets, num_classes=num_classes).float()
+            elif len(targets.shape) == 2 and targets.shape[1] == num_classes: # Already one-hot (N, C)
+                targets_one_hot = targets.float()
+            else:
+                raise ValueError(f"Unsupported targets shape {targets.shape} for multi-class input shape {inputs.shape}")
+        else: # Binary case
+            if len(targets.shape) == 1:
+                targets_one_hot = targets.unsqueeze(1).float() # Ensure (N, 1) and float
+            elif len(targets.shape) == 2 and targets.shape[1] == 1:
+                targets_one_hot = targets.float() # Ensure float
+            else:
+                 raise ValueError(f"Unsupported targets shape {targets.shape} for binary input shape {inputs.shape}")
+
+        # Ensure targets are on the same device as inputs
+        targets_one_hot = targets_one_hot.to(inputs.device)
 
 
+        # --- Calculate Probabilities (pt) ---
         if self.logits:
-            if num_classes > 1: # Multi-class
-                # Use cross_entropy which combines LogSoftmax and NLLLoss
-                ce_loss = F.cross_entropy(inputs, targets.argmax(dim=1), reduction='none')
-                # Calculate pt = p_t = softmax(inputs)_t
+            if input_type == 'multiclass':
                 p = F.softmax(inputs, dim=1)
-                pt = p.gather(1, targets.argmax(dim=1).unsqueeze(1)).squeeze()
-            else: # Binary classification
-                # Use binary_cross_entropy_with_logits
-                BCE_loss = F.binary_cross_entropy_with_logits(inputs.squeeze(), targets.squeeze(), reduction='none')
-                # Calculate pt = p_t = sigmoid(inputs) for the correct class
-                p = torch.sigmoid(inputs.squeeze())
-                # pt for positive class = p, pt for negative class = 1-p
-                pt = torch.where(targets.squeeze() == 1, p, 1 - p)
-                ce_loss = BCE_loss # In binary case, BCE loss is the cross-entropy
+                # Gather probability of the true class: pt = p * targets_one_hot summed over C
+                # This works because targets_one_hot is 1 at the true class, 0 elsewhere
+                pt = (p * targets_one_hot).sum(dim=1)
+            else: # Binary
+                p = torch.sigmoid(inputs)
+                # pt = p if target is 1, 1-p if target is 0
+                pt = torch.where(targets_one_hot == 1, p, 1 - p).squeeze() # Squeeze back to (N,)
         else: # Inputs are probabilities
-             if num_classes > 1: # Multi-class
-                 # Calculate cross-entropy manually: -log(p_t)
-                 # Add epsilon to prevent log(0)
-                 inputs = torch.clamp(inputs, min=1e-7, max=1.0 - 1e-7)
-                 ce_loss = -(targets * torch.log(inputs)).sum(dim=1)
-                 # pt is the probability of the true class
-                 pt = (inputs * targets).sum(dim=1)
-             else: # Binary classification
-                 inputs = torch.clamp(inputs.squeeze(), min=1e-7, max=1.0 - 1e-7)
-                 targets = targets.squeeze()
-                 BCE_loss = F.binary_cross_entropy(inputs, targets, reduction='none')
-                 # pt for positive class = p, pt for negative class = 1-p
-                 pt = torch.where(targets == 1, inputs, 1 - inputs)
-                 ce_loss = BCE_loss
+            p = inputs
+            if input_type == 'multiclass':
+                 # Clamp probabilities to avoid log(0) or log(1) issues if calculating CE manually later
+                 p = torch.clamp(p, min=1e-7, max=1.0 - 1e-7)
+                 pt = (p * targets_one_hot).sum(dim=1)
+            else: # Binary
+                 p = torch.clamp(p, min=1e-7, max=1.0 - 1e-7)
+                 pt = torch.where(targets_one_hot == 1, p, 1 - p).squeeze()
+
+        # Clamp pt to avoid issues with log(0) or power of zero
+        pt = torch.clamp(pt, min=1e-7, max=1.0 - 1e-7)
 
 
-        # Calculate focal loss component: (1 - pt)^gamma
+        # --- Calculate Cross Entropy Loss (ce_loss) ---
+        # Calculate CE loss in a way that matches pt calculation
+        if self.logits:
+            if input_type == 'multiclass':
+                # Use cross_entropy directly, it handles softmax + NLLLoss
+                # Need original class indices for cross_entropy
+                if len(targets.shape) == 2: # If original targets were one-hot
+                     target_indices = targets.argmax(dim=1)
+                else: # Original targets were indices
+                     target_indices = targets.long().to(inputs.device)
+                ce_loss = F.cross_entropy(inputs, target_indices, reduction='none')
+            else: # Binary
+                # Use binary_cross_entropy_with_logits
+                ce_loss = F.binary_cross_entropy_with_logits(inputs, targets_one_hot, reduction='none').squeeze()
+        else: # Inputs are probabilities
+             if input_type == 'multiclass':
+                 # Manual CE: -log(pt)
+                 ce_loss = -torch.log(pt)
+             else: # Binary
+                 # Manual BCE: -(target*log(p) + (1-target)*log(1-p))
+                 # This is equivalent to F.binary_cross_entropy(p, targets_one_hot, reduction='none')
+                 ce_loss = F.binary_cross_entropy(p, targets_one_hot, reduction='none').squeeze()
+
+
+        # --- Calculate Focal Loss component ---
         focal_term = (1 - pt)**self.gamma
-
-        # Calculate the final focal loss
         focal_loss = focal_term * ce_loss
 
-        # Apply alpha weighting
+
+        # --- Apply Alpha Weighting ---
         if self.alpha != -1:
-            if num_classes > 1:
-                 # Get alpha weight for the true class
-                 alpha_t = torch.full_like(targets, 1 - self.alpha) # Default weight for background/negative
-                 # Assuming alpha is for the positive/foreground class(es)
-                 # This part needs careful consideration based on how alpha is defined (per class?)
-                 # Simple approach: alpha for class 1, 1-alpha for class 0 (if binary represented as multi-class)
-                 # Or use a tensor alpha if provided per class
-                 # For simplicity, let's assume alpha applies to the positive class index 1 in a one-hot target
-                 if isinstance(self.alpha, (float, int)): # Single alpha value
-                     # Find the target class index
-                     target_idx = targets.argmax(dim=1)
-                     # Create alpha tensor based on target index (needs refinement based on alpha definition)
-                     # Example: alpha for class 1, (1-alpha) for others. Adapt as needed.
-                     alpha_factor = torch.where(target_idx == 1, self.alpha, 1 - self.alpha) # Example binary case
-                 elif isinstance(self.alpha, torch.Tensor): # Per-class alpha
-                     alpha_factor = self.alpha.gather(0, targets.argmax(dim=1))
-                 else:
-                     raise TypeError("alpha must be float, int, or Tensor")
-                 focal_loss = alpha_factor * focal_loss
-            else: # Binary classification
-                 alpha_t = torch.where(targets.squeeze() == 1, self.alpha, 1 - self.alpha)
+            alpha_t = None
+            if isinstance(self.alpha, (float, int)): # Single alpha value
+                # Common practice: alpha for positive class (1), 1-alpha for negative (0)
+                # For multi-class, often alpha for foreground, 1-alpha for background (class 0)
+                # Adapt this logic based on your specific use case.
+                # Example: alpha for class 1 in binary, 1-alpha for class 0
+                if input_type == 'binary':
+                     alpha_t = torch.where(targets_one_hot.squeeze() == 1, self.alpha, 1 - self.alpha)
+                else: # Multi-class: Needs clearer definition. Assume alpha for all non-0 classes?
+                     # Get class indices
+                     if len(targets.shape) == 2: target_indices = targets.argmax(dim=1)
+                     else: target_indices = targets.long().to(inputs.device)
+                     # Example: alpha for all classes > 0, (1-alpha) for class 0
+                     alpha_t = torch.where(target_indices > 0, self.alpha, 1 - self.alpha)
+                     # Ensure alpha_t is on the correct device
+                     alpha_t = alpha_t.to(inputs.device)
+
+
+            elif self.alpha_tensor is not None: # Per-class alpha tensor
+                 if len(self.alpha_tensor) != num_classes and input_type == 'multiclass':
+                      raise ValueError(f"Per-class alpha tensor length ({len(self.alpha_tensor)}) must match number of classes ({num_classes})")
+                 # Get class indices
+                 if len(targets.shape) == 2: target_indices = targets.argmax(dim=1)
+                 else: target_indices = targets.long().to(inputs.device)
+                 # Gather alpha values for the true class of each sample
+                 alpha_t = self.alpha_tensor.to(inputs.device).gather(0, target_indices)
+
+
+            if alpha_t is not None:
                  focal_loss = alpha_t * focal_loss
 
 
-        # Apply reduction
+        # --- Apply Reduction ---
         if self.reduction == 'mean':
             return focal_loss.mean()
         elif self.reduction == 'sum':
@@ -1026,50 +1249,88 @@ class FocalLoss(nn.Module):
 ```python
 # filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\training.py
 import torch
-import torch.optim as optim
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-# Assume plot_learning_curves is available
-# from utils import plot_learning_curves # Placeholder
+# ...existing code...
+# Ensure plot_learning_curves is defined or imported
+try:
+    from utils import plot_learning_curves
+except ImportError:
+    # Placeholder if utils.py or the function is not available
+    def plot_learning_curves(train_losses, val_losses):
+         print("Plotting learning curves (placeholder)...")
+         print(f"Final Train Loss: {train_losses[-1]:.4f}" if train_losses else "N/A")
+         print(f"Final Val Loss: {val_losses[-1]:.4f}" if val_losses else "N/A")
+         # Add basic overfitting check here as well
+         if val_losses:
+             val_losses_np = np.array(val_losses)
+             if len(val_losses_np) > 1:
+                 min_idx = np.argmin(val_losses_np)
+                 if min_idx < len(val_losses_np) - 1 and val_losses_np[-1] > val_losses_np[min_idx]:
+                     print(f"Placeholder: Potential overfitting detected after epoch {min_idx + 1}")
 
-# Placeholder for plot_learning_curves - replace or import your actual function
-def plot_learning_curves(train_losses, val_losses):
-     print("Plotting learning curves (placeholder)...")
-     print("Train Losses:", train_losses)
-     print("Val Losses:", val_losses)
 
-
-def train_with_lr_scheduling(model, train_loader, val_loader, epochs=30, lr=0.001, patience=3, factor=0.1):
-    """Train a PyTorch model with learning rate scheduling based on validation loss."""
+def train_with_lr_scheduling(model, train_loader, val_loader, epochs=30, lr=0.001, patience=3, factor=0.1, early_stopping_patience=None):
+    """Train a PyTorch model with learning rate scheduling and optional early stopping."""
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     print(f"Training on device: {device}")
+
+    # Handle cases where loaders might be None or empty
+    if not train_loader or not hasattr(train_loader, 'dataset') or len(train_loader.dataset) == 0:
+        print("Error: Training data loader is invalid or empty.")
+        return [], []
+    if not val_loader or not hasattr(val_loader, 'dataset') or len(val_loader.dataset) == 0:
+        print("Warning: Validation data loader is invalid or empty. LR scheduling and early stopping based on validation loss will not work.")
+        # Optionally disable scheduler/early stopping or raise error
+        # return [], []
+
 
     # Define loss function and optimizer
     criterion = torch.nn.CrossEntropyLoss() # Example: Use appropriate loss for your task
     optimizer = optim.Adam(model.parameters(), lr=lr)
 
     # Learning rate scheduler - reduces LR when validation loss plateaus
-    scheduler = ReduceLROnPlateau(
-        optimizer,
-        mode='min',      # Reduce LR when the metric stops decreasing (e.g., validation loss)
-        factor=factor,   # Factor by which the learning rate will be reduced. new_lr = lr * factor
-        patience=patience, # Number of epochs with no improvement after which learning rate will be reduced
-        verbose=True     # Print a message when the learning rate is updated
-    )
+    # Only initialize if val_loader is valid
+    scheduler = None
+    if val_loader:
+        scheduler = ReduceLROnPlateau(
+            optimizer,
+            mode='min',      # Reduce LR when the metric stops decreasing (e.g., validation loss)
+            factor=factor,   # Factor by which the learning rate will be reduced. new_lr = lr * factor
+            patience=patience, # Number of epochs with no improvement after which learning rate will be reduced
+            verbose=True     # Print a message when the learning rate is updated
+        )
+    else:
+        print("Skipping LR scheduler initialization due to invalid validation loader.")
+
 
     train_losses = []
     val_losses = []
     best_val_loss = float('inf')
     epochs_no_improve = 0
-    early_stopping_patience = patience * 3 # Example: Stop if no improvement for 3 scheduler cycles
+    # Set default early stopping patience if not provided
+    if early_stopping_patience is None:
+         early_stopping_patience = patience * 3 + 1 # Allow 3 LR reductions before stopping
+         print(f"Using default early stopping patience: {early_stopping_patience}")
+    elif early_stopping_patience <= 0:
+         print("Early stopping disabled.")
+         early_stopping_patience = float('inf') # Effectively disable
 
-    print(f"Starting training for {epochs} epochs...")
+
+    print(f"Starting training for up to {epochs} epochs...")
     for epoch in range(epochs):
         # --- Training phase ---
         model.train()
         running_train_loss = 0.0
-        for i, (inputs, targets) in enumerate(train_loader):
-            inputs, targets = inputs.to(device), targets.to(device)
+        train_samples = 0
+        for i, batch_data in enumerate(train_loader):
+            # Handle different dataset structures
+            if isinstance(batch_data, (list, tuple)):
+                inputs, targets = batch_data[0].to(device), batch_data[1].to(device)
+            else:
+                inputs = batch_data.to(device)
+                # This case needs clarification on how targets are obtained
+                raise ValueError("Dataset structure not recognized (expected tuple/list of inputs, targets)")
+
 
             optimizer.zero_grad()
             outputs = model(inputs)
@@ -1078,41 +1339,74 @@ def train_with_lr_scheduling(model, train_loader, val_loader, epochs=30, lr=0.00
             optimizer.step()
 
             running_train_loss += loss.item() * inputs.size(0) # Accumulate loss weighted by batch size
+            train_samples += inputs.size(0)
 
-        avg_train_loss = running_train_loss / len(train_loader.dataset) # Calculate average loss over dataset
-        train_losses.append(avg_train_loss)
+        if train_samples > 0:
+             avg_train_loss = running_train_loss / train_samples # Calculate average loss over dataset
+             train_losses.append(avg_train_loss)
+        else:
+             print(f"Epoch {epoch+1}/{epochs} - No training samples processed.")
+             train_losses.append(float('nan')) # Record NaN if no samples
+             # Consider breaking if no training data
+             break
+
 
         # --- Validation phase ---
-        model.eval()
-        running_val_loss = 0.0
-        with torch.no_grad():
-            for inputs, targets in val_loader:
-                inputs, targets = inputs.to(device), targets.to(device)
-                outputs = model(inputs)
-                loss = criterion(outputs, targets)
-                running_val_loss += loss.item() * inputs.size(0)
+        avg_val_loss = float('inf') # Default if no validation
+        if val_loader:
+            model.eval()
+            running_val_loss = 0.0
+            val_samples = 0
+            with torch.no_grad():
+                for batch_data in val_loader:
+                    if isinstance(batch_data, (list, tuple)):
+                        inputs, targets = batch_data[0].to(device), batch_data[1].to(device)
+                    else:
+                        inputs = batch_data.to(device)
+                        raise ValueError("Dataset structure not recognized (expected tuple/list of inputs, targets)")
 
-        avg_val_loss = running_val_loss / len(val_loader.dataset)
-        val_losses.append(avg_val_loss)
+                    outputs = model(inputs)
+                    loss = criterion(outputs, targets)
+                    running_val_loss += loss.item() * inputs.size(0)
+                    val_samples += inputs.size(0)
 
-        print(f"Epoch {epoch+1}/{epochs} - Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}, LR: {optimizer.param_groups[0]['lr']:.6f}")
+            if val_samples > 0:
+                avg_val_loss = running_val_loss / val_samples
+                val_losses.append(avg_val_loss)
+            else:
+                print(f"Epoch {epoch+1}/{epochs} - No validation samples processed.")
+                val_losses.append(float('nan')) # Record NaN
 
-        # Update learning rate based on validation loss
-        scheduler.step(avg_val_loss)
+        else: # No validation loader
+             val_losses.append(float('nan'))
 
-        # Simple Early Stopping Check
-        if avg_val_loss < best_val_loss:
-            best_val_loss = avg_val_loss
-            epochs_no_improve = 0
-            # Optionally save the best model
-            # torch.save(model.state_dict(), 'best_model.pth')
-            # print(f"Validation loss improved to {best_val_loss:.4f}. Saving model.")
-        else:
-            epochs_no_improve += 1
 
-        if epochs_no_improve >= early_stopping_patience:
-            print(f"Early stopping triggered after {epochs_no_improve} epochs without improvement.")
-            break
+        print(f"Epoch {epoch+1}/{epochs} - Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f if avg_val_loss != float('inf') else 'N/A'}, LR: {optimizer.param_groups[0]['lr']:.6f}")
+
+        # Update learning rate and check early stopping only if validation is possible
+        if val_loader and avg_val_loss != float('inf'):
+            # Update learning rate based on validation loss
+            if scheduler:
+                scheduler.step(avg_val_loss)
+
+            # Simple Early Stopping Check
+            if avg_val_loss < best_val_loss:
+                best_val_loss = avg_val_loss
+                epochs_no_improve = 0
+                # Optionally save the best model
+                # torch.save(model.state_dict(), 'best_model.pth')
+                # print(f"Validation loss improved to {best_val_loss:.4f}. Saving model.")
+            else:
+                epochs_no_improve += 1
+
+            if epochs_no_improve >= early_stopping_patience:
+                print(f"Early stopping triggered after {epochs_no_improve} epochs without validation loss improvement.")
+                break
+        elif not val_loader:
+             # If no validation, we can't early stop based on val loss.
+             # Could potentially stop based on training loss plateau, but less common.
+             pass
+
 
     print("Training finished.")
     # Plot learning curves after training
@@ -1120,14 +1414,7 @@ def train_with_lr_scheduling(model, train_loader, val_loader, epochs=30, lr=0.00
 
     return train_losses, val_losses
 
-# Example Real-world Context for LR Scheduling:
-# > 🚀 **Training Large Language Models (LLMs)**: Training models like BERT or GPT involves massive datasets and complex architectures.
-# > Using a fixed learning rate often leads to slow convergence or instability. Techniques like learning rate warm-up
-# > (starting with a small LR, increasing it, then decaying it) and schedulers like ReduceLROnPlateau or Cosine Annealing
-# > are crucial. They help navigate the complex loss landscape, allowing the model to initially make large updates and then
-# > fine-tune weights as it approaches convergence, significantly speeding up training and improving final performance.
-# > Without adaptive learning rates, training state-of-the-art LLMs would be practically infeasible.
-
+# ... (rest of file) ...
 ```
 
 ## The Storytelling Side of Model Evaluation
@@ -1161,8 +1448,8 @@ These examples illustrate why rigorous evaluation isn't just a technical exercis
 
 - **Healthcare Predictive Models**: Several COVID-19 prediction models failed in practice because they were evaluated only on the data available during development, not accounting for how the pandemic would evolve
 - **AI Hiring Systems**: Amazon scrapped their AI recruiting tool when they discovered it penalized resumes containing the word "women's" because it was trained on historically biased data
-- **The $440 Million Bug**: In 2012, Knight Capital lost this staggering amount in 45 minutes due to untested trading algorithms
+- **The $440 Million Bug**: In 2012, Knight Capital lost this staggering amount in 45 minutes due to a deployment error involving untested trading software components
 
-> 🚗 **Self-Driving Car Setback**: In 2018, a self-driving car struck and killed a pedestrian during night testing. Investigation revealed that the perception system had been primarily evaluated on daytime scenarios and clear weather conditions. While it achieved over 98% accuracy on the test dataset, this dataset failed to adequately represent edge cases like pedestrians crossing outside crosswalks at night. This tragedy emphasized why measuring performance on diverse, representative test sets—not just convenient ones—is literally a matter of life and death.
+> 🚗 **Self-Driving Car Setback**: In 2018, a self-driving car struck and killed a pedestrian during night testing. Investigation revealed that the perception system had been primarily evaluated on daytime scenarios and clear weather conditions. While it achieved high accuracy on the test dataset, this dataset failed to adequately represent critical edge cases like pedestrians crossing outside crosswalks at night. This tragedy emphasized why measuring performance on diverse, representative test sets—not just convenient ones—is literally a matter of life and death.
 
 > 🏭 **The Factory Efficiency Illusion**: A manufacturing company implemented an AI system to optimize production schedules, reporting 30% efficiency improvements during testing. However, once deployed, efficiency actually dropped by 15%. The evaluation had been conducted on historical data from their highest-performing months rather than a representative sample across different conditions. This case exemplifies why temporal validation and ensuring test data truly represents deployment conditions are critical when evaluating industrial AI systems.
