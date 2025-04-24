@@ -1,6 +1,6 @@
 500 character prompt below!!!
 
-Witty TED-Talk meets late-night! Unmask AI's villain: Overfitting! Why do models fail IRL (Google Flu, Knight Capital)? Solve the Evaluation Mystery! Explore bias-variance, deadly data leakage traps & learning curves. Reveal heroes: Regularization, Cross-Validation, SMOTE. Use analogies (archer, soup tasting). Segments: Buzzword Breakdown (Overfitting, Data Leakage, CV, AUC), Optimization Corner (Regularization). Challenge: Explain CV! Sound effects: "Red Flag!" "Eureka!" Goal: Aha moments on robust model evaluation. Spotify hit!
+Witty TED-Talk meets late-night! Unmask AI's villain: Overfitting! Why do models fail IRL? Solve the Evaluation Mystery! Explore bias-variance, deadly data leakage traps & learning curves. Reveal heroes: Regularization, Cross-Validation, SMOTE. Use analogies! Segments: Buzzword Breakdown (Overfitting, Data Leakage, CV, AUC), Optimization Corner (Regularization). Challenge: Explain CV! Sound effects: "Red Flag!" "Eureka!"  Aim for aha moments, sticky insights, & a closing tech joke. Spotify hit!
 
 # "Under the Hood: Neural Networks Exposed" - Episode 2: The Evaluation Mystery
 
