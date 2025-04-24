@@ -24,6 +24,8 @@ Building what you believe is the perfect AI model, only to deploy it and watch i
 
 ### The Goldilocks Problem of Machine Learning
 
+> **Definition**: The "Goldilocks problem" refers to the challenge of finding something that is "just right" - neither too much nor too little, similar to the children's story where Goldilocks searches for items that are "not too hot, not too cold, but just right." In machine learning, it describes the challenge of finding the optimal model complexity.
+
 Understanding the bias-variance tradeoff is fundamental to building effective machine learning models. Think of it as the "Goldilocks problem" of AI:
 
 - **Too simple (underfitting)**: The model misses important patterns
