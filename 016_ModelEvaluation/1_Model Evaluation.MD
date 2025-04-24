@@ -235,6 +235,8 @@ Data leakage occurs when information from outside the training dataset is used t
 - Be cautious with time-dependent features that may contain future information
 - When using grouped data (like multiple measurements from the same patient), ensure that groups remain intact within each split
 
+> 🔍 **The Preprocessing Pitfall**: A team building a customer churn prediction model achieved an impressive 92% AUC in validation. However, they had performed feature scaling (e.g., standardization) on the entire dataset *before* splitting it into train and validation sets. This meant information about the validation set's distribution (its mean and standard deviation) "leaked" into the training process. When they corrected this by scaling the training data and then applying the *same* scaling parameters to the validation set, the AUC dropped to a more realistic 78%. This highlights how seemingly minor preprocessing steps can cause significant leakage if not done correctly after splitting.
+
 ### Domain Adaptation and Dataset Shift
 
 Modern ML systems often face challenges when deployed in environments different from their training data:
@@ -248,6 +250,8 @@ To make models more robust to these shifts:
 - Test on multiple datasets from different distributions
 - Use domain-adaptive training techniques
 - Implement monitoring systems to detect performance degradation over time
+
+> 🚗 **Autonomous Driving's Geographic Challenge**: Early self-driving car models trained primarily in sunny California struggled significantly when tested in cities with different weather patterns (like rainy Seattle or snowy Boston) or different road layouts and signage (like European cities). This "domain shift" required extensive retraining with geographically diverse data and the development of domain adaptation techniques to make the perception systems robust across various environments. Companies like Waymo and Cruise now invest heavily in collecting data and testing across numerous cities and weather conditions to combat this issue.
 
 > **Supplementary Reading**: See [Train-Validation-Test Split Guide](TrainValidationTest_101.pdf) for detailed procedures and best practices.
 
@@ -411,6 +415,8 @@ For data with inherent grouping (e.g., multiple samples from the same patient), 
 
 > 🔍 **Analogy**: Consider evaluating the effectiveness of a family counseling program. Even if you have data from multiple family members, you wouldn't want some members of the same family in your training set and others in your test set - their outcomes are related. Group k-fold is like keeping all family members together in the same fold to prevent this information "leakage" between folds.
 
+> 🏥 **Personalized Medicine Pitfall**: A research group developed a model to predict patient response to a new drug based on genetic markers. Initial K-fold cross-validation showed promising results (85% accuracy). However, the dataset contained multiple samples from the same patients over time. When they re-evaluated using Group K-Fold (keeping all samples from one patient within the same fold), accuracy dropped to 60%. The original model had learned to identify individual patients rather than generalizable response patterns. Using Group K-Fold prevented them from publishing misleading results and guided them toward a more robust modeling approach.
+
 #### Repeated K-Fold
 
 Runs K-fold cross-validation multiple times with different random splits, further reducing the variance of the performance estimate.
@@ -430,6 +436,8 @@ For time series data, specialized cross-validation techniques preserve the tempo
 When tuning hyperparameters and evaluating model performance, nested CV uses an inner loop for hyperparameter tuning and an outer loop for model evaluation.
 
 > 🔍 **Analogy**: Think of nested cross-validation like a cooking competition with preliminary and final rounds. In the preliminary rounds (inner loop), each chef experiments with different ingredient combinations (hyperparameters) to perfect their recipe. Then in the final round (outer loop), they use their optimized recipe to cook for the judges. This two-level process ensures that the evaluation is fair - the judges don't see all the failed experiments, only the final optimized dish.
+
+> 🔬 **Overly Optimistic Performance in Genomics**: A bioinformatics team reported near-perfect classification of cancer subtypes using a complex SVM model. They had used standard K-fold cross-validation, but performed hyperparameter tuning (e.g., selecting the best kernel and cost parameter) *within each fold* using the entire fold's data before testing. This allowed information about the test portion of the fold to influence hyperparameter selection. When an independent group re-evaluated using nested cross-validation (where hyperparameter tuning was done on a separate inner loop within the training portion of each outer fold), the reported accuracy dropped significantly, revealing the original results were overly optimistic due to information leakage during tuning. Nested CV provided a much more realistic estimate of the model's true generalization performance.
 
 This approach provides an unbiased estimate of true model performance, accounting for the hyperparameter optimization process. It's particularly important when comparing different modeling approaches.
 
@@ -478,6 +486,8 @@ When one class significantly outnumbers others, models tend to favor the majorit
 4. **Neighborhood Cleaning Rule (NCR)**: Combines ENN with selective undersampling
 5. **Near Miss**: Selects majority class samples based on their distance to minority class examples
 
+> 🏭 **Improving Defect Detection with Undersampling**: A semiconductor manufacturer struggled to detect rare but critical wafer defects (occurring <0.5% of the time). Models trained on the raw data performed poorly on the defect class. By implementing Random Undersampling on the majority class (non-defective wafers) during training, combined with ensemble methods (training multiple models on different undersampled sets), they increased the defect detection rate (recall) by 40% without significantly increasing false alarms. This allowed them to catch costly defects earlier in the production process.
+
 ### Oversampling Techniques
 
 1. **Random Oversampling**: Randomly duplicate minority class samples
@@ -486,6 +496,8 @@ When one class significantly outnumbers others, models tend to favor the majorit
 4. **Borderline-SMOTE**: Creates synthetic samples near the decision boundary rather than throughout the feature space
 5. **SMOTE-NC and SMOTENC**: Variants of SMOTE designed for datasets with categorical features
 6. **SMOTE-TomekLinks**: Combines SMOTE with Tomek links removal for cleaner decision boundaries
+
+> 💳 **Boosting Credit Card Approval Accuracy with SMOTE**: A financial institution was developing a model to predict loan default risk for thin-file applicants (applicants with limited credit history). The default rate in this group was low but significant (around 5%). Standard models struggled to identify potential defaulters accurately. By applying SMOTE to synthetically generate more examples of defaulting applicants in the training data, they improved the model's ability to identify high-risk applicants (increasing recall for the default class by 25%) while maintaining good overall performance. This allowed them to approve more creditworthy thin-file applicants while better managing risk.
 
 ### Hybrid Methods
 
@@ -541,6 +553,10 @@ When applying resampling techniques:
 ### Detecting Overfitting
 
 ```python
+# filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\utils.py
+import matplotlib.pyplot as plt
+import numpy as np
+
 def plot_learning_curves(train_losses, val_losses):
     plt.figure(figsize=(10, 6))
     plt.plot(train_losses, label='Training Loss')
@@ -551,180 +567,567 @@ def plot_learning_curves(train_losses, val_losses):
     plt.title('Learning Curves')
     plt.show()
     # Overfitting detection
+    if not val_losses: # Handle empty validation losses
+        print("Validation losses are empty, cannot detect overfitting.")
+        return
     divergence_point = np.argmin(val_losses)
-    if divergence_point < len(val_losses) - 1:
-        print(f"Potential overfitting detected after epoch {divergence_point}")
-        print(f"Consider early stopping at epoch {divergence_point}")
+    if divergence_point < len(val_losses) - 1 and val_losses[-1] > val_losses[divergence_point]:
+        print(f"Potential overfitting detected after epoch {divergence_point + 1}")
+        print(f"Minimum validation loss was {val_losses[divergence_point]:.4f} at epoch {divergence_point + 1}.")
+        print(f"Consider early stopping around epoch {divergence_point + 1}")
+    elif len(val_losses) > 1:
+         print(f"No clear overfitting detected based on validation loss trend. Minimum validation loss: {np.min(val_losses):.4f}")
     else:
-        print("No clear overfitting detected")
+        print("Not enough epochs to determine overfitting trend.")
+
 ```
 
 ### Train-Validation-Test Split with PyTorch
 
 ```python
+# filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\data_split.py
 from sklearn.model_selection import train_test_split
-from torch.utils.data import SubsetRandomSampler, DataLoader
+from torch.utils.data import SubsetRandomSampler, DataLoader, Subset
+import torch
 
-def create_data_loaders(dataset, batch_size=32, train_size=0.7, val_size=0.15, test_size=0.15, random_state=42):
-    """Create train, validation and test data loaders from a single dataset."""
-    # Generate indices for the split
-    indices = list(range(len(dataset)))
+def create_data_loaders(dataset, batch_size=32, train_size=0.7, val_size=0.15, test_size=0.15, random_state=42, stratify=None):
+    """Create train, validation and test data loaders from a single dataset, with optional stratification."""
+    num_samples = len(dataset)
+    indices = list(range(num_samples))
+
+    # Ensure sizes sum to 1
+    if not np.isclose(train_size + val_size + test_size, 1.0):
+        raise ValueError("train_size, val_size, and test_size must sum to 1.0")
+
+    # Determine target labels for stratification if needed
+    stratify_labels = None
+    if stratify:
+        # Attempt to get labels; adapt based on dataset type (e.g., TensorDataset, torchvision Dataset)
+        if hasattr(dataset, 'targets'):
+            stratify_labels = dataset.targets
+        elif isinstance(dataset, torch.utils.data.TensorDataset):
+             # Assuming the last tensor in the tuple is the target
+            stratify_labels = dataset.tensors[-1]
+        elif isinstance(dataset, torch.utils.data.Subset):
+             # Handle Subset objects if stratification is needed
+             if hasattr(dataset.dataset, 'targets'):
+                 stratify_labels = [dataset.dataset.targets[i] for i in dataset.indices]
+             elif isinstance(dataset.dataset, torch.utils.data.TensorDataset):
+                 stratify_labels = dataset.dataset.tensors[-1][dataset.indices]
+             else:
+                 print("Warning: Stratification requested but cannot determine labels for Subset. Proceeding without stratification.")
+        else:
+            print("Warning: Stratification requested but cannot determine labels. Proceeding without stratification.")
+        
+        # Ensure stratify_labels is a list or numpy array for sklearn
+        if torch.is_tensor(stratify_labels):
+            stratify_labels = stratify_labels.cpu().numpy()
+        elif isinstance(stratify_labels, list):
+             stratify_labels = np.array(stratify_labels) # Ensure numpy array for sklearn compatibility
+
+        # Check if stratification is possible
+        if stratify_labels is None or len(np.unique(stratify_labels)) < 2:
+             print("Warning: Not enough classes for stratification or labels unavailable. Proceeding without stratification.")
+             stratify_labels = None # Disable stratification
+
+
     # First split: temporary train and test
     temp_train_idx, test_idx = train_test_split(
-        indices, test_size=test_size, random_state=random_state
+        indices,
+        test_size=test_size,
+        random_state=random_state,
+        stratify=stratify_labels[indices] if stratify_labels is not None else None # Stratify the split
     )
+
+    # Adjust validation size relative to the remaining data
+    relative_val_size = val_size / (train_size + val_size)
+
+    # Prepare labels for the second split if stratifying
+    stratify_labels_temp_train = None
+    if stratify_labels is not None:
+        stratify_labels_temp_train = stratify_labels[temp_train_idx]
+         # Check if stratification is possible for the second split
+        if len(np.unique(stratify_labels_temp_train)) < 2:
+             print("Warning: Not enough classes for stratification in the second split. Proceeding without stratification for train/val split.")
+             stratify_labels_temp_train = None
+
+
     # Second split: train and validation from the temporary train
     train_idx, val_idx = train_test_split(
-        temp_train_idx, test_size=val_size/(train_size+val_size), random_state=random_state
+        temp_train_idx,
+        test_size=relative_val_size,
+        random_state=random_state,
+        stratify=stratify_labels_temp_train # Stratify the second split
     )
-    # Create data samplers
-    train_sampler = SubsetRandomSampler(train_idx)
-    val_sampler = SubsetRandomSampler(val_idx)
-    test_sampler = SubsetRandomSampler(test_idx)
+
+    # Create data samplers (using Subset instead of SubsetRandomSampler for clarity and potential shuffling in DataLoader)
+    train_dataset = Subset(dataset, train_idx)
+    val_dataset = Subset(dataset, val_idx)
+    test_dataset = Subset(dataset, test_idx)
+
     # Create the data loaders
-    train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
-    val_loader = DataLoader(dataset, batch_size=batch_size, sampler=val_sampler)
-    test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
+    # Shuffle training data, but not validation or test data
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+    print(f"Data split: Train={len(train_idx)}, Validation={len(val_idx)}, Test={len(test_idx)}")
     return train_loader, val_loader, test_loader
+
 ```
 
 ### K-Fold Cross-Validation with PyTorch
 
 ```python
-from sklearn.model_selection import KFold
+# filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\cv.py
+from sklearn.model_selection import KFold, StratifiedKFold
 import numpy as np
 import torch
+from torch.utils.data import Subset, DataLoader
+# Assume evaluate_model function exists and returns a performance metric (e.g., accuracy, loss)
+# from evaluation import evaluate_model # Placeholder for your evaluation function
 
-def k_fold_cross_validation(dataset, model_class, k=5, batch_size=32, epochs=10, lr=0.001):
-    """Perform k-fold cross-validation with PyTorch models."""
-    kf = KFold(n_splits=k, shuffle=True, random_state=42)
+# Placeholder for evaluate_model - replace with your actual evaluation logic
+def evaluate_model(model, data_loader, criterion):
+    model.eval()
+    total_loss = 0.0
+    correct_predictions = 0
+    total_samples = 0
+    device = next(model.parameters()).device # Get model device
+
+    with torch.no_grad():
+        for inputs, targets in data_loader:
+            inputs, targets = inputs.to(device), targets.to(device)
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            total_loss += loss.item() * inputs.size(0)
+
+            _, predicted = torch.max(outputs.data, 1)
+            total_samples += targets.size(0)
+            correct_predictions += (predicted == targets).sum().item()
+
+    avg_loss = total_loss / total_samples
+    accuracy = correct_predictions / total_samples
+    print(f"Validation - Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}")
+    # Return a single performance metric, e.g., accuracy or negative loss
+    return accuracy # Or return avg_loss if optimizing for loss
+
+
+def k_fold_cross_validation(dataset, model_class, k=5, batch_size=32, epochs=10, lr=0.001, random_state=42, stratify=False, **model_args):
+    """Perform k-fold cross-validation with PyTorch models, with optional stratification."""
+    
+    # Determine target labels for stratification if needed
+    targets = None
+    if stratify:
+        if hasattr(dataset, 'targets'):
+            targets = np.array(dataset.targets)
+        elif isinstance(dataset, torch.utils.data.TensorDataset):
+            targets = dataset.tensors[-1].cpu().numpy()
+        else:
+            print("Warning: Stratification requested but cannot determine labels. Using standard KFold.")
+            stratify = False # Disable stratification if labels aren't easily accessible
+
+        # Check if stratification is possible
+        if targets is not None and len(np.unique(targets)) < k:
+             print(f"Warning: Number of unique classes ({len(np.unique(targets))}) is less than k={k}. Stratification might behave unexpectedly or fail. Consider reducing k or disabling stratification.")
+             # You might still proceed, but be aware of potential issues with very small classes.
+        elif targets is None:
+             stratify = False # Ensure stratification is disabled if targets are None
+
+
+    if stratify:
+        kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=random_state)
+        split_generator = kf.split(np.arange(len(dataset)), targets) # Need targets for StratifiedKFold
+        print(f"Using Stratified {k}-Fold Cross-Validation.")
+    else:
+        kf = KFold(n_splits=k, shuffle=True, random_state=random_state)
+        split_generator = kf.split(np.arange(len(dataset))) # No targets needed for KFold
+        print(f"Using {k}-Fold Cross-Validation.")
+
     fold_performances = []
-    for fold, (train_idx, val_idx) in enumerate(kf.split(dataset)):
-        print(f"Training fold {fold+1}/{k}...")
-        # Create data loaders for this fold
-        train_sampler = SubsetRandomSampler(train_idx)
-        val_sampler = SubsetRandomSampler(val_idx)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
 
-        train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
-        val_loader = DataLoader(dataset, batch_size=batch_size, sampler=val_sampler)
+    for fold, (train_idx, val_idx) in enumerate(split_generator):
+        print(f"\n--- Training fold {fold+1}/{k} ---")
+
+        # Create subsets for this fold
+        train_subset = Subset(dataset, train_idx)
+        val_subset = Subset(dataset, val_idx)
+
+        # Create data loaders for this fold
+        train_loader = DataLoader(train_subset, batch_size=batch_size, shuffle=True)
+        val_loader = DataLoader(val_subset, batch_size=batch_size, shuffle=False)
+
         # Initialize model and optimizer
-        model = model_class()
+        model = model_class(**model_args).to(device) # Pass model arguments
         optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-        criterion = torch.nn.CrossEntropyLoss()
+        # Choose an appropriate criterion (e.g., CrossEntropyLoss for classification)
+        criterion = torch.nn.CrossEntropyLoss() # Example criterion
+
         # Train the model
         for epoch in range(epochs):
-            # Training code here
-            # ...
-        # Evaluate on validation set
-        model.eval()
-        val_performance = evaluate_model(model, val_loader)
+            model.train()
+            epoch_loss = 0.0
+            for batch_idx, (inputs, targets) in enumerate(train_loader):
+                inputs, targets = inputs.to(device), targets.to(device)
+
+                optimizer.zero_grad()
+                outputs = model(inputs)
+                loss = criterion(outputs, targets)
+                loss.backward()
+                optimizer.step()
+                epoch_loss += loss.item()
+            
+            avg_epoch_loss = epoch_loss / len(train_loader)
+            print(f"Fold {fold+1}, Epoch {epoch+1}/{epochs}, Train Loss: {avg_epoch_loss:.4f}")
+            # Optional: Evaluate on validation set each epoch if needed
+            # evaluate_model(model, val_loader, criterion)
+
+
+        # Evaluate on validation set after training for the fold
+        print(f"Evaluating fold {fold+1}...")
+        val_performance = evaluate_model(model, val_loader, criterion)
         fold_performances.append(val_performance)
+        print(f"Fold {fold+1} Performance: {val_performance:.4f}")
+
+
     # Calculate average performance across folds
     avg_performance = np.mean(fold_performances)
     std_performance = np.std(fold_performances)
 
-    print(f"Cross-validation performance: {avg_performance:.4f} ± {std_performance:.4f}")
-    return fold_performances
+    print("\n--- Cross-Validation Summary ---")
+    print(f"Fold Performances: {[f'{p:.4f}' for p in fold_performances]}")
+    print(f"Average Performance: {avg_performance:.4f} ± {std_performance:.4f}")
+    return fold_performances, avg_performance, std_performance
+
 ```
 
 ### Handling Imbalanced Data with PyTorch
 
 ```python
-from torch.utils.data import WeightedRandomSampler
+# filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\resampling.py
+import torch
+from torch.utils.data import WeightedRandomSampler, DataLoader
+import numpy as np
 
 def create_balanced_sampler(dataset):
-    """Create a weighted sampler to handle imbalanced datasets."""
-    # Assuming dataset.targets contains the labels
-    targets = dataset.targets
+    """Create a weighted sampler to handle imbalanced datasets based on dataset targets."""
+    # Attempt to get targets from the dataset
+    targets = None
+    if hasattr(dataset, 'targets'):
+        targets = dataset.targets
+    elif isinstance(dataset, torch.utils.data.TensorDataset):
+        # Assuming the last tensor is the target
+        targets = dataset.tensors[-1]
+    elif hasattr(dataset, 'dataset') and hasattr(dataset.dataset, 'targets') and hasattr(dataset, 'indices'):
+         # Handle Subset objects
+         targets = [dataset.dataset.targets[i] for i in dataset.indices]
+    else:
+        raise ValueError("Could not automatically determine targets for balancing. Ensure dataset has 'targets' attribute or is a TensorDataset.")
+
+    if not isinstance(targets, torch.Tensor):
+        targets = torch.tensor(targets) # Convert to tensor if necessary
+
+    # Ensure targets are integer type for bincount
+    if not targets.dtype in [torch.int, torch.long]:
+         print(f"Warning: Targets dtype is {targets.dtype}. Casting to long for bincount.")
+         targets = targets.long()
+
+
+    # Calculate class counts and weights
     class_counts = torch.bincount(targets)
-    class_weights = 1. / class_counts.float()
+    # Ensure class_counts covers all potential classes if targets are 0-indexed
+    num_classes = class_counts.size(0)
+    # Handle potential missing classes in the current subset/dataset
+    total_classes = int(targets.max().item() + 1) if len(targets) > 0 else 0
+    if total_classes > num_classes:
+        # Pad class_counts with zeros for missing classes
+        padded_counts = torch.zeros(total_classes, dtype=class_counts.dtype)
+        padded_counts[:num_classes] = class_counts
+        class_counts = padded_counts
+
+
+    # Avoid division by zero for classes not present in the dataset/subset
+    class_weights = torch.zeros_like(class_counts, dtype=torch.float)
+    present_classes_mask = class_counts > 0
+    class_weights[present_classes_mask] = 1. / class_counts[present_classes_mask].float()
+
+
     # Assign weights to each sample
     sample_weights = class_weights[targets]
+
     # Create a weighted sampler
     sampler = WeightedRandomSampler(
         weights=sample_weights,
-        num_samples=len(sample_weights),
-        replacement=True
+        num_samples=len(sample_weights), # Draw samples equal to the original dataset size
+        replacement=True # Oversampling requires replacement
     )
+    print(f"Created WeightedRandomSampler. Class counts: {class_counts.tolist()}. Class weights: {class_weights.tolist()[:10]}...") # Print first 10 weights
     return sampler
 
-# Usage
-balanced_sampler = create_balanced_sampler(dataset)
-balanced_loader = DataLoader(
-    dataset,
-    batch_size=32,
-    sampler=balanced_sampler
-)
+# Example Usage (within your training script)
+# train_dataset = ... # Your training dataset (e.g., after splitting)
+# balanced_sampler = create_balanced_sampler(train_dataset)
+# balanced_train_loader = DataLoader(
+#     train_dataset,
+#     batch_size=32,
+#     sampler=balanced_sampler # Use the sampler instead of shuffle=True
+# )
+# # Use balanced_train_loader in your training loop
+
 ```
 
 ### Implementing Focal Loss for Imbalanced Classification
 
 ```python
+# filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\losses.py
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
-class FocalLoss(torch.nn.Module):
+class FocalLoss(nn.Module):
     """Focal Loss implementation for imbalanced classification.
+    Reduces the loss contribution from easy examples and focuses on hard negatives.
+    Useful for dense object detection or highly imbalanced classification.
+
     Paper: https://arxiv.org/abs/1708.02002
+
+    Args:
+        alpha (float, optional): Weighting factor for balancing positive/negative examples.
+                                 Typically alpha for foreground class, 1-alpha for background.
+                                 Defaults to 0.25. Set to -1 to disable alpha weighting.
+        gamma (float, optional): Focusing parameter. Higher values give more focus to hard examples.
+                                 Defaults to 2.0.
+        reduction (str, optional): Specifies the reduction to apply to the output:
+                                   'none' | 'mean' | 'sum'. 'none': no reduction will be applied,
+                                   'mean': the sum of the output will be divided by the number of
+                                           elements in the output, 'sum': the output will be summed.
+                                   Defaults to 'mean'.
+        logits (bool, optional): If True, inputs are assumed to be logits (before sigmoid/softmax).
+                                 If False, inputs are probabilities. Defaults to True.
     """
-    def __init__(self, alpha=0.25, gamma=2.0, reduction='mean'):
+    def __init__(self, alpha=0.25, gamma=2.0, reduction='mean', logits=True):
         super(FocalLoss, self).__init__()
+        if not (0 <= alpha <= 1 or alpha == -1):
+             raise ValueError("alpha should be in [0, 1] or -1 to disable.")
+        if gamma < 0:
+             raise ValueError("gamma should be non-negative.")
+
         self.alpha = alpha
         self.gamma = gamma
         self.reduction = reduction
+        self.logits = logits
 
     def forward(self, inputs, targets):
-        BCE_loss = F.binary_cross_entropy_with_logits(inputs, targets, reduction='none')
-        pt = torch.exp(-BCE_loss)  # probability of the correct class
-        focal_loss = self.alpha * (1-pt)**self.gamma * BCE_loss
+        """
+        Args:
+            inputs (Tensor): Predicted scores (logits or probabilities) of shape (N, C) or (N,).
+                             For binary classification, can be (N,) or (N, 1).
+                             For multi-class, should be (N, C).
+            targets (Tensor): Ground truth labels of shape (N,) or (N, C) (for one-hot).
+                              Should contain class indices (0 to C-1).
+        Returns:
+            Tensor: The calculated focal loss.
+        """
+        num_classes = inputs.shape[1] if len(inputs.shape) > 1 else 1
+
+        # Ensure targets are long type and have correct shape
+        if targets.dtype != torch.long:
+            targets = targets.long()
+        if len(targets.shape) == 1:
+             if num_classes > 1: # Multi-class
+                 targets = F.one_hot(targets, num_classes=num_classes)
+             elif num_classes == 1: # Binary case, ensure shape (N, 1)
+                 targets = targets.unsqueeze(1)
+        
+        # Ensure targets are float for calculations
+        targets = targets.float()
+
+
+        if self.logits:
+            if num_classes > 1: # Multi-class
+                # Use cross_entropy which combines LogSoftmax and NLLLoss
+                ce_loss = F.cross_entropy(inputs, targets.argmax(dim=1), reduction='none')
+                # Calculate pt = p_t = softmax(inputs)_t
+                p = F.softmax(inputs, dim=1)
+                pt = p.gather(1, targets.argmax(dim=1).unsqueeze(1)).squeeze()
+            else: # Binary classification
+                # Use binary_cross_entropy_with_logits
+                BCE_loss = F.binary_cross_entropy_with_logits(inputs.squeeze(), targets.squeeze(), reduction='none')
+                # Calculate pt = p_t = sigmoid(inputs) for the correct class
+                p = torch.sigmoid(inputs.squeeze())
+                # pt for positive class = p, pt for negative class = 1-p
+                pt = torch.where(targets.squeeze() == 1, p, 1 - p)
+                ce_loss = BCE_loss # In binary case, BCE loss is the cross-entropy
+        else: # Inputs are probabilities
+             if num_classes > 1: # Multi-class
+                 # Calculate cross-entropy manually: -log(p_t)
+                 # Add epsilon to prevent log(0)
+                 inputs = torch.clamp(inputs, min=1e-7, max=1.0 - 1e-7)
+                 ce_loss = -(targets * torch.log(inputs)).sum(dim=1)
+                 # pt is the probability of the true class
+                 pt = (inputs * targets).sum(dim=1)
+             else: # Binary classification
+                 inputs = torch.clamp(inputs.squeeze(), min=1e-7, max=1.0 - 1e-7)
+                 targets = targets.squeeze()
+                 BCE_loss = F.binary_cross_entropy(inputs, targets, reduction='none')
+                 # pt for positive class = p, pt for negative class = 1-p
+                 pt = torch.where(targets == 1, inputs, 1 - inputs)
+                 ce_loss = BCE_loss
+
+
+        # Calculate focal loss component: (1 - pt)^gamma
+        focal_term = (1 - pt)**self.gamma
+
+        # Calculate the final focal loss
+        focal_loss = focal_term * ce_loss
+
+        # Apply alpha weighting
+        if self.alpha != -1:
+            if num_classes > 1:
+                 # Get alpha weight for the true class
+                 alpha_t = torch.full_like(targets, 1 - self.alpha) # Default weight for background/negative
+                 # Assuming alpha is for the positive/foreground class(es)
+                 # This part needs careful consideration based on how alpha is defined (per class?)
+                 # Simple approach: alpha for class 1, 1-alpha for class 0 (if binary represented as multi-class)
+                 # Or use a tensor alpha if provided per class
+                 # For simplicity, let's assume alpha applies to the positive class index 1 in a one-hot target
+                 if isinstance(self.alpha, (float, int)): # Single alpha value
+                     # Find the target class index
+                     target_idx = targets.argmax(dim=1)
+                     # Create alpha tensor based on target index (needs refinement based on alpha definition)
+                     # Example: alpha for class 1, (1-alpha) for others. Adapt as needed.
+                     alpha_factor = torch.where(target_idx == 1, self.alpha, 1 - self.alpha) # Example binary case
+                 elif isinstance(self.alpha, torch.Tensor): # Per-class alpha
+                     alpha_factor = self.alpha.gather(0, targets.argmax(dim=1))
+                 else:
+                     raise TypeError("alpha must be float, int, or Tensor")
+                 focal_loss = alpha_factor * focal_loss
+            else: # Binary classification
+                 alpha_t = torch.where(targets.squeeze() == 1, self.alpha, 1 - self.alpha)
+                 focal_loss = alpha_t * focal_loss
+
+
+        # Apply reduction
         if self.reduction == 'mean':
             return focal_loss.mean()
         elif self.reduction == 'sum':
             return focal_loss.sum()
-        else:
+        elif self.reduction == 'none':
             return focal_loss
+        else:
+            raise ValueError(f"Invalid reduction type: {self.reduction}")
+
 ```
 
 ### Learning Rate Scheduling for Better Training
 
 ```python
-def train_with_lr_scheduling(model, train_loader, val_loader, epochs=30):
-    """Train with learning rate scheduling for better convergence."""
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+# filepath: c:\Users\rjjaf\_Projects\pytorch-ultimate\016_ModelEvaluation\training.py
+import torch
+import torch.optim as optim
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+# Assume plot_learning_curves is available
+# from utils import plot_learning_curves # Placeholder
+
+# Placeholder for plot_learning_curves - replace or import your actual function
+def plot_learning_curves(train_losses, val_losses):
+     print("Plotting learning curves (placeholder)...")
+     print("Train Losses:", train_losses)
+     print("Val Losses:", val_losses)
+
+
+def train_with_lr_scheduling(model, train_loader, val_loader, epochs=30, lr=0.001, patience=3, factor=0.1):
+    """Train a PyTorch model with learning rate scheduling based on validation loss."""
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    print(f"Training on device: {device}")
+
+    # Define loss function and optimizer
+    criterion = torch.nn.CrossEntropyLoss() # Example: Use appropriate loss for your task
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+
     # Learning rate scheduler - reduces LR when validation loss plateaus
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode='min', factor=0.1, patience=3, verbose=True
+    scheduler = ReduceLROnPlateau(
+        optimizer,
+        mode='min',      # Reduce LR when the metric stops decreasing (e.g., validation loss)
+        factor=factor,   # Factor by which the learning rate will be reduced. new_lr = lr * factor
+        patience=patience, # Number of epochs with no improvement after which learning rate will be reduced
+        verbose=True     # Print a message when the learning rate is updated
     )
+
     train_losses = []
     val_losses = []
+    best_val_loss = float('inf')
+    epochs_no_improve = 0
+    early_stopping_patience = patience * 3 # Example: Stop if no improvement for 3 scheduler cycles
+
+    print(f"Starting training for {epochs} epochs...")
     for epoch in range(epochs):
-        # Training phase
+        # --- Training phase ---
         model.train()
-        train_loss = 0.0
-        for inputs, targets in train_loader:
+        running_train_loss = 0.0
+        for i, (inputs, targets) in enumerate(train_loader):
+            inputs, targets = inputs.to(device), targets.to(device)
+
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
-            train_loss += loss.item()
-        avg_train_loss = train_loss / len(train_loader)
+
+            running_train_loss += loss.item() * inputs.size(0) # Accumulate loss weighted by batch size
+
+        avg_train_loss = running_train_loss / len(train_loader.dataset) # Calculate average loss over dataset
         train_losses.append(avg_train_loss)
-        # Validation phase
+
+        # --- Validation phase ---
         model.eval()
-        val_loss = 0.0
+        running_val_loss = 0.0
         with torch.no_grad():
             for inputs, targets in val_loader:
+                inputs, targets = inputs.to(device), targets.to(device)
                 outputs = model(inputs)
                 loss = criterion(outputs, targets)
-                val_loss += loss.item()
-        avg_val_loss = val_loss / len(val_loader)
+                running_val_loss += loss.item() * inputs.size(0)
+
+        avg_val_loss = running_val_loss / len(val_loader.dataset)
         val_losses.append(avg_val_loss)
-        print(f"Epoch {epoch+1}: Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}")
+
+        print(f"Epoch {epoch+1}/{epochs} - Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}, LR: {optimizer.param_groups[0]['lr']:.6f}")
+
         # Update learning rate based on validation loss
         scheduler.step(avg_val_loss)
+
+        # Simple Early Stopping Check
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            epochs_no_improve = 0
+            # Optionally save the best model
+            # torch.save(model.state_dict(), 'best_model.pth')
+            # print(f"Validation loss improved to {best_val_loss:.4f}. Saving model.")
+        else:
+            epochs_no_improve += 1
+
+        if epochs_no_improve >= early_stopping_patience:
+            print(f"Early stopping triggered after {epochs_no_improve} epochs without improvement.")
+            break
+
+    print("Training finished.")
+    # Plot learning curves after training
+    plot_learning_curves(train_losses, val_losses)
+
     return train_losses, val_losses
+
+# Example Real-world Context for LR Scheduling:
+# > 🚀 **Training Large Language Models (LLMs)**: Training models like BERT or GPT involves massive datasets and complex architectures.
+# > Using a fixed learning rate often leads to slow convergence or instability. Techniques like learning rate warm-up
+# > (starting with a small LR, increasing it, then decaying it) and schedulers like ReduceLROnPlateau or Cosine Annealing
+# > are crucial. They help navigate the complex loss landscape, allowing the model to initially make large updates and then
+# > fine-tune weights as it approaches convergence, significantly speeding up training and improving final performance.
+# > Without adaptive learning rates, training state-of-the-art LLMs would be practically infeasible.
+
 ```
 
 ## The Storytelling Side of Model Evaluation
