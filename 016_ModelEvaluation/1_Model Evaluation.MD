@@ -9,6 +9,7 @@ Model evaluation is a critical step in the machine learning workflow that helps 
 Building what you believe is the perfect AI model, only to deploy it and watch it spectacularly fail in the real world. This happens more often than you'd think! The difference between a model that works on paper and one that succeeds in production comes down to proper evaluation. Without it, you're essentially flying blind - or worse, flying with instruments that give you false readings.
 
 By the end of this module, you will:
+
 - Identify and address issues related to underfitting and overfitting
 - Implement the train-test split method for model evaluation
 - Utilize resampling techniques to handle imbalanced datasets
@@ -20,6 +21,7 @@ By the end of this module, you will:
 Understanding the bias-variance tradeoff is fundamental to building effective machine learning models.
 
 ### Key Concepts:
+
 - **Underfitting**: When a model is too simple to capture the underlying patterns in the data
 - **Overfitting**: When a model learns the training data too well, including its noise and outliers
 - **Balanced fitting**: Finding the optimal complexity that generalizes well to new data
@@ -27,34 +29,42 @@ Understanding the bias-variance tradeoff is fundamental to building effective ma
 ### Visual Understanding of Underfitting and Overfitting
 
 #### Regression Example
+
 In regression problems, underfitting and overfitting are visually apparent:
+
 - In **underfitting**, the model is too simple for the given complexity. For example, when the relationship between x and y follows a quadratic shape, but we try to fit a linear model, the vertical differences between actual data (green points) and predicted values (blue line) are very high. This indicates high bias in the model.
 - In **overfitting**, the model has learned the training data too well. Nearly all points of the data are perfectly covered by the model, including all noise related to the measurement points. Such models generalize poorly to new data and won't work well in real-life situations.
 
 #### Classification Example
+
 For classification problems with two independent variables X1 and X2:
+
 - In **underfitting**, a linear decision boundary (blue line) attempts to separate classes that require a non-linear boundary. This results in significant misclassification rates, with points predicted as one class when they actually belong to another.
 - In **overfitting**, an extremely complex decision boundary perfectly separates all training points, even accounting for points that are likely measurement errors rather than actual properties of the data. The model tries to predict noise, which by definition cannot be modeled.
 
 ### Bias-Variance Tradeoff
 
 Think of this like dart players aiming at a target:
+
 - **High bias, low variance**: The darts consistently hit the same area, but away from the bullseye
 - **Low bias, high variance**: The darts are centered around the bullseye but widely scattered
 - **High bias, high variance**: The darts are scattered widely and also miss the target center
 - **Low bias, low variance**: The darts consistently hit the bullseye (ideal situation)
 
 In machine learning terms:
+
 - **Bias** is the difference between predictions and actual values on the training data. High bias means the model is not well-fitted to the training data.
 - **Variance** is the difference between performance on training data versus validation data. High variance means large differences between training and validation performance.
 
 As model complexity increases:
+
 - Bias decreases (better fit to training data)
 - Variance increases (more likely to overfit)
 
 The goal is to find the optimal model complexity that minimizes the sum of bias error and variance error. This is known as the bias-variance tradeoff.
 
 ### Algorithm Tendencies
+
 - **Low variance algorithms**: Linear regression, Linear Discriminant Analysis (LDA), logistic regression
 - **High variance algorithms**: Decision trees, K-Nearest Neighbors, Support Vector Machines
 
@@ -63,11 +73,13 @@ These high variance algorithms train many more parameters, and you need to ensur
 ### Detecting and Mitigating Overfitting
 
 **Signs of overfitting:**
+
 - Large gap between training and validation performance
 - Model performs increasingly worse on validation data as training continues
 - Extremely complex model structure relative to the dataset size
 
 **Mitigation techniques:**
+
 - **Regularization**: L1 (Lasso) and L2 (Ridge) regularization add penalties to the loss function to constrain model parameters
 - **Early stopping**: Halt training when validation performance starts to degrade
 - **Pruning**: Removing unnecessary complexity from models (especially decision trees)
@@ -84,11 +96,13 @@ These high variance algorithms train many more parameters, and you need to ensur
 Before training any model, we need to properly split our data to enable robust evaluation.
 
 ### Common Approaches:
+
 - **Training set**: Used to train the model (typically 60-80% of data)
 - **Validation set**: Used for hyperparameter tuning and model selection
 - **Test set**: Used only once to evaluate the final model
 
 ### Purpose of Each Split
+
 - **Training data**: Data used to fit the model parameters
 - **Validation data**: Data used to evaluate and fine-tune the model during development. The model occasionally sees this data but doesn't directly learn from it
 - **Test data**: Provides an unbiased evaluation of the final model. This data should only be used once after the model is completely developed
@@ -98,6 +112,7 @@ The train-validation-test splitting of data is considered the gold standard in m
 ### Determining Split Proportions
 
 The optimal split depends on:
+
 1. The total number of samples available
 2. The complexity of the model
 3. Number of hyperparameters to tune
@@ -111,6 +126,7 @@ When working with classification problems, especially imbalanced datasets, it's 
 ### Temporal Splitting
 
 For time series data, random splits can lead to data leakage. Instead:
+
 - Use past data for training
 - More recent data for validation
 - Most recent data for testing
@@ -120,6 +136,7 @@ This approach respects the temporal nature of the data and better simulates real
 ### Preventing Data Leakage
 
 Data leakage occurs when information from outside the training dataset is used to create the model. Best practices include:
+
 - Perform feature scaling/normalization **after** splitting the data
 - Apply feature selection only on training data
 - Keep validation and test sets completely isolated until final evaluation
@@ -129,11 +146,13 @@ Data leakage occurs when information from outside the training dataset is used t
 ### Domain Adaptation and Dataset Shift
 
 Modern ML systems often face challenges when deployed in environments different from their training data:
+
 - **Covariate shift**: When the distribution of inputs changes between training and deployment
 - **Concept drift**: When the relationship between inputs and outputs changes over time
 - **Domain adaptation**: Techniques to adapt models to new domains with limited or no labels
 
 To make models more robust to these shifts:
+
 - Test on multiple datasets from different distributions
 - Use domain-adaptive training techniques
 - Implement monitoring systems to detect performance degradation over time
@@ -149,6 +168,7 @@ Cross-validation is a powerful method for assessing a model's performance and st
 Cross-validation addresses a fundamental problem in machine learning: we want to maximize data used for training to build the best model, but we also need sufficient data for validation to ensure reliable performance assessment.
 
 This presents a dilemma:
+
 - The best training performance is reached if as much data as possible is used for fitting the model
 - Stable validation results require as much data as possible for validation
 - Maximizing both simultaneously is not possible
@@ -160,6 +180,7 @@ In k-fold cross-validation, the data is divided into k equal parts (folds). The 
 #### 5-Fold Cross-Validation Example:
 
 In 5-fold cross-validation, the data is divided into five equal parts. For example, with 500 observations:
+
 1. **First iteration**: The first 100 observations (20%) are reserved for validation, and the remaining 80% for training.
    - Model 1 is trained on observations 101-500
    - Performance is evaluated on observations 1-100
@@ -190,13 +211,17 @@ In LOOCV, we create as many folds as there are data points. Each model is traine
 ### Advanced Cross-Validation Variants
 
 #### Group K-Fold
+
 For data with inherent grouping (e.g., multiple samples from the same patient), Group K-Fold ensures all samples from the same group stay together in the same fold, preventing data leakage.
 
 #### Repeated K-Fold
+
 Runs K-fold cross-validation multiple times with different random splits, further reducing the variance of the performance estimate.
 
 #### Time Series Cross-Validation
+
 For time series data, specialized cross-validation techniques preserve the temporal order:
+
 - **Forward chaining**: Train on a fixed window, predict the next time period, then expand the window
 - **Rolling-origin cross-validation**: Use a fixed-size window that moves forward through time
 - **Purged cross-validation**: Removes overlapping time periods between training and validation to prevent leakage
@@ -210,17 +235,20 @@ This approach provides an unbiased estimate of true model performance, accountin
 ### Modern Hyperparameter Optimization
 
 Within cross-validation, several advanced techniques can efficiently search the hyperparameter space:
+
 - **Bayesian optimization**: Uses probabilistic models to efficiently explore the hyperparameter space
 - **Hyperband**: Allocates resources to promising configurations early in training
 - **Population-based training**: Evolves model configurations during training
 
 ### Advantages of Cross-Validation
+
 1. Provides better and more stable results than simple train-validation splits
 2. Helps compare different machine learning algorithms effectively
 3. Useful for assessing the impact of hyperparameter tuning
 4. Utilizes data more efficiently than a simple train-test split
 
 ### Disadvantages of Cross-Validation
+
 1. Computationally very expensive because many different models are created
 2. May still not fully represent real-world performance if the data distribution shifts
 3. Can be challenging to implement correctly for time series or hierarchical data
@@ -235,12 +263,14 @@ When dealing with imbalanced datasets (where some classes are much more frequent
 When one class significantly outnumbers others, models tend to favor the majority class, potentially ignoring the minority class entirely. This is problematic when the minority class is often what we're most interested in detecting (e.g., fraud in financial transactions, rare diseases in medical diagnosis).
 
 ### Common Approaches:
+
 - **Undersampling**: Reducing the number of observations from the majority class
 - **Oversampling**: Increasing the number of observations from the minority class
 - **SMOTE** (Synthetic Minority Over-sampling Technique): Creating synthetic examples of the minority class
 - **Ensemble methods**: Combining multiple models trained on differently resampled datasets
 
 ### Undersampling Techniques
+
 1. **Random Undersampling**: Randomly remove samples from the majority class
 2. **Tomek Links**: Remove majority samples that form Tomek links with minority samples (pairs from different classes that are each other's nearest neighbor)
 3. **Edited Nearest Neighbors (ENN)**: Remove samples whose class differs from the majority of their k nearest neighbors
@@ -248,6 +278,7 @@ When one class significantly outnumbers others, models tend to favor the majorit
 5. **Near Miss**: Selects majority class samples based on their distance to minority class examples
 
 ### Oversampling Techniques
+
 1. **Random Oversampling**: Randomly duplicate minority class samples
 2. **SMOTE (Synthetic Minority Oversampling Technique)**: Create synthetic samples along the line segments connecting minority class neighbors
 3. **ADASYN (Adaptive Synthetic Sampling)**: Similar to SMOTE but focuses on harder-to-learn examples
@@ -256,10 +287,12 @@ When one class significantly outnumbers others, models tend to favor the majorit
 6. **SMOTE-TomekLinks**: Combines SMOTE with Tomek links removal for cleaner decision boundaries
 
 ### Hybrid Methods
+
 1. **SMOTE + Tomek**: Apply SMOTE oversampling followed by Tomek links undersampling
 2. **SMOTE + ENN**: SMOTE followed by Edited Nearest Neighbors cleaning
 
 ### Algorithm-Level Approaches
+
 1. **Cost-sensitive learning**: Assign higher misclassification costs to the minority class
 2. **Class weights**: Adjust the weight of classes in the learning algorithm's objective function
 3. **Specialized algorithms**: Some algorithms like XGBoost have built-in mechanisms to handle imbalanced data
@@ -267,6 +300,7 @@ When one class significantly outnumbers others, models tend to favor the majorit
 5. **Label distribution smoothing**: Smoothing the hard class labels to reduce model confidence
 
 ### Deep Learning Approaches for Imbalanced Data
+
 1. **Two-phase training**: First train on balanced data, then fine-tune on the original distribution
 2. **Class-balanced loss**: Reweights losses based on effective number of samples
 3. **Generative models**: Use GANs or VAEs to generate minority class samples
@@ -274,6 +308,7 @@ When one class significantly outnumbers others, models tend to favor the majorit
 ### Evaluation Metrics for Imbalanced Data
 
 Standard accuracy is misleading for imbalanced datasets. Instead, use:
+
 - **Precision and Recall**: Focus on the minority class performance
 - **F1 Score**: Harmonic mean of precision and recall
 - **ROC AUC**: Area under the receiver operating characteristic curve
@@ -284,6 +319,7 @@ Standard accuracy is misleading for imbalanced datasets. Instead, use:
 ### Implementation Considerations
 
 When applying resampling techniques:
+
 - Be careful not to introduce bias through the resampling process
 - Apply resampling only to training data, never to validation or test data
 - Consider the domain context when choosing between undersampling and oversampling
@@ -361,7 +397,7 @@ def k_fold_cross_validation(dataset, model_class, k=5, batch_size=32, epochs=10,
         # Create data loaders for this fold
         train_sampler = SubsetRandomSampler(train_idx)
         val_sampler = SubsetRandomSampler(val_idx)
-        
+
         train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
         val_loader = DataLoader(dataset, batch_size=batch_size, sampler=val_sampler)
         # Initialize model and optimizer
@@ -379,7 +415,7 @@ def k_fold_cross_validation(dataset, model_class, k=5, batch_size=32, epochs=10,
     # Calculate average performance across folds
     avg_performance = np.mean(fold_performances)
     std_performance = np.std(fold_performances)
-        
+
     print(f"Cross-validation performance: {avg_performance:.4f} ± {std_performance:.4f}")
     return fold_performances
 ```
@@ -408,8 +444,8 @@ def create_balanced_sampler(dataset):
 # Usage
 balanced_sampler = create_balanced_sampler(dataset)
 balanced_loader = DataLoader(
-    dataset, 
-    batch_size=32, 
+    dataset,
+    batch_size=32,
     sampler=balanced_sampler
 )
 ```
@@ -510,6 +546,7 @@ Proper model evaluation is essential for developing reliable and robust machine 
 ### Real-world Consequences of Poor Evaluation
 
 These examples illustrate why rigorous evaluation isn't just a technical exercise—it's an ethical imperative.
+
 - **Healthcare Predictive Models**: Several COVID-19 prediction models failed in practice because they were evaluated only on the data available during development, not accounting for how the pandemic would evolve
 - **AI Hiring Systems**: Amazon scrapped their AI recruiting tool when they discovered it penalized resumes containing the word "women's" because it was trained on historically biased data
 - **The $440 Million Bug**: In 2012, Knight Capital lost this staggering amount in 45 minutes due to untested trading algorithms
