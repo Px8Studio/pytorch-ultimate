@@ -229,6 +229,95 @@ To make models more robust to these shifts:
 
 > **Supplementary Reading**: See [Train-Validation-Test Split Guide](TrainValidationTest_101.pdf) for detailed procedures and best practices.
 
+## Data Leakage: The Silent Model Killer
+
+Data leakage occurs when information from outside the training dataset inappropriately influences the model, creating misleadingly good performance metrics that fail to generalize to real-world scenarios. It's one of the most common and dangerous pitfalls in machine learning.
+
+> 💡 **Think of data leakage like accidentally seeing the answers to an exam before taking it**: Your test scores will look impressive, but they don't reflect your actual knowledge or ability to apply it in the future.
+
+### Types of Data Leakage
+
+Data leakage manifests differently depending on the context:
+
+#### 1. Target Leakage
+
+This occurs when predictive features include information that wouldn't be available at the time of prediction in real-world scenarios.
+
+**Example**: Using "prescribed medication" as a feature to predict disease diagnosis, when in reality the medication would only be prescribed after diagnosis.
+
+#### 2. Train-Test Contamination
+
+When information from the test set influences the training process, typically through preprocessing or feature selection.
+
+**Example**: Performing feature normalization on the entire dataset before splitting it into train and test sets, allowing the model to "peek" at the test data distribution.
+
+#### 3. Temporal Leakage
+
+Using future information to predict past events in time series data.
+
+**Example**: Training a stock price prediction model using data from both before and after the prediction date.
+
+#### 4. Group Leakage
+
+When samples from the same group (e.g., same patient, same household) appear in both training and test sets.
+
+**Example**: Having multiple images of the same person in both training and test sets in a facial recognition system.
+
+#### 5. Feature Leakage
+
+When a feature directly or indirectly encodes information about the target variable.
+
+**Example**: Including "transaction_flagged_as_fraudulent" as a feature when trying to predict fraud.
+
+### How to Detect Data Leakage
+
+1. **Suspiciously high performance**: If your model achieves near-perfect results, be skeptical
+2. **Feature importance analysis**: Unusually strong predictors might be leaking information
+3. **Timeline validation**: Ensure your features would actually be available at prediction time
+4. **Cross-validation divergence**: Large differences between CV folds may indicate leakage
+
+### Prevention Strategies
+
+#### For General Machine Learning:
+
+- Split your data before any preprocessing
+- Perform feature scaling/normalization independently on each split
+- Use time-based splits for temporal data
+- Keep all data from the same group in the same split
+- Document the intended prediction time and scrutinize features accordingly
+- Implement a "leakage audit" in your ML pipeline
+
+#### For Deep Learning:
+
+- Be cautious with data augmentation pipelines
+- Watch for hidden batch normalization leakage
+- Ensure validation callbacks don't influence training decisions
+- Be wary of pre-trained models that might have seen your test data
+
+#### For AutoML and Automated Feature Engineering:
+
+- Enforce strict separation between training and validation data
+- Guard against feature selection methods that might use test data information
+- Implement holdout sets that are never seen during the development process
+
+### Real-world Consequences
+
+Data leakage has caused notable failures in production systems:
+
+- Medical diagnosis systems showing excellent lab performance but failing in clinical settings
+- Financial models that appeared to "predict" market crashes but actually used post-crash data
+- Recommendation systems that worked in testing but failed to influence customer behavior
+
+> ⚠️ **Warning**: A model built with data leakage is worse than no model at all, as it creates false confidence in predictions that may lead to harmful decisions.
+
+### Common Leakage Patterns to Watch For
+
+1. **Look-ahead bias**: Using information that would only be available in the future
+2. **Data preprocessing leakage**: Applying transformations to the entire dataset at once
+3. **Cross-validation leakage**: Incorrect implementation of CV allowing information to cross fold boundaries
+4. **Sample duplication**: The same or very similar samples appearing in both training and test sets
+5. **Target encoding leakage**: Using target statistics without proper cross-validation
+
 ## 3. Cross-Validation Techniques
 
 Cross-validation is a powerful method for assessing a model's performance and stability. See [Resampling Techniques Guide](ResamplingTechniques_101.pdf) for detailed procedures and best practices.
