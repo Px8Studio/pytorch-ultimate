@@ -16,6 +16,7 @@ ind.pubmed*
 *.pyc
 venv/
 .vscode/
+!.vscode/settings.json
 
 # Audio files
 *.mp3
