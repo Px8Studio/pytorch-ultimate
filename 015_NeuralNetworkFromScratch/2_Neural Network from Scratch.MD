@@ -61,9 +61,6 @@ Let's revisit the forward pass structure:
     *   We'll use Mean Squared Error (MSE): `Loss = (y_pred - y_true)^2`.
     *   The result is a single loss score.
 
-![Neural Network Forward Pass](https://raw.githubusercontent.com/yourusername/pytorch-ultimate/main/015_NeuralNetworkFromScratch/images/forward_pass_diagram.png)
-*Figure 1: Diagram showing the forward pass through our simple neural network, from input X through weights, bias, activation to final prediction.*
-
 That completes the forward pass. The next question is: how do we update the weights and biases?
 
 ### Backward Pass Explained (Weight Updates)
@@ -81,9 +78,6 @@ How do we know which way to adjust? We use the *gradient* (the slope or derivati
 *   The gradient tells us the direction of the steepest ascent. To minimize loss, we move in the *opposite* direction of the gradient.
 *   This process is called **Gradient Descent**.
 *   A key property of MSE: larger errors result in larger gradients, leading to bigger initial adjustments.
-
-![Gradient Descent Visualization](https://raw.githubusercontent.com/yourusername/pytorch-ultimate/main/015_NeuralNetworkFromScratch/images/gradient_descent.png)
-*Figure 2: Visualization of gradient descent optimization on a loss landscape, showing how parameters are updated to minimize loss.*
 
 **The Learning Rate (`alpha`):**
 Simply subtracting the full gradient might cause us to overshoot the minimum, potentially oscillating back and forth (`L1` to `L2` to `L1`...).
@@ -644,9 +638,6 @@ We have successfully:
     *   `train`: Training loop orchestration.
 *   Trained the network.
 *   Evaluated performance using loss plots, accuracy, and a confusion matrix.
-
-![Neural Network Complete Architecture](https://raw.githubusercontent.com/yourusername/pytorch-ultimate/main/015_NeuralNetworkFromScratch/images/complete_nn_architecture.png)
-*Figure 3: Complete architecture of our neural network showing data flow, training process, and evaluation metrics.*
 
 ---
 
