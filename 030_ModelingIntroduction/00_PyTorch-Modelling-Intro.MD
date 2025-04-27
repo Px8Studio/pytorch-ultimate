@@ -214,3 +214,174 @@ Play video starting at :7:2 and follow transcript7:02
 So thank you very much for staying with me in this coding lecture, and see you in the next one.
 
 
+Foundations and Core Concepts of PyTorch
+Module 7
+Model Class (Coding)
+
+0:01
+Hello and welcome to this coding lecture.
+Play video starting at ::4 and follow transcript0:04
+In this coding lecture we are going to work with the Model class, because so far we have created our model directly from scratch, but now I'm going to show you how you can set up your model in a separate class which you then can easily instantiate and use in the further code.
+Play video starting at ::24 and follow transcript0:24
+All right. For this I have opened the linear regression model plus start script which is just providing some code for loading the required packages, and I run this first chunk,
+Play video starting at ::40 and follow transcript0:40
+then it's also having the
+Play video starting at ::42 and follow transcript0:42
+data import ready to start.
+Play video starting at ::47 and follow transcript0:47
+And you're going to see this is the same dataset that we have used in the lectures before.
+Play video starting at ::54 and follow transcript0:54
+And then we're converting these lists and numpy arrays to tensors.
+Play video starting at :1:3 and follow transcript1:03
+Okay. Everything ready. Now we can create our Model class. So for this we have to type the class, and we have to give a name to this class. So let's say we want to call it linearRegressionTorch
+Play video starting at :1:18 and follow transcript1:18
+class.
+Play video starting at :1:20 and follow transcript1:20
+And then this one has to inherit from the PyTorch submodule nn. Module.
+Play video starting at :1:30 and follow transcript1:30
+So this is the general structure you have to create this class. The class is inheriting from nn. Module. And now we have to specify the init function
+Play video starting at :1:43 and follow transcript1:43
+which is called when an object is instantiated from this class. So we can create this init function. It needs to have the keyword self which is referring to the objects inside the class. And then we can specify two parameters. I will call them input_size and output_size.
+Play video starting at :2:7 and follow transcript2:07
+And then in here, when the class is initialized, we're creating an internal object which is called linear. And this one is a linear layer coming from the nn.Module.
+Play video starting at :2:23 and follow transcript2:23
+And this linear class is requiring two parameters. One is for the in_features and one is for the out_features.
+Play video starting at :2:33 and follow transcript2:33
+So in here we're passing the size of the model. So we're telling that there's one node going in and one node going out.
+Play video starting at :2:48 and follow transcript2:48
+And then every model size needs to have a forward function which is provided with one variable typically that's called X.
+Play video starting at :2:56 and follow transcript2:56
+And
+Play video starting at :2:58 and follow transcript2:58
+since our model is so simple, we can just follow this proposal here. We are just calling the linear layer that we have created before and storing the results in an object called out. And we are returning this one. Later on when we have more complex models, we will set up more layers in the init function, and then we stack them together in the forward function,
+Play video starting at :3:28 and follow transcript3:28
+right? And that's already it. So this is our Model class. Now we can specify some parameters. Our input dimension is 1, our output dimension is 1, and we are ready to instantiate an object of this class.
+Play video starting at :3:48 and follow transcript3:48
+So here we just create a new object called model, which is instantiated from this class with the parameters we have just specified
+Play video starting at :3:58 and follow transcript3:58
+and we can run that.
+Play video starting at :4: and follow transcript4:00
+And our Model class is very perfect.
+Play video starting at :4:3 and follow transcript4:03
+Now, the next one is to specify a loss function.
+Play video starting at :4:10 and follow transcript4:10
+And since we're working with linear regression,
+Play video starting at :4:14 and follow transcript4:14
+the loss type of mean square error seems to be quite appropriate. So we will use this specific function
+Play video starting at :4:23 and follow transcript4:23
+and assign it to the object called loss_fun.
+Play video starting at :4:27 and follow transcript4:27
+Then we need to specify the optimizer. And here we can also specify another parameter called LR for learning rate.
+Play video starting at :4:36 and follow transcript4:36
+And that specify the value for it.
+Play video starting at :4:43 and follow transcript4:43
+And then we need to specify the optimizer. So the optimizer is created from the submodule optim. And then we're going to use Stochastic Gradient Descent.
+Play video starting at :4:57 and follow transcript4:57
+And when this function is called, it is requiring some parameters. So here we are passing the model parameters which we can extract with model.parameters. And we also can specify the learning rate. And with this, we are ready to create our training loop.
+Play video starting at :5:16 and follow transcript5:16
+So this time we are also going to save the losses and the slope and the bias in individual variables.
+Play video starting at :5:27 and follow transcript5:27
+And these ones are lists which are completely empty at the beginning.
+Play video starting at :5:32 and follow transcript5:32
+And we also set one parameter, the number of epochs to 1000.
+Play video starting at :5:40 and follow transcript5:40
+And now we can create a loop for it. So we are iterating over 1000 epochs,
+Play video starting at :5:50 and follow transcript5:50
+and here we are now starting. So
+Play video starting at :5:55 and follow transcript5:55
+we are at first setting the gradients to zero.
+Play video starting at :6: and follow transcript6:00
+And we're doing this by calling optimizer.zero_grad
+Play video starting at :6:6 and follow transcript6:06
+Then we have the forward pass. So we're passing our observations through the model that we have created to get the predictions.
+Play video starting at :6:16 and follow transcript6:16
+And this is exactly the line we want to run for this.
+Play video starting at :6:21 and follow transcript6:21
+So we're passing x,
+Play video starting at :6:24 and follow transcript6:24
+our data that we have set up here to the model, and we get as a return y_pred.
+Play video starting at :6:34 and follow transcript6:34
+Now we have predictions, and we also have the true values. So we are at the point that we can calculate the loss. So for this, we can call our loss function pass in the predictions, and the true values, and we will get back the losses which we store in the object called loss.
+Play video starting at :6:57 and follow transcript6:57
+And now we can update the weights
+Play video starting at :7:2 and follow transcript7:02
+by calling
+Play video starting at :7:6 and follow transcript7:06
+optimizer.step. So that would be it if we wouldn't want to learn more of the model. But right here, we want to see a bit more into the insight on what is happening. So we will get the parameters, and I will show you how we will get them, and then we are going to store them to the losses and to the slope and bias parameters. So we can iterate through
+Play video starting at :7:36 and follow transcript7:36
+the parameters. So in model.named_parameters,
+Play video starting at :7:46 and follow transcript7:46
+have all the parameters stored, and we'll get back the name and the parameter, and we're only going to check the parameters that are having a gradient required.
+Play video starting at :8:2 and follow transcript8:02
+And then only in the case that
+Play video starting at :8:6 and follow transcript8:06
+the name is
+Play video starting at :8:10 and follow transcript8:10
+linear dot weight
+Play video starting at :8:14 and follow transcript8:14
+So here we're now going to append our slope,
+Play video starting at :8:21 and follow transcript8:21
+and we're going to use param dot data dot num,
+Play video starting at :8:30 and follow transcript8:30
+and we are going to use
+Play video starting at :8:35 and follow transcript8:35
+the very first object.
+Play video starting at :8:38 and follow transcript8:38
+Okay. And we are doing something very similar for the bias term.
+Play video starting at :8:44 and follow transcript8:44
+So in here, we're going to append the current bias value of the current epoch.
+Play video starting at :8:53 and follow transcript8:53
+So then we're going to store the losses
+Play video starting at :9:2 and follow transcript9:02
+very similar we're taking or losses objects. And we are appending
+Play video starting at :9:7 and follow transcript9:07
+what is stored in loss data as a float.
+Play video starting at :9:16 and follow transcript9:16
+And now we can print the loss
+Play video starting at :9:19 and follow transcript9:19
+for every 1/100 epoch. We're going to print the epoch and the losses.
+Play video starting at :9:29 and follow transcript9:29
+All right, let's run that.
+Play video starting at :9:32 and follow transcript9:32
+And you can see here it's not working, the losses are not decreasing. They are constant. Actually, there is a bug in my code and I found out that I have
+Play video starting at :9:44 and follow transcript9:44
+missed one small line, one very important one, the one in which the gradients are calculated. So we spoke before about the automatic gradient calculation which is triggered by calling loss.backward. So this one was missing. Small line, big impact. So this is very important to calculate the gradients,
+Play video starting at :10:12 and follow transcript10:12
+good. Let's just clear up everything and run everything again.
+Play video starting at :10:19 and follow transcript10:19
+Just to see now this is the expected result. So you can see we have losses which are decreasing with the number of epoch; and at some point, they are getting quite stable, this is good.
+Play video starting at :10:32 and follow transcript10:32
+So now we can for example, visualize the model training by creating a scatter plot in which we are passing in the number of epoch
+Play video starting at :10:49 and follow transcript10:49
+on the X axis. And then we are going to plot the losses. So this is the whole purpose why we have stored this object.
+Play video starting at :11: and follow transcript11:00
+And you can see this is a typical representation on how the losses develop. So you start with very high losses at the beginning and then the gradient descent is in action, you can see that you're getting closer and closer to a good result. And at some point, the returns are diminishing more and more. And at some point, you get a very flat line at the end at which point it's not really worth having more calculations. So at that point, you could basically stop the training and work with this kind of model.
+Play video starting at :11:41 and follow transcript11:41
+We can also do that for the bias terms.
+Play video starting at :11:45 and follow transcript11:45
+So we can in a very similar fashion create a scatter plot on which we have a range of the 1000 epochs. And then we are going to plot the bias term.
+Play video starting at :12:1 and follow transcript12:01
+You can see the same, we are starting with a very poor result, we are starting basically at around zero and then we are getting better and better and we are getting at some point to the statistical result of 36 point whatever. So we can also do the same for the slopes.
+Play video starting at :12:27 and follow transcript12:27
+Same story, we're starting out with some poor results and then a very steady trend towards a constant value at some point. Here it's looking like there is still some significant slope. So we could even think about having more epochs
+Play video starting at :12:45 and follow transcript12:45
+looking at that graph.
+Play video starting at :12:48 and follow transcript12:48
+OK. So we now can also create our predictions again by calling our model object.
+Play video starting at :12:57 and follow transcript12:57
+And in here, we're going to access the data and convert them to numpy,
+Play video starting at :13:4 and follow transcript13:04
+and we need to remove one dimension to make it work. In the end with the plot we're going to create
+Play video starting at :13:12 and follow transcript13:12
+and then we can create our scatterplot
+Play video starting at :13:15 and follow transcript13:15
+with our
+Play video starting at :13:19 and follow transcript13:19
+x values which are stored in that list
+Play video starting at :13:23 and follow transcript13:23
+and our y_list. So these are the true values, and now we can put on top the predictions, and we want to be able to differentiate them. So we specify a color
+Play video starting at :13:38 and follow transcript13:38
+and you can see it actually its better if we take a line plot in this regard.
+Play video starting at :13:47 and follow transcript13:47
+Here we are. So we have our observations, the blue dots, and this is our final regression line. So this looks already quite good. All right. So you have learned how to setup the Model class, and how to create the training for this specific model.
+
