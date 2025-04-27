@@ -2,18 +2,21 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "📦 Export Conda Env",
+			"label": "📦 Export 'pytorch' Conda Env to YAML",
 			"type": "shell",
 			"command": "conda",
 			"args": [
-				"env",
-				"export",
+				"run",
 				"-n",
 				"pytorch",
+				"conda",
+				"env",
+				"export",
 				"--file",
 				"${workspaceFolder}\\pytorch.yml"
 			],
 			"problemMatcher": [],
+			"detail": "Exports the 'pytorch' Conda environment to pytorch.yml in the workspace root using 'conda run'.",
 			"group": {
 				"kind": "build",
 				"isDefault": false
