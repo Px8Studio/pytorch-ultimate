@@ -786,3 +786,43 @@ sns.lineplot(x=X_list, y=y_pred, color='red')
 import hiddenlayer as hl
 graph = hl.build_graph(model, X)
 # %%
+
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Datasets and Dataloaders (101)
+
+0:01
+Hello and welcome to this lecture on Datasets and Dataloaders.
+Play video starting at ::7 and follow transcript0:07
+Let's start with the question. Why it's a good idea to create these specific classes? The idea behind is that ideally your model training should be separated from your data processing,
+Play video starting at ::21 and follow transcript0:21
+because then you can change something at the end of data processing and your modeling part can stay exactly the same as before. So in the end, your code is having some increased readability and you have a very high modality. So it's just better code and it's making your life easier later on.
+Play video starting at ::48 and follow transcript0:48
+And for this, there are two specific classes implemented in PyTorch and I will show you how to use them, which are Dataset and Dataloader. The Dataset is an interface to some preloaded Datasets that you can use. But mainly we are going to use it as an interface to our own, to our custom Datasets.
+Play video starting at :1:12 and follow transcript1:12
+So here the Dataset is storing the samples and the labels
+Play video starting at :1:18 and follow transcript1:18
+and then the Dataloader is taking over. This is some iterable wrapped around Dataset, and that is basically loading then the data.
+Play video starting at :1:28 and follow transcript1:28
+Let's take a look at how you can work with custom Datasets.
+Play video starting at :1:32 and follow transcript1:32
+You can just implement your own class. You can see it here at the right hand side. First of all, you have to load the classes, Dataset and Dataloader. Then you can set up your own Dataset class, which is inheriting from Dataset. And it's important that your Dataset class has the implementations for three different functions
+Play video starting at :1:59 and follow transcript1:59
+which there are. The first one is the __init__ function. This is the function that is run once during the instantiation process of creating an object.
+Play video starting at :2:11 and follow transcript2:11
+Then you have a __len__ function, which is just returning the number of samples that are available.
+Play video starting at :2:18 and follow transcript2:18
+And then you have to have some implementation of the __getitem__ function. This one is loading samples from the Dataset, and preprocesses them in the way that you have defined, and returns them for a given index.
+Play video starting at :2:33 and follow transcript2:33
+So here at the right hand side, you can see our own implementation as we will develop it together in our coding session. So here we are passing in our independent and dependent data set X and y; we are creating the internal objects X and Y; and then the __len__ function is just returning the length of your Dataset. And the __getitem__ function is provided with an index and then it's returning the independent and dependent feature at position of the index.
+Play video starting at :3:14 and follow transcript3:14
+All right, that's it on the Dataset. Then the next part is the Dataloader.
+Play video starting at :3:20 and follow transcript3:20
+The Dataloader basically iterates through the Dataset
+Play video starting at :3:24 and follow transcript3:24
+and its returning batches of your data, we have spoken about batches before. So depending on the BATCH_SIZE which was defined, now the Dataloader is returning a number of different Datasets,
+Play video starting at :3:41 and follow transcript3:41
+and it has a lot of different features which are coming in very handy. Like for example, you can just set a flag so that all the data are shuffled, and they're not taken from top to bottom but randomly sampled from the Dataset. And there are also some more advanced sampling strategies. So there's a lot to discover with this class as well. But that's it for our introduction into Dataset and Dataloader. And now in our upcoming coding session, we're going to see how we can actually implement that.
+Play video starting at :4:17 and follow transcript4:17
+Thank you very much for joining, and see you there.
