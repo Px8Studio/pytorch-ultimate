@@ -17,7 +17,7 @@ ind.pubmed*
 venv/
 .vscode/
 !.vscode/settings.json
-
+!.vscode/tasks.json
 # Audio files
 *.mp3
 *.wav
