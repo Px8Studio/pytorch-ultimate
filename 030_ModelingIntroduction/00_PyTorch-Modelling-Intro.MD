@@ -560,3 +560,229 @@ Foundations and Core Concepts of PyTorch
 Module 7
 Exercise: Learning Rate and Number of Epochs
 
+0:00
+Now here comes a small exercise.
+Play video starting at ::4 and follow transcript0:04
+You've seen we have two hyperparameters here. We have the learning rate and the number of epochs. And I want you to play around with these values just to see which values are working out quite well. At which point do you get some stable results? So just play with these values. Perform the training, take a look at the results, and try to find some good working parameter combinations on your own. And then we're going to see,
+Play video starting at ::34 and follow transcript0:34
+and then I'm going to show you my solution to that. All right. See you there.
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Solution: Learning Rate and Number of Epochs
+
+0:01
+And here comes my solution.
+Play video starting at ::3 and follow transcript0:03
+So how would you basically detect this?
+Play video starting at ::7 and follow transcript0:07
+In some later lecture we are going to deal with hyperparameter tuning in more detail. Then we're also going to setup some grid search. So we will have some very structured approach of modifying parameters and testing all of them here. And now I just want you to modify the parameters manually just to see what the output is. So what I'll do is, I'll start with some very large learning rate, and then I can run everything including the, including the losses plot. So I run everything above
+Play video starting at ::43 and follow transcript0:43
+and here you can see this is definitely too large. So this would be the loss plot. So it should have some decreasing slope,
+Play video starting at ::52 and follow transcript0:52
+and the losses should be getting smaller and smaller with every epoch. Here we can see there is no learning at all, and at some point the losses are even exploding. So that is not working at all. Now, I usually just go in orders of magnitude through it. So we just take a value 10 times smaller than this one, and then we run everything. Again,
+Play video starting at :1:22 and follow transcript1:22
+this looks much better. So you can see a value of 0.
+Play video starting at :1:28 and follow transcript1:28
+01 is already providing some good results. Let's just check the boundaries of this. So let's just get smaller and smaller until we see at some point that this is not really working out. You can see, if we are having a value of 0.001
+Play video starting at :1:48 and follow transcript1:48
+then 1000 epochs are definitely not enough yet. So we have not reached the stable plateau. So we can still get some improvement with having more epochs.
+Play video starting at :2:2 and follow transcript2:02
+So if we want to go with this learning rate, we would have to increase the epoch, I won't do that now. But this is what you can read out of this graph, for example. So let's assume that the optimum value is somewhere in between 0.01 and 0.001. So let's just try 0.02 for this and run it again.
+Play video starting at :2:31 and follow transcript2:31
+And this looks quite good. So here we have the stable result at the end. So 1000 epochs are enough for this.
+Play video starting at :2:41 and follow transcript2:41
+In this specific example, we could also take a look at the statistical results because we know that we have the optimum values of the bias and the slope. This one should be 37.3 and minus 5.3.
+Play video starting at :3:4 and follow transcript3:04
+So this is our baseline. In this specific example, we know these are the true results, and then we can check basically the bias and the slope. So let's see where we end up. So you can see with this value, we didn't reach the perfect result yet. Let's just take a look at the slope.
+Play video starting at :3:30 and follow transcript3:30
+Okay. So as you can see
+Play video starting at :3:35 and follow transcript3:35
+with this value we did not get yet the perfect results. Let's just increase the number of epochs,
+Play video starting at :3:46 and follow transcript3:46
+now it's running a bit longer,
+Play video starting at :3:49 and follow transcript3:49
+and then we can take a look at the losses,
+Play video starting at :3:54 and follow transcript3:54
+okay. They seem to be quite stable for a long time already.
+Play video starting at :3:58 and follow transcript3:58
+I guess the same holds for the bias and for the slope, let's just check the values. The bias ends up with 37.2. Okay. Pretty close to the statistical result and the slope
+Play video starting at :4:16 and follow transcript4:16
+is at minus 5.3. So let's consider this to be close enough, you could also modify a bit more with the number of epochs, just to see what are the limits. Is there may be a minimum number of epochs that you would need depending on the learning rate? So yes, that is basically what I wanted you to explore. How these two different parameters are interacting with each other? So the smaller the learning rate, the longer the training is taking, and then you need more epochs to get to a stable result. And with this, we have reached the end of this lecture. Thank you very much, and see you in the next video.
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Batches (101)
+
+0:01
+Hello and welcome to this lecture on batches.
+Play video starting at ::6 and follow transcript0:06
+What are batches? And why is it useful to partition your data into batches? It is actually the easiest to understand if we take a look at the problem. So the problem is that often you have data sets that are very large. So we have a huge dataset that you would want to use to train your model. And it might be that passing the complete dataset at once to the model is just impossible due to the constraints of your computer. In these cases, it's very good if you partition your data and that you rather provide smaller bytes to the model. And this is what is called batches. So here you can see the alternative to the left side. So now we are not taking the complete dataset and pass it to the model, but instead we're passing it in batch one, which is just having a fraction of all data, then we're taking the second batch, and so on all the way until the last data is provided to the model.
+Play video starting at :1:13 and follow transcript1:13
+But now you might ask, well, it might be a good idea to partition the data into batches, but what is actually the optimal batch size? Because you can imagine the batch size can vary between 1, then you have to complete dataset to providing each individual data point to the model. And what is actually the best? So let's talk about that. Let's talk about the better size, the batch size that is the number of simultaneously provided data sets.
+Play video starting at :1:47 and follow transcript1:47
+And there are a few points to consider here. The batch size is defining the speed of the model training and the stability of the learning process.
+Play video starting at :1:57 and follow transcript1:57
+And there are some reasons for using smaller batch sizes. Smaller batch sizes are actually noisier and provide lower generalization errors. And like I said earlier, it's easier to pass a small batch size of training data because then you don't run into constraints with your memory, either CPU or GPU.
+Play video starting at :2:22 and follow transcript2:22
+And just to provide some best practices, what are typical batch sizes? The typical batch size is somewhere in between 1 and 500.
+Play video starting at :2:33 and follow transcript2:33
+And often you can see that the size is just a multiple of 2, and it has shown that a good default, if you don't know anything else, then a good default is to use 32.
+Play video starting at :2:49 and follow transcript2:49
+That was our short course on batch sizes. Thank you very much, and see you in the next lecture.
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Batches (Coding)
+
+0:01
+Hello and welcome to this coding lecture.
+Play video starting at ::5 and follow transcript0:05
+In the previous video you have learned about batches, and this is what we are going to implement now. Here you can see I have opened this linear regression batches start script, which is basically the code from the Model class implementation.
+Play video starting at ::20 and follow transcript0:20
+We can just check that everything is working by running everything above the line where we plot the losses.
+Play video starting at ::29 and follow transcript0:29
+So we're working with the same dataset, and we create our linear regression model with PyTorch. And
+Play video starting at ::40 and follow transcript0:40
+what we're going to do now is, we are, we're iterating through our dataset with a defined batch size. So for this, we need to define this parameter at first the batch size. So we're going in smaller batches through the data within every epoch. So what this technically means is we have the outer loop for iterating over the number of the epochs. And then in every epoch, we are passing the training data bit by bit to the model. So this is what we are going to implement now.
+Play video starting at :1:21 and follow transcript1:21
+So the group is looking like this, we are
+Play video starting at :1:26 and follow transcript1:26
+creating a for loop and the range is from zero to the length of X, or we can say x.shape
+Play video starting at :1:38 and follow transcript1:38
+at position 0. So this is returning the number of rows of our training data. We're iterating over the number of rows of our dataset. And the step size is the BATCH_SIZE. So every time we're increasing the value by 2,
+Play video starting at :1:57 and follow transcript1:57
+that is already good. Now, we have some problem with the indentation. Everything that is inside
+Play video starting at :2:7 and follow transcript2:07
+the for loop needs to be indented.
+Play video starting at :2:10 and follow transcript2:10
+All right, but still this cannot work because still we're passing in here the complete training data. This of course is not correct. Here we need to,
+Play video starting at :2:23 and follow transcript2:23
+add the specific location, so we're going from position i to position i plus the BATCH_SIZE. So at the first run, we're starting with 0 and then the range is going from 0 to 2, then i is jumping with a value of 2, and then this will return the next pair of data, good. So now we have the predictions right.
+Play video starting at :2:52 and follow transcript2:52
+Now we have to do the same for the true values because this is now having the predictions for two observations and not the complete dataset. And then we need to compare that of course, also to the same two locations of the true tensor. So again, we're slicing for position i to i plus the BATCH_SIZE,
+Play video starting at :3:17 and follow transcript3:17
+and that should be it. So we can run now everything. Let's just clear the output and run everything.
+Play video starting at :3:31 and follow transcript3:31
+Now you can see here due to the indentation, we can correct that maybe that we are having now the epoch 0 a number of times because every time we are passing only a small fraction of the complete dataset.
+Play video starting at :3:49 and follow transcript3:49
+And finally, we have more of these values. This is just due to the fact that we're adding several values per epoch,
+Play video starting at :3:58 and follow transcript3:58
+but that shouldn't care us too much. The main point in here is that we successfully implemented the BATCH_SIZE. So we are now passing the data not as a complete chunk to our model training, but instead we are taking smaller bytes and passing them one by one to the model.
+Play video starting at :4:21 and follow transcript4:21
+And that was basically it. So inside our outer loop for the iteration over the epoch we have now introduced another inner loop for iterating over the batches. And then all we had to do is, we had to pick the right positions
+Play video starting at :4:39 and follow transcript4:39
+of the data that we are passing in the forward pass and we had to adapt
+Play video starting at :4:45 and follow transcript4:45
+in the loss function, the position of the true tensor. And that is everything that we needed to implement to make this work and to implement successfully the BATCH_SIZE.
+Play video starting at :5: and follow transcript5:00
+That is everything that I wanted you to learn in this lecture. Thank you very much, and see you in the next video.
+
+#%% packages
+import graphlib
+import numpy as np
+import pandas as pd
+import torch
+import torch.nn as nn 
+import seaborn as sns
+
+#%% data import
+cars_file = 'https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv'
+cars = pd.read_csv(cars_file)
+cars.head()
+
+#%% visualise the model
+sns.scatterplot(x='wt', y='mpg', data=cars)
+sns.regplot(x='wt', y='mpg', data=cars)
+
+#%% convert data to tensor
+X_list = cars.wt.values
+X_np = np.array(X_list, dtype=np.float32).reshape(-1,1)
+y_list = cars.mpg.values
+y_np = np.array(y_list, dtype=np.float32).reshape(-1,1)
+X = torch.from_numpy(X_np)
+y_true = torch.from_numpy(y_np)
+
+#%%
+class LinearRegressionTorch(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(LinearRegressionTorch, self).__init__()
+        self.linear = nn.Linear(input_size, output_size)
+    
+    def forward(self, x):
+        return self.linear(x)
+
+input_dim = 1
+output_dim = 1
+model = LinearRegressionTorch(input_size=input_dim, output_size=output_dim)
+model.train()
+
+# %% Mean Squared Error
+loss_fun = nn.MSELoss()
+
+#%% Optimizer
+learning_rate = 0.02
+# test different values of too large 0.1 and too small 0.001
+# best 0.02
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+
+#%% perform training
+losses = []
+slope, bias = [], []
+NUM_EPOCHS = 1000
+BATCH_SIZE = 2
+for epoch in range(NUM_EPOCHS):
+    for i in range(0, X.shape[0], BATCH_SIZE):
+        # optimization
+        optimizer.zero_grad()
+
+        # forward pass
+        y_pred = model(X[i:i+BATCH_SIZE])
+
+        # compute loss
+        loss = loss_fun(y_pred, y_true[i:i+BATCH_SIZE])
+        losses.append(loss.item())
+
+        # backprop
+        loss.backward()
+
+        # update weights
+        optimizer.step()
+    
+    # get parameters
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            if name == 'linear.weight':
+                slope.append(param.data.numpy()[0][0])
+            if name == 'linear.bias':
+                bias.append(param.data.numpy()[0])
+
+
+    # store loss
+    losses.append(float(loss.data))
+    # print loss
+    if (epoch % 100 == 0):
+        print(f"Epoch {epoch}, Loss: {loss.data}")
+
+    
+
+# %% visualise model training
+sns.scatterplot(x=range(len(losses)), y=losses)
+
+#%% visualise the bias development
+sns.lineplot(x=range(NUM_EPOCHS), y=bias)
+#%% visualise the slope development
+sns.lineplot(x=range(NUM_EPOCHS), y=slope)
+
+
+
+# %% check the result
+model.eval()
+y_pred = [i[0] for i in model(X).data.numpy()]
+y = [i[0] for i in y_true.data.numpy()]
+sns.scatterplot(x=X_list, y=y)
+sns.lineplot(x=X_list, y=y_pred, color='red')
+# %%
+import hiddenlayer as hl
+graph = hl.build_graph(model, X)
+# %%
