@@ -826,3 +826,108 @@ Play video starting at :3:41 and follow transcript3:41
 and it has a lot of different features which are coming in very handy. Like for example, you can just set a flag so that all the data are shuffled, and they're not taken from top to bottom but randomly sampled from the Dataset. And there are also some more advanced sampling strategies. So there's a lot to discover with this class as well. But that's it for our introduction into Dataset and Dataloader. And now in our upcoming coding session, we're going to see how we can actually implement that.
 Play video starting at :4:17 and follow transcript4:17
 Thank you very much for joining, and see you there.
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Datasets and Dataloaders (Coding)
+
+0:02
+Hello and welcome to this coding lecture on Datasets and Dataloaders. You can see here I have loaded this linear regression Dataset Dataloader start script.
+Play video starting at ::14 and follow transcript0:14
+And this basically reflects the code that we have created with the batches before. So now what we're going to do is basically after we have created our independent and dependent features, we are going to create a new chunk on which we are going to create at first a Dataset and then the Dataloader.
+Play video starting at ::41 and follow transcript0:41
+So for this, we are going to create our Linear-
+Play video starting at ::47 and follow transcript0:47
+Regression Dataset.
+Play video starting at ::51 and follow transcript0:51
+And this one inherits from the Dataset class.
+Play video starting at ::56 and follow transcript0:56
+The Dataset class needs to be imported, of course. So we need to import it from torch. utils.data.
+Play video starting at :1:5 and follow transcript1:05
+And from this sub module, we are importing the Dataset and the Dataloader.
+Play video starting at :1:13 and follow transcript1:13
+So we can run this
+Play video starting at :1:16 and follow transcript1:16
+maybe all chunks until the one where we're currently creating the code.
+Play video starting at :1:21 and follow transcript1:21
+Okay. So now we can create our Dataset class. And as you have seen before, the Dataset class requires some
+Play video starting at :1:33 and follow transcript1:33
+functions. So the first one is, the __init__ function
+Play video starting at :1:38 and follow transcript1:38
+in which we are going to
+Play video starting at :1:41 and follow transcript1:41
+pass in the independent feature and the dependent feature. And then the internal objects x and y are populated with the data that was passed in during the instantiation of this object.
+Play video starting at :1:58 and follow transcript1:58
+Then we need to setup another function for length. So everything that this function is doing is it's returning the length of the complete Dataset.
+Play video starting at :2:10 and follow transcript2:10
+And then we need some implementation of the get item function, which is accessing the internal objects with self. And then you can pass in some index, and it is returning the independent features at this position of the index and the dependent features.
+Play video starting at :2:32 and follow transcript2:32
+So this is everything that you need to do to setup successfully the Dataset.
+Play video starting at :2:38 and follow transcript2:38
+And then we can specify the Dataloader, and we can directly assign it to the object that is called train_loader.
+Play video starting at :2:51 and follow transcript2:51
+So for this, all we have to do is, we have to call the Dataloader function and we need to pass some parameters to this. So the first one is the Dataset, and the Dataset is basically created with the Dataset class that you can see here.
+Play video starting at :3:13 and follow transcript3:13
+And in here the objects X_np, so the numpy version of the independent features, and the numpy array of the dependent feature are passed into this Dataset class that we have just created and we pass this to the Dataloader.
+Play video starting at :3:33 and follow transcript3:33
+So this is the required parameter. We also need to specify another parameter which is the batch_size,
+Play video starting at :3:42 and follow transcript3:42
+and we just leave it with a size of 2 for now. And you can see here there are many more parameters. So you can do much more with this. But for this introduction, we are just leaving it with the required parameters, with the Dataset and with the batch_size,
+Play video starting at :4:1 and follow transcript4:01
+now we can run this.
+Play video starting at :4:4 and follow transcript4:04
+So now we have some implementation of the Dataset and the Dataloader
+Play video starting at :4:10 and follow transcript4:10
+that the modeling class is not touched, everything is kept unchanged. We are also going to keep the loss function and the learning rate and the optimizer. The next change is coming in our training groups.
+Play video starting at :4:28 and follow transcript4:28
+You can see how we have implemented the batch_sizes before. So we had to make sure that we are picking the exact right positions of the independent and dependent feature. So we need to make sure with the slicing that we get the right starting and end position and we have to make sure to apply this at different points. Actually, one purpose of the Dataloader is that it is making our life a bit easier in this regard. So we are going to work on this inner loop and also how the data that we have here is modified.
+Play video starting at :5:9 and follow transcript5:09
+Okay. Before we go there, we will just have a small x course. And this one is going to check the train_loader
+Play video starting at :5:20 and follow transcript5:20
+and what this returns?
+Play video starting at :5:23 and follow transcript5:23
+What we're going to do is basically we're going to make use of the enumerate function.
+Play video starting at :5:30 and follow transcript5:30
+And in here we are passing the train_loader, and what we get back is some iteration of this training data that we have.
+Play video starting at :5:42 and follow transcript5:42
+And we can put this into a for loop, and then we get back two different returns. One is the position at which we currently are. And the other one is data.
+Play video starting at :5:57 and follow transcript5:57
+So we can
+Play video starting at :6: and follow transcript6:00
+run it like this. And then we can print, let's just print
+Play video starting at :6:8 and follow transcript6:08
+which batch we have here and then which data we can see.
+Play video starting at :6:14 and follow transcript6:14
+We can see here the zeroth batch. And then we can see here the data is actually a list of tensors.
+Play video starting at :6:24 and follow transcript6:24
+And let's try to understand this in more detail because here in the data, we have the first object,
+Play video starting at :6:35 and follow transcript6:35
+and that one is having the size of 2, that is the batch_size, and then the number of features, and then we have and then we have the second object with the same size. What this is actually referring to is our independent feature and the dependent feature. So what we could also do is we could also say that we get back here a couple of
+Play video starting at :7:4 and follow transcript7:04
+the independent feature and the dependent feature. And then we could print these two different objects.
+Play video starting at :7:16 and follow transcript7:16
+So this is basically how we have to understand the return values of the enumerated train_loader.
+Play video starting at :7:24 and follow transcript7:24
+So this is what we're going to make use now in our training loop. So first of all, we are going to work on this inner loop definition and we can make use of what we have just learned. So we have X and y, and we have in enumerate train_loader. All right.
+Play video starting at :7:46 and follow transcript7:46
+So now we have changed that, but that also means we don't need any more these specific slices that we use here
+Play video starting at :7:58 and follow transcript7:58
+with the batch positions. And we also have to modify this y value because now we are taking the updated y value that is defined here. So now we are passing in our independent feature in the forward pass. We get back to the predictions. And then we make use of these predictions together with the true independent features during the loss calculation. And the rest is basically staying the same.
+Play video starting at :8:30 and follow transcript8:30
+So now we can run everything
+Play video starting at :8:33 and follow transcript8:33
+and we should see that there is some decreasing development of the different losses.
+Play video starting at :8:40 and follow transcript8:40
+So it's looking like to be very stable already up to a few 100 epochs
+Play video starting at :8:46 and follow transcript8:46
+and you can see here. So it's converting quite nicely. So this is then providing the same results that we had before in the coding lecture. So the main takeaway of this coding lecture is basically that you have learned how to setup the Dataset class with your custom data. So then you have seen that you need to implement these three different functions, the init function in which you pass in the data that you want to process, then the length function which is returning the length of the object,
+Play video starting at :9:24 and follow transcript9:24
+and then the getitem function which is returning based on an index which has provided the independent and dependent feature.
+Play video starting at :9:34 and follow transcript9:34
+And then the train_loader is defining in very much detail how the data is going to be provided during the learning. So the two required parameters are here, the Dataset that you need to pass in, and the batch_size.
+Play video starting at :9:53 and follow transcript9:53
+And there is much more that you can explore. You can for example, enable the shuffling so that the data is sampled from the training data. And there is much more to explore here.
+Play video starting at :10:7 and follow transcript10:07
+And then finally, you have seen how you can include this in the training loop. So at which positions you have to modify the code to make it work and to pass in the return of the train_loader into the training loop, and then the training is performed accordingly and you're done.
+Play video starting at :10:29 and follow transcript10:29
+So that's it what you should learn about Dataset and Dataloader. Thank you very much for watching, and see you in the next lecture.
