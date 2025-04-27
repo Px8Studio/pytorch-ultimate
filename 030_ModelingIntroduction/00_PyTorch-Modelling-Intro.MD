@@ -134,3 +134,83 @@ and see if it's working. And it's super fast because it's a very small dataset. 
 Play video starting at :9:53 and follow transcript9:53
 And we are done.
 
+Foundations and Core Concepts of PyTorch
+Module 7
+Linear Regression from Scratch (Coding, Model Evaluation)
+
+0:00
+So now we are here to check the results.
+Play video starting at ::3 and follow transcript0:03
+So let's just print with the F string notation our weight,
+Play video starting at ::13 and follow transcript0:13
+and that is accessible with our tensor w, and
+Play video starting at ::20 and follow transcript0:20
+the function item.
+Play video starting at ::25 and follow transcript0:25
+And we also want to show the bias,
+Play video starting at ::29 and follow transcript0:29
+and that is stored in b. item.
+Play video starting at ::35 and follow transcript0:35
+So these are the parameters that our model has calculated. If we plot again our graph,
+Play video starting at ::44 and follow transcript0:44
+we can see here that we have our slope, the slope is -5. So you can roughly cross check if that is making sense. It's easier with the bias. So the bias is the intersection with the Y axis and the Y axis would be hit at 36.8. You have to consider that this is not showing all the way, it's starting at 1.5. So the 0 would be here. It's, it's making sense. Okay. Now we can also calculate our predictions.
+Play video starting at :1:23 and follow transcript1:23
+So for this, we're just using our
+Play video starting at :1:26 and follow transcript1:26
+independent feature as X, multiply that with our weights, and to that we are adding the bias, and then we are detaching it
+Play video starting at :1:38 and follow transcript1:38
+from PyTorch and converting it to a numpy array.
+Play video starting at :1:43 and follow transcript1:43
+So let's take a look at y_pred.
+Play video starting at :1:47 and follow transcript1:47
+So these are our predictions.
+Play video starting at :1:52 and follow transcript1:52
+Now it's always good to have some visualization for it. So we're going to create some scatter plot
+Play video starting at :2:5 and follow transcript2:05
+here. We can use
+Play video starting at :2:8 and follow transcript2:08
+our values which are stored in X_ list, and in y_list.
+Play video starting at :2:18 and follow transcript2:18
+So that is our true observations. And then if we put on some line float
+Play video starting at :2:29 and follow transcript2:29
+for the same x value X_list, and then we're taking our predictions that we have created, and then we're putting a line through it. And actually, it's good that you see that this is actually not working. We are ending up with some error. The data must be one dimensional. Let's see what is happening here. So we have y_pred, we can check the shape and yes, it's two dimensional. So this is something that you will end up seeing a lot. We have to always make sure that the dimensions of your objects are right. So one way to solve this is to call the reshape function, -1 to remove one dimension. And then you can call it, now it's working. So this is now our regression line which is actually coming from our deep learning model. So that's actually quite cool. If you compare that to the statistical
+Play video starting at :3:31 and follow transcript3:31
+model that we have here, it's basically the same.
+Play video starting at :3:35 and follow transcript3:35
+So
+Play video starting at :3:37 and follow transcript3:37
+even if it doesn't look like much, you have already created your very first neural network and you were able to train it correctly and it's providing the right values. That is actually awesome.
+Play video starting at :3:54 and follow transcript3:54
+You can just believe me, but in statistics it's always better to trust some numbers. So we can just make sure
+Play video starting at :4:3 and follow transcript4:03
+to see that we get the same results by creating some real linear regression model.
+Play video starting at :4:11 and follow transcript4:11
+So in here, this is just some sklearn stuff that we're doing here.
+Play video starting at :4:18 and follow transcript4:18
+So we are a fitting
+Play video starting at :4:21 and follow transcript4:21
+our
+Play video starting at :4:23 and follow transcript4:23
+numpy object X_np, and we're passing our target variable. And with this, we create our regression model
+Play video starting at :4:33 and follow transcript4:33
+and then we can extract our slope and offset.
+Play video starting at :4:39 and follow transcript4:39
+The slope is stored in the regression coefficient, and the intercept is stored in the property intercept_. So let's see that. So the true values are, for the slope -5.3 and the intercept is 37.28. And actually what we have here is coming very close to this,
+Play video starting at :5:6 and follow transcript5:06
+as you can see here. So the weights and the bias are pretty much what the statistical linear regression would also provide,
+Play video starting at :5:16 and follow transcript5:16
+good.
+Play video starting at :5:18 and follow transcript5:18
+Then the last part, that is just bonus. So we don't have to do that because it's requiring some additional package installation. I have shown you this here
+Play video starting at :5:32 and follow transcript5:32
+at the end. So we can create a graph visualization of the graph that was used for this. For this you can use the package called GraphViz, which can be downloaded under this,
+Play video starting at :5:46 and follow transcript5:46
+but there are also some additional things to be considered. So if it doesn't work for you, it's definitely not a problem. I also had to do some changes just to make it work. But in the end, I just want to quickly show you that once everything is installed and we have added it to the path variable, then you can call the function make_dot, from this package torchviz and you get this representation of our graph. So this is the first neural network that you have created.
+Play video starting at :6:22 and follow transcript6:22
+We can see here which of the functions are called, which of them are depending on other functions and so on. And all the way back to the very beginning where we have the slope and the bias.
+Play video starting at :6:36 and follow transcript6:36
+So this was our first neural network that we have created. And from now on we are building up on what we have learned here. So we are putting more complexity to it. We are going to improve the performance and the way our code looks. But the general structure is going to be pretty much like what we have seen here in this first lecture.
+Play video starting at :7:2 and follow transcript7:02
+So thank you very much for staying with me in this coding lecture, and see you in the next one.
+
+
