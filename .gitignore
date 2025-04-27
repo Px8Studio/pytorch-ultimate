@@ -15,7 +15,9 @@ ind.pubmed*
 !350_SemiSupervised/data/test/
 *.pyc
 venv/
-.vscode/
+# Ignore contents of .vscode, but not the directory itself
+.vscode/*
+# Un-ignore specific files
 !.vscode/settings.json
 !.vscode/tasks.json
 # Audio files
