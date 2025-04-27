@@ -48,6 +48,8 @@ Hello and welcome. In this lecture, we'll cover the theory behind implementing a
 
 ### Forward Pass Explained
 
+![alt text](forward_pass.png)
+
 Let's revisit the forward pass structure:
 1.  **Input Data (`X`):** Starts with our training data.
 2.  **Layer 1 (`l1`):** Processes the input using weights (`w`) and biases (`b`).
