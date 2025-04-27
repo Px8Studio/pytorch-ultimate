@@ -121,7 +121,7 @@ So for example, if we say the variable y is dependent on x plus whatever offset,
 Play video starting at :2:44 and follow transcript2:44
 then we can also print our variable y. And you can see this is behaving very much like numpy. Everything is the same so far.
 Play video starting at :2:56 and follow transcript2:56
-And one difference here is actually if we check, the property requires_grad,
+And one difference here is actually if we check, the property requires*grad,
 Play video starting at :3:5 and follow transcript3:05
 that is False. So if you create a tensor in that way, and if you don't specify the parameter requires_grad=True, then the default is actually that it doesn't require gradient.
 Play video starting at :3:21 and follow transcript3:21
@@ -155,7 +155,7 @@ times value
 Play video starting at :4:54 and follow transcript4:54
 -4. All right, that's our function.
 Play video starting at :4:58 and follow transcript4:58
-And we are now, just for visualization purposes we are creating a range which we call x_ range, and we can call from numpy the function linspace for linearly spacing for a certain range. And we want to have the range from 0 to 10,
+And we are now, just for visualization purposes we are creating a range which we call x* range, and we can call from numpy the function linspace for linearly spacing for a certain range. And we want to have the range from 0 to 10,
 Play video starting at :5:21 and follow transcript5:21
 and 101 points along this line.
 Play video starting at :5:27 and follow transcript5:27
@@ -278,20 +278,22 @@ import numpy as np
 x = torch.tensor(5.5)
 
 # %% simple calculations
+
 y = x + 10
 print(y)
 
 # %% automatic gradient calculation
-print(x.requires_grad)  # check if requires_grad is true, false if not directly specified
 
-x.requires_grad_() # set requires grad to true, default True
+print(x.requires_grad) # check if requires_grad is true, false if not directly specified
+
+x.requires*grad*() # set requires grad to true, default True
 
 #%% or set the flag directly during creation
 x = torch.tensor(2.0, requires_grad=True)
 print(x.requires_grad)
 #%% function for showing automatic gradient calculation
 def y_function(val):
-    return (val-3) * (val-6) * (val-4)
+return (val-3) _ (val-6) _ (val-4)
 
 x_range = np.linspace(0, 10, 101)
 x_range
@@ -299,34 +301,50 @@ y_range = [y_function(i) for i in x_range]
 sns.lineplot(x = x_range, y = y_range)
 
 # %% define y as function of x
-y = (x-3) * (x-6) * (x-4)
+
+y = (x-3) _ (x-6) _ (x-4)
 print(y)
+
 # %%
 
 # %% x -> y
+
 # create a tensor with gradients enabled
+
 x = torch.tensor(1.0, requires_grad=True)
+
 # create second tensor depending on first tensor
-y = (x-3) * (x-6) * (x-4)
+
+y = (x-3) _ (x-6) _ (x-4)
+
 # calculate gradients
+
 y.backward()
+
 # show gradient of first tensor
+
 print(x.grad)
+
 # %% x -> y -> z
+
 x = torch.tensor(1.0, requires_grad=True)
-y = x**3
+y = x\**3
 z = 5*y - 4
 
 # %%
+
 z.backward()
-print(x.grad)  # should be equal 5*3x**2
+print(x.grad) # should be equal 5\*3x\*\*2
+
 # %% more complex network
+
 x11 = torch.tensor(2.0, requires_grad=True)
 x21 = torch.tensor(3.0, requires_grad=True)
-x12 = 5 * x11 - 3 * x21
-x22 = 2 * x11**2 + 2 * x21
-y = 4 * x12 + 3 * x22
+x12 = 5 _ x11 - 3 _ x21
+x22 = 2 _ x11\*\*2 + 2 _ x21
+y = 4 _ x12 + 3 _ x22
 y.backward()
 print(x11.grad)
 print(x21.grad)
+
 # %%
