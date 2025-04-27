@@ -177,6 +177,7 @@ y.backward()
 # Print the gradient of x
 print(x.grad)  # The slope at x=2
 ```
+![alt text](gradient_at_2.png)
 
 ### Building Multi-Layer Computational Graphs
 
