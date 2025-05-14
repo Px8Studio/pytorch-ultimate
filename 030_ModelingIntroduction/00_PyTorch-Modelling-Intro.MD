@@ -996,3 +996,62 @@ Play video starting at :3:27 and follow transcript3:27
 And that's all you have to know about saving and loading the model.
 Play video starting at :3:32 and follow transcript3:32
 And with this, we have reached the end of this lecture. Thank you very much and see you in the next one.
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Model Training (101)
+
+0:01
+Hello and welcome to this lecture on PyTorch model training.
+Play video starting at ::8 and follow transcript0:08
+There is actually a strong need to have this lecture because the process is to be honest quite confusing in PyTorch because we have so many different objects, and it's not really clear which objects are impacted at which point, and by what, so let's speak about it.
+Play video starting at ::27 and follow transcript0:27
+So what do we have? We have the model, we have the optimizer, we have a loss function, we have a gradient update,
+Play video starting at ::35 and follow transcript0:35
+then we have the backward function of our loss function,
+Play video starting at ::42 and follow transcript0:42
+and we have the optimizer.step and then there are the model parameters. So many objects are floating around and it's not really clear which objects are changed and impacted at which point, and by what, so it's really important to understand how everything interacts. And there is a very good article I would like to make yourself aware of. You can find the link down here and it's really worth reading. It helped me a lot to understand these things because they're not so simple.
+Play video starting at :1:20 and follow transcript1:20
+All right. So basically we're having these objects, we're having the model which is based on our sub module torch.nn, this one is including the layers, the activation functions and so on. Then we have the optimizer. And actually here we have the first issue because the model parameters need to be shared with the optimizer. And we don't know how. and then we have the loss function that one is used to calculate the losses. And all of these objects are basically feeding into the model parameters and the gradients,
+Play video starting at :1:59 and follow transcript1:59
+you can see the classical training loop. So this is a very typical structure that you can see a lot in our coding lectures. So we are having an outer loop for iterating over the different epochs. Then we have the inner loop in which we are iterating over the batches. And then we have at first the optimization, we are zeroing the gradients out. We will talk about that more in the later lectures. Then we have our forward pass in which we are calculating the predictions. Then we can take these predictions together with the true values and the loss function so that we get, taking all of this into account, so we get the losses.
+Play video starting at :2:45 and follow transcript2:45
+And then we have the back propagation and the updating of the weights by calling optimizer. step. So this is basically the structure that you will see, that you will see over and over again in the recording.
+Play video starting at :3:2 and follow transcript3:02
+And now we want to talk about all these little details in here. So the first one is optimizer.zero_grad. This one is clearing the gradients.
+Play video starting at :3:15 and follow transcript3:15
+And for this, we have to know that the optimizer is accumulating the gradients. And for every new pass, every new forward pass or backward pass, the gradients need to be deleted.
+Play video starting at :3:28 and follow transcript3:28
+But then the question is still,
+Play video starting at :3:32 and follow transcript3:32
+why is actually the optimizer holding the gradient and not the model itself. So let's talk about that later.
+Play video starting at :3:40 and follow transcript3:40
+We have our forward pass,
+Play video starting at :3:43 and follow transcript3:43
+in this step the predictions are calculated, that one is very straightforward. We're taking data, putting it through the model, and get back some predictions.
+Play video starting at :3:55 and follow transcript3:55
+Similarly, for the loss calculation also pretty straightforward. We have the true values, we have our predictions, and we have a loss function. All of that together is returning some actual calculated loss.
+Play video starting at :4:13 and follow transcript4:13
+And then we have the gradient calculation, in this step when we call loss.backward.
+Play video starting at :4:21 and follow transcript4:21
+So this loss function object is calculating the gradients for all the nodes. And you can see here some example, we want to calculate the gradient of the weight1, that is basically the partial derivative of the loss function with respect to this weight1.
+Play video starting at :4:40 and follow transcript4:40
+And you have to know that the gradients are changed directly. So they are changed inplace,
+Play video starting at :4:46 and follow transcript4:46
+and implicitly the model layers are used and the tensor gradients are updated.
+Play video starting at :4:56 and follow transcript4:56
+Then we have the weight update. So at this point, you can assume that the gradients are known. Now we have to update the weights. And for this, you can use the step function of the optimizer, that is the purpose of this function.
+Play video starting at :5:15 and follow transcript5:15
+And in this step, the Model parameters are updated,
+Play video starting at :5:20 and follow transcript5:20
+although the model was never caught in this step. So also here there is some inplace functionality, and things are changed in the backend, which is not really clear how it's done.
+Play video starting at :5:35 and follow transcript5:35
+So why is it under weight, what are the advantages and disadvantages?
+Play video starting at :5:40 and follow transcript5:40
+The advantage is that with the way the developers have set up PyTorch,
+Play video starting at :5:47 and follow transcript5:47
+they have created some very flexible and composable API which can be used, not just for deep learning, but also for other computational graphs.
+Play video starting at :5:58 and follow transcript5:58
+The disadvantage is a bit like what we have touched on in this lecture that the model, the loss, the optimizer, they changed the parameter state and it's not really clear who is the owner at which step.
+Play video starting at :6:15 and follow transcript6:15
+All right, I hope that this made it a bit clearer and you're now less confused than at the beginning of this lecture. Thank you and see you in the next one.
