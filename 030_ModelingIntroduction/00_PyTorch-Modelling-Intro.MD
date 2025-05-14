@@ -1055,3 +1055,88 @@ Play video starting at :5:58 and follow transcript5:58
 The disadvantage is a bit like what we have touched on in this lecture that the model, the loss, the optimizer, they changed the parameter state and it's not really clear who is the owner at which step.
 Play video starting at :6:15 and follow transcript6:15
 All right, I hope that this made it a bit clearer and you're now less confused than at the beginning of this lecture. Thank you and see you in the next one.
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Hyperparameter Tuning (101)
+
+0:01
+Hello and welcome to this lecture on Hyperparameter tuning.
+Play video starting at ::7 and follow transcript0:07
+There are some reasons for tuning the parameters.
+Play video starting at ::11 and follow transcript0:11
+The first one is, covering the training and the inference time. So depending on the parameters you're choosing, you could end up with some very long training time or some very long inference time.
+Play video starting at ::25 and follow transcript0:25
+Then another reason might be that you just want to improve your results because the hyperparameters are very much impacting the performance.
+Play video starting at ::37 and follow transcript0:37
+And the last one is touching on the convergence because if you have wrong parameters, it might be that you end up with exploding or vanishing gradients and your model is just not being able to learn correctly.
+Play video starting at ::57 and follow transcript0:57
+Let's assume there is a need to
+Play video starting at :1:1 and follow transcript1:01
+perform hyperparameter tuning,
+Play video starting at :1:4 and follow transcript1:04
+and then the question is how can you actually do that?
+Play video starting at :1:7 and follow transcript1:07
+The intuition is that you want to track multiple combinations of parameters, and then in the end just pick the best one. There are also certain packages that you can use. Here I have just named some, like RayTune, Optuna and Skorch. The last one is what we're going to use in our coding lecture.
+Play video starting at :1:30 and follow transcript1:30
+And then there are a bunch of different hyper parameters. I tried to categorize them into different classes. So the first class would be the network topology. If you want to change the topology of your network, you could change the number of nodes, you could change the layer types, the activation functions, everything that is defined in your models.
+Play video starting at :1:59 and follow transcript1:59
+Then there are some other network objects like the loss function or the optimizer which you could change or which have some parameters themselves that could be optimized.
+Play video starting at :2:14 and follow transcript2:14
+And then during the model training, there are also some other parameters like the learning rate, the bach_size we spoke about earlier or the number of epochs. So all of these could be modified and much more.
+Play video starting at :2:28 and follow transcript2:28
+Let's touch on some of them,
+Play video starting at :2:31 and follow transcript2:31
+let's recap the batch size.
+Play video starting at :2:34 and follow transcript2:34
+So here you can see the problem, you could pass your dataset completely into a model, which might not be possible. So due to that, it might be a good idea to have a small batch size. So using a small number of datasets and putting these small bytes to the model, or using some larger size and then putting these larger bytes to the model.
+Play video starting at :3:2 and follow transcript3:02
+So here are some advantages and disadvantages. So for the GPU utilization, if you have a GPU, then it's advantageous to use some larger size.
+Play video starting at :3:15 and follow transcript3:15
+Of course, the number of iterations is going up if you have very small batch sizes,
+Play video starting at :3:23 and follow transcript3:23
+but smaller sizes have also shown to improve the stability of your training. So that you can see already there are some reasons to use smaller values, and other reasons to use larger values. So it might be complicated. And the best practice here is to use a batch size of 32 to start with.
+Play video starting at :3:47 and follow transcript3:47
+The next hyperparameter I want to touch on is the number of epochs.
+Play video starting at :3:53 and follow transcript3:53
+So you can see you have two different options. You could have a low number of epochs or a very high number of epochs. And this of course is impacting your training time
+Play video starting at :4:5 and follow transcript4:05
+because the higher the number of epochs, the longer the training time. On the inference time that doesn't have an impact,
+Play video starting at :4:13 and follow transcript4:13
+but it does have also an impact on the model performance.
+Play video starting at :4:17 and follow transcript4:17
+The model performance is poor if your number of epochs is too small. Typically, it's better to have a larger number of epochs. But there is also some limit, because at some point it just doesn't make sense to increase the number of epochs anymore.
+Play video starting at :4:36 and follow transcript4:36
+And also you might end up with some stability problems if you are having a too large number of epochs.
+Play video starting at :4:46 and follow transcript4:46
+The next point is covering the number of hidden layers. So there could be just a very small number of hidden layers. Like you can see here, we have an input layer, a hidden layer and an output layer. And here is the opposite side where you have a number of different hidden layers. And for the ability to learn complex patterns, it's necessary and essential to have many hidden layers. So for this, it's better to have more layers. But then of course, it's having an impact on the training time. It takes of course longer if you have more layers, and thus more nodes.
+Play video starting at :5:32 and follow transcript5:32
+Also it's having the same impact on the inference time.
+Play video starting at :5:36 and follow transcript5:36
+So when you deploy your model, it's also taking longer if you have more layers included,
+Play video starting at :5:43 and follow transcript5:43
+and there's also this risk of overfitting. So if your model is getting too complex, it might be that the model is just memorizing the observations and this might reduce the generalization of your model.
+Play video starting at :6:2 and follow transcript6:02
+The next hyperparameter I want to touch on is the nodes within a layer.
+Play video starting at :6:8 and follow transcript6:08
+So you could have a hidden layer with just a few nodes, but you could also have the opposite, a hidden layer with many nodes.
+Play video starting at :6:18 and follow transcript6:18
+And it's similar to before, we have the same pattern here. If you need to have a model which is able to learn complex patterns, then it's necessary to have more nodes in your hidden layers. So if you have more layers, then this is good in the case that you need to have the ability to learn complex patterns. But it has a negative impact on the training time and the inference time because these ones are getting up.
+Play video starting at :6:49 and follow transcript6:49
+And also having fewer nodes might be beneficial, because the risk of overfitting is decreased. So this first point and the last point, these are always creating some tension because because if your model is too simple for the problem, then it's not able to learn the complex patterns,
+Play video starting at :7:12 and follow transcript7:12
+but the opposite might be that your model is too complex for the problem, and then you are risking to get overfitting.
+Play video starting at :7:23 and follow transcript7:23
+So how can you actually create some structured search? There are different approaches. The first one is called grid search.
+Play video starting at :7:33 and follow transcript7:33
+In this approach, you need to at first define your search space. So you need to define a set of parameters with some limiting values, and then you are basically evaluating all possible combinations. So in a case where we're saying we want to make some grid search based on the learning rate and the batch size, you can see we have two different values for the learning rate and three for the batch size, then you can expand the metrics and create all the different runs. So basically all possible combinations of both parameters. And this approach of grid search is very well for checking wellknown parameters.
+Play video starting at :8:21 and follow transcript8:21
+There is also random search.
+Play video starting at :8:24 and follow transcript8:24
+In this approach, you would pick randomly a point from your configuration space, and that might be better for the discovery of well working parameter combinations.
+Play video starting at :8:39 and follow transcript8:39
+I want to make you aware of one package that I found to work very well. And that is also what we're going to use in our coding section that is called scorch. That's a scikit-learn compatible neural network library that wraps PyTorch.
+Play video starting at :8:55 and follow transcript8:55
+You can see where to find the repo, and
+Play video starting at :9: and follow transcript9:00
+this can be integrated into your sklearn pipeline. And it also provides some grid search functionality, and this is actually what we are going to code now in the upcoming coding lecture. Thank you and see you there.
