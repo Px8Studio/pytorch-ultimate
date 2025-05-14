@@ -1140,3 +1140,76 @@ Play video starting at :8:55 and follow transcript8:55
 You can see where to find the repo, and
 Play video starting at :9: and follow transcript9:00
 this can be integrated into your sklearn pipeline. And it also provides some grid search functionality, and this is actually what we are going to code now in the upcoming coding lecture. Thank you and see you there.
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Hyperparameter Tuning (Coding)
+
+0:01
+Hello and welcome to this coding lecture on hyperparameter tuning.
+Play video starting at ::6 and follow transcript0:06
+I have opened here the start script for the hyperparameter tuning, and the sample code that I'm going to provide here is covering the package loading the data import. You can see here we have set up the Dataset class and the Dataloader and the modeling class together with the loss function and the learning rate and the optimizer. So
+Play video starting at ::33 and follow transcript0:33
+many things are already provided. And what we now are going to implement is something that is called grid search. In the theory lecture you have seen what grid search is meaning. So we are going to setup some parameters, which are then combined, and every combination of these parameters that are going to be evaluated, and compared to each other. And finally, the best parameter combination is used
+Play video starting at :1:2 and follow transcript1:02
+for this. I'm going to use
+Play video starting at :1:5 and follow transcript1:05
+a package that is called scorch. You can find it here at this GitHub page, and this is basically a scikit-learn compatible neural network library that wraps PyTorch. And first of all, we have to go to the top of this file, and to import the necessary functions of this specific package. So from scorch, we are importing the NeuralNetRegressor.
+Play video starting at :1:36 and follow transcript1:36
+Okay. Let's just scroll to the bottom of the script and then run everything above. So now it should look like this, everything was loaded into the workspace, and now we are ready to setup our model. So the first thing is that we're going to make use of this Neural NetRegressor. And in here, this is requiring some parameters. The first one is the LinearRegressionTorch model class that we have setup.
+Play video starting at :2:8 and follow transcript2:08
+And the second one is a parameter, the max_ epochs that we can set. And then we can also specify the learning_rate. And
+Play video starting at :2:20 and follow transcript2:20
+we can also specify a parameter called iteration_
+Play video starting at :2:25 and follow transcript2:25
+train_ shuffle,
+Play video starting at :2:28 and follow transcript2:28
+and we can set that to True.
+Play video starting at :2:31 and follow transcript2:31
+You can also check out the help function to find out what other functionality this is providing. Let's just see if this works. So this looks good. Then the next point is to set some parameters,
+Play video starting at :2:49 and follow transcript2:49
+and the other parameters that we're going to set are train_split equals False.
+Play video starting at :2:56 and follow transcript2:56
+So we're not splitting our data according to some train_test_split ratio. So, and the other parameter that is going to be our verbose
+Play video starting at :3:9 and follow transcript3:09
+that we set to 0.
+Play video starting at :3:13 and follow transcript3:13
+And now we're setting up our dictionary of the parameters that we're going to modify. So the first one is the learning_rate. Let's just use a smaller number of learning rates, because it's just for teaching purposes. So we are going to take three different learning rates that are going to be evaluated.
+Play video starting at :3:40 and follow transcript3:40
+So we provide this list, and we're going to setup another parameter called max_ epochs,
+Play video starting at :3:47 and follow transcript3:47
+which is also having values as a list. So we're having a range of, let's start with 10 epochs, then have 200, then 500 epochs.
+Play video starting at :4:1 and follow transcript4:01
+Okay. And now we have to set this up in our grid search. For this we can call the GridSearch CV function that we've loaded. And what this is needing, is at first the estimator, the network that we have setup; then the param_grid, this is our dictionary of the parameters that we're going to modify;
+Play video starting at :4:27 and follow transcript4:27
+and then it wants to find out the best parameter combination, so we need to specify some scoring. Then since we are working with a regression problem, we can make use of the scoring parameter R squared. And
+Play video starting at :4:47 and follow transcript4:47
+we are using three different runs for the cross validation. And to see a bit more, we can specify the verbosity to be 2.
+Play video starting at :4:59 and follow transcript4:59
+Good. And the next point is that we need to pass our data to the fit method. So in here, like usually in scale, we are putting in the independent feature and the dependent feature.
+Play video starting at :5:14 and follow transcript5:14
+And finally, once everything was evaluated, we can put into a print statement, the best score
+Play video starting at :5:24 and follow transcript5:24
+that is scored in the property best_score_ of gs.
+Play video starting at :5:30 and follow transcript5:30
+And then we can also specify the best_ params, the best parameters which are stored in gs.best_params.
+Play video starting at :5:43 and follow transcript5:43
+So now we have setup everything, and let's perform now the grid search.
+Play video starting at :5:50 and follow transcript5:50
+You can see here it's running, you can see which parameters were modified, and how long it took. And then, and then we can see there is a small typo. So this one got an unexpected argument, iteration_train_shuffle, we can check that out.
+Play video starting at :6:9 and follow transcript6:09
+And you can see here there is a typo.
+Play video starting at :6:12 and follow transcript6:12
+it actually needs to be called iterator_train __ shuffle.
+Play video starting at :6:22 and follow transcript6:22
+So now it's taking a bit longer, and
+Play video starting at :6:26 and follow transcript6:26
+eventually we're going to have some results.
+Play video starting at :6:36 and follow transcript6:36
+And finally, we are done. So you can see here the best score. And what is more interesting for us, this is the best parameter combination, so based on this two different parameters that were combined. So in total, we had three parameters for learning rate and three for max_ epochs. So nine different parameter combinations were checked. And all of this parameter set, these two parameter combinations are the best ones.
+Play video starting at :7:9 and follow transcript7:09
+And if you have more parameters, you can just take them up into this dictionary and then the larger grid search is performed.
+Play video starting at :7:19 and follow transcript7:19
+All right. So in this lecture, you have learned how you can perform some grid search to find the best parameter combination of your hyperparameter tuning. You have seen how we can implement this with the scorch package. So how you have to set up everything to perform this grid search together with cross validation and how to extract the best score in the end and how to get the best parameter combination.
+Play video starting at :7:49 and follow transcript7:49
+With that we have reached the end of this lecture. Thank you very much and see you in the next one.
