@@ -931,3 +931,68 @@ Play video starting at :10:7 and follow transcript10:07
 And then finally, you have seen how you can include this in the training loop. So at which positions you have to modify the code to make it work and to pass in the return of the train_loader into the training loop, and then the training is performed accordingly and you're done.
 Play video starting at :10:29 and follow transcript10:29
 So that's it what you should learn about Dataset and Dataloader. Thank you very much for watching, and see you in the next lecture.
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Saving and Loading Models (101)
+
+0:01
+Hello and welcome to this lecture on model saving and loading.
+Play video starting at ::8 and follow transcript0:08
+So, first of all, why do we need that? Well, you know that training some deep learning model might take hours or even days or weeks. So you definitely need to find a way to save the model in the end because you cannot afford to just retrain it every time you need it. And for this, there are of course some functions implemented in PyTorch. The first one is torch.save. This one is saving your model. And here the first recommendation is actually to only save the state dict.
+Play video starting at ::46 and follow transcript0:46
+And you can ask yourself why is it not good to save the complete model? Well, it's because if you would save the complete model, which is also possible, then there are some exact directory structures saved. Some paths are saved to the file with the classes. So you might end up in a situation where your code easily breaks when you try to load the model on a different computer, for example. So due to these reasons, it's the recommended way to create a new instance of your model. Once you have trained the model and you want to load it and then just to load the state dictionary into your instance of the model.
+Play video starting at :1:35 and follow transcript1:35
+So the state_dict is basically a dictionary with all the layers and the corresponding parameters. And here only the learnable parameters and registered buffers like batchnorm are saved. And here at the bottom, you can see how to use it. So you can just call torch .save(), and then reference to your model. In case it's called model, then it's model.state_dict,
+Play video starting at :2:2 and follow transcript2:02
+and then you have to provide a PATH to save it.
+Play video starting at :2:6 and follow transcript2:06
+The corresponding loading function is then called torch.load_ state_dict.
+Play video starting at :2:12 and follow transcript2:12
+This is like the name you would guess, loading the state dictionary, and you can see what I have just explained. If you want to load it, you have to create an instance again of your model class, and then you have to load the state dictionary with this functionality.
+Play video starting at :2:33 and follow transcript2:33
+And then since you don't want to retrain the model, you can put the model into evaluation mode, with model.eval.
+Play video starting at :2:44 and follow transcript2:44
+Then just for completeness, I want to tell you that there is this way of saving the complete model, and then the corresponding loading function would be called torch.load. But as I've said before, this is not the recommended way to do.
+Play video starting at :3:1 and follow transcript3:01
+Good. That's it. And in the upcoming coding lecture, we will see how we can easily implement this. Thank you. And see you there.
+
+
+Foundations and Core Concepts of PyTorch
+Module 7
+Saving and Loading Models (Coding)
+
+0:01
+Hello and welcome to this coding lecture on model saving and loading. You can see here, I've loaded the start script for model saving and loading. And you can just jump to the bottom and run everything above this line to set up the model and perform the model training. Because this is what we're going to start with. We have a model, and it has already trained parameters. And now you're going to find out how we can actually save this model and load this later on.
+Play video starting at ::37 and follow transcript0:37
+But first of all, we have spoken in the theory lecture about the state dictionary and I just want to show you this so you can access this by calling the method state_ dict on the model.
+Play video starting at ::51 and follow transcript0:51
+And you can see here this is an ordered dictionary where you have at first the linear weights and then the linear bias.
+Play video starting at :1:1 and follow transcript1:01
+And if you want to save the model state, then all you have to do is call torch.save, and you have to tell what to save. That is actually the model dot state_dict. And then the second parameter is the file which you want to use for saving this. So you can call it like here model_state_ dict .pth for PyTorch.
+Play video starting at :1:29 and follow transcript1:29
+And if we run that,
+Play video starting at :1:33 and follow transcript1:33
+you can see that there is
+Play video starting at :1:35 and follow transcript1:35
+a model_state_dict saved in the current working folder.
+Play video starting at :1:41 and follow transcript1:41
+And now if you want to load this model, all you have to do is you have to at first create an instance of your Model class. So that is our LinearRegressionTorch class
+Play video starting at :1:57 and follow transcript1:57
+with the input dimension and the output dimension.
+Play video starting at :2:4 and follow transcript2:04
+And then this is initialized with some random weights. And now you have to load the state_dict.
+Play video starting at :2:11 and follow transcript2:11
+So you have to run model. load_ state_dict, we've torch.load. And in here you're passing the file that we have just saved.
+Play video starting at :2:21 and follow transcript2:21
+So that would be the opposite direction for loading a saved model. And
+Play video starting at :2:28 and follow transcript2:28
+then you can just check the model.state_dict,
+Play video starting at :2:32 and follow transcript2:32
+that everything was loaded correctly.
+Play video starting at :2:38 and follow transcript2:38
+And with this, you could move forward, you could just share the trained model, or just use it at some later point. And just to recap what you have learned. So this lecture was focusing on how you can save the model, and how you can later on load it again. And in here you have seen how you can access the state dictionary, and then how you have to set it up so that you're saving this state dictionary in a PyTorch file. And then later on, if you want to load the model, you have seen that you have to at first create an instance of your Model class. And then you have to populate the state dictionary with the parameters that were saved before in this specific file.
+Play video starting at :3:27 and follow transcript3:27
+And that's all you have to know about saving and loading the model.
+Play video starting at :3:32 and follow transcript3:32
+And with this, we have reached the end of this lecture. Thank you very much and see you in the next one.
