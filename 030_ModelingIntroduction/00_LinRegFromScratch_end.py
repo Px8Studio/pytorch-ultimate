@@ -64,8 +64,8 @@ print(f"Slope: {reg.coef_}, Bias: {reg.intercept_}")
 # %% create graph visualisation
 # make sure GraphViz is installed (https://graphviz.org/download/)
 # if not computer restarted, append directly to PATH variable
-import os
-from torchviz import make_dot
-os.environ['PATH'] += os.pathsep + 'C:/Program Files (x86)/Graphviz/bin'
-make_dot(loss_tensor)
+# import os
+# from torchviz import make_dot
+# os.environ['PATH'] += os.pathsep + 'C:/Program Files (x86)/Graphviz/bin'
+# make_dot(loss_tensor)
 # %%

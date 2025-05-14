@@ -3,6 +3,9 @@ import torch
 import seaborn as sns
 import numpy as np
 
+#%% check if GPU is available
+print(torch.cuda.is_available())
+
 #%% create a tensor
 x = torch.tensor(5.5)
 
